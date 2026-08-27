@@ -7,6 +7,7 @@ Every public statement about ArchaeoAI must be entered here before it appears in
 | C001 | Terrain representation affects baseline performance on this task. | E001 report and split manifest | Name dataset version, feature class, regions, metric, and confidence interval. Do not generalize beyond them. | Pending | Pending |
 | C002 | Random patch splits can overestimate performance relative to a geographic holdout. | E001 paired split results | Say “in this study” unless independently replicated. | Pending | Pending |
 | C003 | ArchaeoAI is reproducible. | Clean rerun log and environment lockfile | Claim only after a second person/session regenerates the headline result. | Pending | Pending |
+| C004 | Official NHLE metadata suggests that scheduled single bowl barrows are viable for an E001 label-curation study. | Phase 2A audit code, coordinate-free outputs, and 30-entry manual sample | Say “conditional GO” and name the 27 August 2026 service snapshot. Counts are title-triage queues, not final labels; make no terrain or model claim. | Pending | Evidence recorded; review pending |
 
 ## Rule
 

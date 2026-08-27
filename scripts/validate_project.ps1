@@ -11,6 +11,7 @@ $required = @(
     'data/README.md',
     'data/manifests/example-dataset.toml',
     'docs/environment-audit.md',
+    'docs/e001-feasibility-audit.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/dataset-decision-record.md',
@@ -22,14 +23,20 @@ $required = @(
     'research-log/README.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
+    'scripts/audit_nhle_bowl_barrows.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
     'src/archaeoai/paths.py',
+    'src/archaeoai/nhle_audit.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
     'tests/test_package.py',
-    'tests/test_paths.py'
+    'tests/test_paths.py',
+    'tests/test_nhle_audit.py',
+    'outputs/feasibility/bowl_barrow_summary.json',
+    'outputs/feasibility/bowl_barrow_counts.csv',
+    'outputs/feasibility/bowl_barrow_manual_sample.csv'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -49,6 +56,47 @@ if ($projectConfig -notmatch 'requires-python\s*=\s*">=3\.12,<3\.15"') {
 $exampleManifest = Get-Content -Raw 'data/manifests/example-dataset.toml'
 if ($exampleManifest -notmatch 'status\s*=\s*"template"' -or $exampleManifest -notmatch 'example\.invalid') {
     throw 'The example dataset manifest must remain explicitly fictional and in template status.'
+}
+
+$auditSummary = Get-Content -Raw 'outputs/feasibility/bowl_barrow_summary.json' | ConvertFrom-Json
+if (
+    $auditSummary.privacy.stored_coordinates -ne $false -or
+    $auditSummary.privacy.stored_geometry -ne $false -or
+    $auditSummary.counts.total_scheduled_monument_records_examined -le 0
+) {
+    throw 'The Phase 2A summary must be coordinate-free and contain a verified source count.'
+}
+$aggregateHeaders = (Get-Content 'outputs/feasibility/bowl_barrow_counts.csv' -TotalCount 1)
+$manualHeaders = (Get-Content 'outputs/feasibility/bowl_barrow_manual_sample.csv' -TotalCount 1)
+if ($aggregateHeaders -match 'Easting|Northing|NGR' -or $manualHeaders -match 'Easting|Northing|NGR') {
+    throw 'Tracked Phase 2A CSV outputs must not contain exact-coordinate fields.'
+}
+$auditCounts = $auditSummary.counts
+if (
+    $auditCounts.broad_barrow_candidates -ne (
+        $auditCounts.probable_bowl_candidates +
+        $auditCounts.clear_title_exclusions +
+        $auditCounts.manual_review_required
+    )
+) {
+    throw 'Phase 2A triage counts must partition all broad barrow candidates.'
+}
+$aggregateRows = Import-Csv 'outputs/feasibility/bowl_barrow_counts.csv'
+$aggregateProbable = ($aggregateRows | Measure-Object -Property probable_bowl_candidates -Sum).Sum
+$aggregateExcluded = ($aggregateRows | Measure-Object -Property clear_title_exclusions -Sum).Sum
+$aggregateManual = ($aggregateRows | Measure-Object -Property manual_review_required -Sum).Sum
+if (
+    $aggregateProbable -ne $auditCounts.probable_bowl_candidates -or
+    $aggregateExcluded -ne $auditCounts.clear_title_exclusions -or
+    $aggregateManual -ne $auditCounts.manual_review_required
+) {
+    throw 'Phase 2A aggregate CSV counts must match the JSON summary.'
+}
+$manualRows = Import-Csv 'outputs/feasibility/bowl_barrow_manual_sample.csv'
+$manualIds = @($manualRows.list_entry | Sort-Object)
+$sampleIds = @($auditSummary.manual_sample.record_ids | ForEach-Object { "$_" } | Sort-Object)
+if ($manualRows.Count -ne $sampleIds.Count -or (Compare-Object $manualIds $sampleIds)) {
+    throw 'The manual-review artifact must match the deterministic sample in the JSON summary.'
 }
 
 $projectRootPath = (Resolve-Path '.').Path

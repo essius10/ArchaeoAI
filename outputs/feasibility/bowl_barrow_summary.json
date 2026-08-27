@@ -1,0 +1,168 @@
+{
+  "audit": {
+    "purpose": "metadata-only E001 bowl-barrow feasibility audit",
+    "accessed_at": "2026-08-27T18:25:43.911177+00:00",
+    "classifier_version": "title-triage-v1",
+    "class_definition": "a single bowl barrow in England, recorded as a Scheduled Monument, surviving as a discrete upstanding earthwork mound",
+    "warning": "Title triage is not a final label set; every probable candidate requires full-record and geometry review."
+  },
+  "source": {
+    "official_item_url": "https://opendata-historicengland.hub.arcgis.com/datasets/historicengland::national-heritage-list-for-england-nhle/explore?layer=6",
+    "arcgis_item_id": "767f279327a24845bf47dfe5eae9862b",
+    "feature_service_url": "https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer",
+    "layer_id": 6,
+    "layer_name": "Scheduled Monuments",
+    "geometry_type": "esriGeometryPolygon",
+    "spatial_reference": {
+      "wkid": 27700,
+      "latestWkid": 27700
+    },
+    "last_edit_at": "2026-08-27T05:59:25.097000+00:00",
+    "query_formats": [
+      "JSON",
+      "geoJSON",
+      "PBF"
+    ],
+    "export_formats": [
+      "csv",
+      "shapefile",
+      "sqlite",
+      "geoPackage",
+      "filegdb",
+      "featureCollection",
+      "geojson",
+      "kml",
+      "excel"
+    ],
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "alias": "OBJECTID",
+        "type": "esriFieldTypeOID"
+      },
+      {
+        "name": "ListEntry",
+        "alias": "List Entry Number",
+        "type": "esriFieldTypeInteger"
+      },
+      {
+        "name": "Name",
+        "alias": "List Entry Name",
+        "type": "esriFieldTypeString"
+      },
+      {
+        "name": "SchedDate",
+        "alias": "Date first listed",
+        "type": "esriFieldTypeDate"
+      },
+      {
+        "name": "AmendDate",
+        "alias": "Date of most recent amendment",
+        "type": "esriFieldTypeDate"
+      },
+      {
+        "name": "CaptureScale",
+        "alias": "Capture scale",
+        "type": "esriFieldTypeString"
+      },
+      {
+        "name": "hyperlink",
+        "alias": "NHLE link",
+        "type": "esriFieldTypeString"
+      },
+      {
+        "name": "area_ha",
+        "alias": "Area (ha)",
+        "type": "esriFieldTypeDouble"
+      },
+      {
+        "name": "NGR",
+        "alias": "National Grid Reference",
+        "type": "esriFieldTypeString"
+      },
+      {
+        "name": "Easting",
+        "alias": "Easting",
+        "type": "esriFieldTypeDouble"
+      },
+      {
+        "name": "Northing",
+        "alias": "Northing",
+        "type": "esriFieldTypeDouble"
+      }
+    ]
+  },
+  "counts": {
+    "total_scheduled_monument_records_examined": 20002,
+    "scheduled_monument_polygon_features": 20002,
+    "duplicate_list_entry_features": 0,
+    "broad_barrow_candidates": 5487,
+    "probable_bowl_candidates": 1908,
+    "clear_title_exclusions": 1826,
+    "manual_review_required": 1753
+  },
+  "geographic_distribution": {
+    "aggregation": "100 km British National Grid cells; no coordinates retained",
+    "groups_with_any_broad_candidate": 26,
+    "groups_with_probable_bowl_candidates": 23,
+    "groups_with_at_least_25_probable_bowl_candidates": 20,
+    "records_without_centroid_metadata": 0
+  },
+  "geometry_metadata": {
+    "warning": "Designation polygons indicate the protected area, not a mound segmentation mask; every selected patch centre requires visual review.",
+    "probable_candidate_capture_scales": {
+      "1:10000": 1883,
+      "1:1250": 5,
+      "1:2500": 17,
+      "1:5000": 3
+    },
+    "probable_candidate_area_ha": {
+      "available": 1908,
+      "minimum": 0.007793866903667482,
+      "median": 0.0632103844677348,
+      "maximum": 2.115030611912191
+    }
+  },
+  "manual_sample": {
+    "method": "lowest SHA-256 ranks of seed and stable List Entry Number",
+    "seed": "E001-Phase-2A-2026-08-27",
+    "requested_size": 30,
+    "record_ids": [
+      1014408,
+      1015973,
+      1015047,
+      1008223,
+      1013112,
+      1010725,
+      1010714,
+      1021306,
+      1013563,
+      1020392,
+      1017971,
+      1009429,
+      1009137,
+      1017268,
+      1012205,
+      1008004,
+      1014299,
+      1013643,
+      1015484,
+      1007398,
+      1018102,
+      1009014,
+      1010507,
+      1015768,
+      1015152,
+      1014895,
+      1010512,
+      1008709,
+      1007510,
+      1017563
+    ]
+  },
+  "privacy": {
+    "stored_coordinates": false,
+    "stored_geometry": false,
+    "tracked_aggregation_only": true
+  }
+}

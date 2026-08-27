@@ -19,10 +19,15 @@ Phase 1 provides:
 - explicit dataset status and heritage-sensitivity classifications;
 - automated tests, Ruff checks, and Windows-compatible environment validation.
 
+Phase 2A now provides a **metadata-only feasibility audit** for scheduled single bowl barrows. The
+official NHLE title pool and a deterministic 30-entry quality sample support a conditional GO, but
+no record is yet an approved E001 label. See the
+[E001 feasibility audit](docs/e001-feasibility-audit.md).
+
 The following are **not implemented**:
 
 - raster loading, validation, clipping, tiling, or terrain transformations;
-- archaeological labels, sampling, or geographic split generation;
+- approved archaeological labels, background sampling, or geographic split generation;
 - baseline models, metrics, visualizations, or an executable E001 run;
 - any real dataset, archaeological coordinate, prediction, or result.
 
@@ -48,6 +53,15 @@ Verify the environment and repository:
 .\.venv\Scripts\python.exe -m ruff check .
 .\.venv\Scripts\python.exe -m ruff format --check .
 ```
+
+Reproduce the coordinate-safe live NHLE metadata audit:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\audit_nhle_bowl_barrows.py
+```
+
+This command queries only official designation metadata and writes aggregate outputs without exact
+coordinates. It does not download terrain or create final archaeological labels.
 
 ## Configuration
 
@@ -94,6 +108,7 @@ This repository must not publish precise coordinates for unprotected or sensitiv
 - [Research charter](docs/research-charter.md)
 - [Literature and novelty audit](docs/literature-novelty-audit.md)
 - [Dataset decision record](docs/dataset-decision-record.md)
+- [E001 Phase 2A feasibility audit](docs/e001-feasibility-audit.md)
 - [Candidate questions and recommendation](docs/research-questions.md)
 - [Six-month roadmap and first 12 weeks](docs/roadmap.md)
 - [Decision log](docs/decision-log.md)

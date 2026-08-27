@@ -1,10 +1,25 @@
 # Dataset decision record — D001
 
-## Decision pending: select a lawful, non-sensitive label source before data download
+## Conditional decision: NHLE bowl-barrows pass metadata feasibility, not final data approval
+
+Phase 2A found a large, geographically broad pool of Scheduled Monument titles that plausibly
+represent single bowl barrows. Historic England publishes the official NHLE layer under OGL, and a
+30-record full-entry sample showed strong but imperfect title precision. See
+[the Phase 2A audit](e001-feasibility-audit.md).
+
+**Decision status: CONDITIONAL GO.** D001 is not finally approved for terrain extraction. Exact
+labels must still pass full-entry review, geometry QA, Environment Agency 1 m DTM coverage and
+survey-provenance checks, geographic grouping, attribution review, and controlled-coordinate
+handling.
 
 ### Candidate terrain source
 
 England Environment Agency National LIDAR Programme DTM (reported 1 m coverage). This is attractive because it is public, national in scale, and relevant to earthwork microtopography.
+
+Phase 2A verified the Environment Agency 2022 LIDAR Composite DTM as the initial candidate: nominal
+1 m resolution, approximately 99% England coverage, EPSG:27700, Ordnance Datum Newlyn, 5 km GeoTIFF
+tiles, and OGL. Its survey index exposes source resolution and acquisition dates. Composite survey
+heterogeneity remains a mandatory confound check.
 
 ### Required label criteria
 
@@ -16,7 +31,10 @@ England Environment Agency National LIDAR Programme DTM (reported 1 m coverage).
 
 ### Leading study design
 
-Use a documented, non-sensitive class such as scheduled earthwork remains only if a lawful source supports it. Sample negatives in the same regional/acquisition strata, excluding buffers around all known labels. Hold out one region entirely.
+Use scheduled single bowl barrows that survive as discrete upstanding mounds, after full official-
+entry and geometry review. Sample backgrounds in the same regional/acquisition strata, excluding
+buffers around all known labels. Use multiple buffered geographic groups, with at least two
+nonadjacent final test groups if the audited set permits it.
 
 ### Rejection criteria
 
