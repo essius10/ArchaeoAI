@@ -3,6 +3,7 @@ from archaeoai.terrain_metadata import (
     esri_geometry_qa,
     patch_sample_points,
     point_in_ring,
+    ring_centroid,
 )
 
 
@@ -17,6 +18,11 @@ def test_point_in_ring() -> None:
     ring = [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]
     assert point_in_ring((5, 5), ring)
     assert not point_in_ring((20, 5), ring)
+
+
+def test_ring_centroid() -> None:
+    ring = [[0, 0], [0, 10], [10, 10], [10, 0], [0, 0]]
+    assert ring_centroid(ring) == (5, 5)
 
 
 def test_geometry_qa_passes_one_compact_polygon() -> None:
@@ -36,6 +42,11 @@ def test_geometry_qa_flags_off_centre_and_large_designations() -> None:
         "geometry_off_centre"
     )
     assert esri_geometry_qa(geometry, centroid=(5, 5), area_ha=0.7).reason == ("geometry_too_large")
+
+    wide_geometry = {"rings": [[[0, 0], [0, 100], [100, 100], [100, 0], [0, 0]]]}
+    assert esri_geometry_qa(wide_geometry, centroid=(10, 50), area_ha=0.4).reason == (
+        "geometry_off_centre"
+    )
 
 
 def test_terrain_assessment_requires_full_patch_and_provenance() -> None:

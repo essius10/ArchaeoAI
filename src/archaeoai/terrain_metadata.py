@@ -7,6 +7,7 @@ status, broad provenance, and reason codes but no machine-ready locations.
 from __future__ import annotations
 
 import json
+import math
 import time
 import urllib.parse
 import urllib.request
@@ -68,6 +69,23 @@ def point_in_ring(point: tuple[float, float], ring: list[list[float]]) -> bool:
     return inside
 
 
+def ring_centroid(ring: list[list[float]]) -> tuple[float, float]:
+    """Return the planar centroid of a non-degenerate closed polygon ring."""
+    twice_area = 0.0
+    x_total = 0.0
+    y_total = 0.0
+    for index in range(len(ring) - 1):
+        x1, y1 = ring[index]
+        x2, y2 = ring[index + 1]
+        cross = x1 * y2 - x2 * y1
+        twice_area += cross
+        x_total += (x1 + x2) * cross
+        y_total += (y1 + y2) * cross
+    if twice_area == 0:
+        raise ValueError("cannot calculate centroid of a degenerate ring")
+    return x_total / (3 * twice_area), y_total / (3 * twice_area)
+
+
 def esri_geometry_qa(
     geometry: dict[str, Any], *, centroid: tuple[float, float], area_ha: float | None
 ) -> GeometryQa:
@@ -83,6 +101,11 @@ def esri_geometry_qa(
         return GeometryQa("fail", "geometry_off_centre", area_ha, 1)
     xs = [point[0] for point in outer_rings[0]]
     ys = [point[1] for point in outer_rings[0]]
+    polygon_centre = ring_centroid(outer_rings[0])
+    maximum_span = max(max(xs) - min(xs), max(ys) - min(ys))
+    maximum_centre_offset = max(15, maximum_span * 0.35)
+    if math.dist(centroid, polygon_centre) > maximum_centre_offset:
+        return GeometryQa("fail", "geometry_off_centre", area_ha, 1)
     if area_ha is None or area_ha > 0.5 or max(xs) - min(xs) > 200 or max(ys) - min(ys) > 200:
         return GeometryQa("needs_review", "geometry_too_large", area_ha, 1)
     return GeometryQa("pass", None, area_ha, 1)
