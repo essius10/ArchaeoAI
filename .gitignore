@@ -1,0 +1,51 @@
+# Python environments and generated research artifacts
+.venv/
+venv/
+env/
+.conda/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Raw and derived spatial data are tracked through manifests, never Git blobs.
+data/raw/
+data/interim/
+data/processed/
+*.tif
+*.tiff
+*.las
+*.laz
+*.gpkg
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.parquet
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Sensitive label data must not be committed.
+data/private/
+
+# Local configuration and credentials.
+.env
+.env.*
+!.env.example
+*.local
+.aws/
+.gcloud/
+credentials*.json
+service-account*.json
+*.pem
+*.p12
+*.pfx
+id_rsa*
+secrets/
