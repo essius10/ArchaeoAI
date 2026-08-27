@@ -1,0 +1,104 @@
+{
+  "gate": {
+    "phase": "2A.5",
+    "decision": "FINAL GO",
+    "curation_version": "e001-curation-v1",
+    "queue_seed": "E001-Phase-2A5-2026-08-28",
+    "generated_at": "2026-08-27T19:01:14.478425+00:00",
+    "warning": "No raster, background sample, model, or exact coordinate is included."
+  },
+  "source": {
+    "nhle_scheduled_monuments_layer": "https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer/6",
+    "source_access_date": "2026-08-27",
+    "source_last_edit_at": "2026-08-27T05:59:25.097000+00:00",
+    "official_entry_review": "every queue ID loaded from its Historic England full entry",
+    "terrain_index": "official Defra/Environment Agency OGC Features collections",
+    "future_patch_footprint_assumption": "128 m square at nominal 1 m resolution"
+  },
+  "counts": {
+    "records_reviewed": 360,
+    "accepted": 261,
+    "rejected": 25,
+    "uncertain": 27,
+    "needs_geometry_review": 0,
+    "needs_terrain_review": 47,
+    "accepted_by_group": {
+      "BNG_100KM_E1_N0": 8,
+      "BNG_100KM_E2_N0": 14,
+      "BNG_100KM_E2_N1": 14,
+      "BNG_100KM_E3_N0": 9,
+      "BNG_100KM_E3_N1": 15,
+      "BNG_100KM_E3_N2": 16,
+      "BNG_100KM_E3_N3": 16,
+      "BNG_100KM_E3_N4": 9,
+      "BNG_100KM_E3_N5": 15,
+      "BNG_100KM_E4_N0": 11,
+      "BNG_100KM_E4_N1": 11,
+      "BNG_100KM_E4_N2": 14,
+      "BNG_100KM_E4_N3": 12,
+      "BNG_100KM_E4_N4": 11,
+      "BNG_100KM_E4_N5": 15,
+      "BNG_100KM_E5_N0": 4,
+      "BNG_100KM_E5_N1": 12,
+      "BNG_100KM_E5_N2": 13,
+      "BNG_100KM_E5_N3": 10,
+      "BNG_100KM_E5_N4": 15,
+      "BNG_100KM_E6_N1": 5,
+      "BNG_100KM_E6_N2": 9,
+      "BNG_100KM_E6_N3": 3
+    },
+    "exclusion_reasons": {
+      "cairn": 2,
+      "cropmark_only": 1,
+      "insufficient_evidence": 27,
+      "no_upstanding_relief": 12,
+      "not_bowl_barrow": 7,
+      "terrain_no_1m_coverage": 2,
+      "terrain_patch_incomplete": 1,
+      "terrain_provenance_confounded": 47
+    }
+  },
+  "qa": {
+    "geometry_pass": 311,
+    "geometry_fail": 0,
+    "geometry_needs_review": 0,
+    "terrain_coverage_pass": 308,
+    "terrain_coverage_fail": 3,
+    "terrain_coverage_needs_review": 0,
+    "terrain_provenance_pass": 261,
+    "terrain_provenance_fail": 0,
+    "terrain_provenance_needs_review": 47,
+    "metadata_query_errors": 0
+  },
+  "geography": {
+    "provisional_group_definition": "100 km British National Grid cell",
+    "accepted_groups": 23,
+    "minimum_sites_per_viable_group": 12,
+    "viable_groups": 12,
+    "nonadjacent_holdout_candidates": [
+      "BNG_100KM_E3_N2",
+      "BNG_100KM_E3_N5",
+      "BNG_100KM_E5_N4",
+      "BNG_100KM_E2_N0"
+    ],
+    "holdout_warning": "provisional only; patch autocorrelation is not yet measured"
+  },
+  "provenance_confound": {
+    "all_accepted_nominally_1m": true,
+    "all_accepted_programmes_known": true,
+    "groups_with_one_observed_survey_year": 3,
+    "groups_examined": 23,
+    "interpretation": "Positive-only metadata cannot prove absence of label-survey confounding. Future backgrounds must be matched within acquisition and geographic strata."
+  },
+  "second_review": {
+    "queue_size": 40,
+    "independent_review_completed": false,
+    "warning": "This queue requires a different human/independent reviewer."
+  },
+  "privacy": {
+    "stored_coordinates": false,
+    "stored_geometry": false,
+    "tracked_stable_public_ids": true,
+    "private_inputs_ignored_by_git": true
+  }
+}

@@ -24,19 +24,29 @@ $required = @(
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
+    'scripts/curate_e001_labels.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
     'src/archaeoai/paths.py',
     'src/archaeoai/nhle_audit.py',
+    'src/archaeoai/curation.py',
+    'src/archaeoai/terrain_metadata.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
     'tests/test_package.py',
     'tests/test_paths.py',
     'tests/test_nhle_audit.py',
+    'tests/test_curation.py',
+    'tests/test_terrain_metadata.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
-    'outputs/feasibility/bowl_barrow_manual_sample.csv'
+    'outputs/feasibility/bowl_barrow_manual_sample.csv',
+    'outputs/feasibility/e001_curation_summary.json',
+    'outputs/feasibility/e001_curated_records.csv',
+    'outputs/feasibility/e001_group_counts.csv',
+    'outputs/feasibility/e001_provenance_summary.csv',
+    'outputs/feasibility/e001_second_review_queue.csv'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -97,6 +107,53 @@ $manualIds = @($manualRows.list_entry | Sort-Object)
 $sampleIds = @($auditSummary.manual_sample.record_ids | ForEach-Object { "$_" } | Sort-Object)
 if ($manualRows.Count -ne $sampleIds.Count -or (Compare-Object $manualIds $sampleIds)) {
     throw 'The manual-review artifact must match the deterministic sample in the JSON summary.'
+}
+
+$curationSummary = Get-Content -Raw 'outputs/feasibility/e001_curation_summary.json' | ConvertFrom-Json
+$curationCounts = $curationSummary.counts
+$curationRows = @(Import-Csv 'outputs/feasibility/e001_curated_records.csv')
+if (
+    $curationSummary.privacy.stored_coordinates -ne $false -or
+    $curationSummary.privacy.stored_geometry -ne $false -or
+    $curationRows.Count -ne $curationCounts.records_reviewed
+) {
+    throw 'The Phase 2A.5 curation output must be complete and coordinate-free.'
+}
+$statusTotal = (
+    $curationCounts.accepted +
+    $curationCounts.rejected +
+    $curationCounts.uncertain +
+    $curationCounts.needs_geometry_review +
+    $curationCounts.needs_terrain_review
+)
+if ($statusTotal -ne $curationCounts.records_reviewed) {
+    throw 'Phase 2A.5 review statuses must partition the reviewed queue.'
+}
+$acceptedRows = @($curationRows | Where-Object { $_.review_status -eq 'accepted' })
+if ($acceptedRows.Count -ne $curationCounts.accepted) {
+    throw 'Tracked accepted rows must match the Phase 2A.5 summary.'
+}
+$invalidAccepted = @(
+    $acceptedRows | Where-Object {
+        $_.bowl_barrow_identity -ne 'yes' -or
+        $_.single_monument -ne 'yes' -or
+        $_.upstanding_earthwork -ne 'yes' -or
+        $_.geometry_qa -ne 'pass' -or
+        $_.terrain_coverage -ne 'pass' -or
+        $_.terrain_provenance -ne 'pass'
+    }
+)
+if ($invalidAccepted.Count -ne 0) {
+    throw 'Every accepted E001 record must pass all six evidence and QA gates.'
+}
+$trackedCurationHeaders = Get-Content 'outputs/feasibility/e001_curated_records.csv' -TotalCount 1
+$curationHeaderFields = @($trackedCurationHeaders -split ',')
+if ($curationHeaderFields -match '^(Easting|Northing|NGR|Latitude|Longitude|Geometry|Polygon|BBox)$') {
+    throw 'Tracked Phase 2A.5 outputs must not contain exact-coordinate or geometry fields.'
+}
+$privateIgnoreCheck = & git check-ignore 'data/private/e001-private-sentinel.json'
+if ($LASTEXITCODE -ne 0 -or -not $privateIgnoreCheck) {
+    throw 'data/private must remain ignored by Git.'
 }
 
 $projectRootPath = (Resolve-Path '.').Path
