@@ -19,15 +19,17 @@ Phase 1 provides:
 - explicit dataset status and heritage-sensitivity classifications;
 - automated tests, Ruff checks, and Windows-compatible environment validation.
 
-Phase 2A now provides a **metadata-only feasibility audit** for scheduled single bowl barrows. The
-official NHLE title pool and a deterministic 30-entry quality sample support a conditional GO, but
-no record is yet an approved E001 label. See the
-[E001 feasibility audit](docs/e001-feasibility-audit.md).
+Phase 2A.5 now provides a coordinate-safe curated-data gate for scheduled single bowl barrows. A
+deterministic 360-record official-entry review retained 261 records after geometry, provisional
+128 m terrain-coverage, and survey-provenance checks. This moves dataset decision D001 to FINAL GO
+for Phase 2B planning. Groups and holdouts remain provisional, 40 records await actual independent
+review, and no terrain or model experiment has begun. See the
+[Phase 2A.5 gate](docs/e001-phase-2a5-curation-gate.md).
 
 The following are **not implemented**:
 
 - raster loading, validation, clipping, tiling, or terrain transformations;
-- approved archaeological labels, background sampling, or geographic split generation;
+- background sampling or a finalized buffered geographic split;
 - baseline models, metrics, visualizations, or an executable E001 run;
 - any real dataset, archaeological coordinate, prediction, or result.
 
@@ -63,6 +65,16 @@ Reproduce the coordinate-safe live NHLE metadata audit:
 This command queries only official designation metadata and writes aggregate outputs without exact
 coordinates. It does not download terrain or create final archaeological labels.
 
+Reproduce the Phase 2A.5 queue or rerun its metadata gate:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\curate_e001_labels.py --print-queue
+.\.venv\Scripts\python.exe .\scripts\curate_e001_labels.py --terrain-workers 2
+```
+
+The second command needs the ignored full-entry review cache described in `data/README.md`. It
+queries designation and terrain metadata only; it does not download LiDAR.
+
 ## Configuration
 
 `configs/e001.example.toml` is a non-data example of the E001 configuration contract. It records the experiment ID, deterministic seed, safe repository-relative paths, random and geographic split settings, and placeholder preprocessing parameters.
@@ -83,7 +95,8 @@ Configured paths must remain inside the repository. Absolute paths and parent-di
 
 Manifests record dataset identity, provider, URL, license, CRS, resolution, geographic description, expected local path, optional dates, optional SHA-256 checksum, acquisition status, and sensitivity classification. `acquired` and `verified` manifests require an access date and checksum.
 
-Raw, derived, and sensitive data remain excluded from Git. A real manifest must not be created until dataset decision D001 resolves license, provenance, geographic coverage, and heritage-sensitivity questions.
+Raw, derived, and sensitive data remain excluded from Git. D001 now approves the source strategy;
+Phase 2B must create a real manifest only when a bounded dataset is actually acquired and verified.
 
 ## Repository structure
 
@@ -109,6 +122,7 @@ This repository must not publish precise coordinates for unprotected or sensitiv
 - [Literature and novelty audit](docs/literature-novelty-audit.md)
 - [Dataset decision record](docs/dataset-decision-record.md)
 - [E001 Phase 2A feasibility audit](docs/e001-feasibility-audit.md)
+- [E001 Phase 2A.5 curation and terrain gate](docs/e001-phase-2a5-curation-gate.md)
 - [Candidate questions and recommendation](docs/research-questions.md)
 - [Six-month roadmap and first 12 weeks](docs/roadmap.md)
 - [Decision log](docs/decision-log.md)

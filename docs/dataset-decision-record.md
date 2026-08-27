@@ -1,16 +1,22 @@
 # Dataset decision record — D001
 
-## Conditional decision: NHLE bowl-barrows pass metadata feasibility, not final data approval
+## Final decision: NHLE bowl-barrows and EA Composite DTM pass the Phase 2A.5 gate
 
 Phase 2A found a large, geographically broad pool of Scheduled Monument titles that plausibly
 represent single bowl barrows. Historic England publishes the official NHLE layer under OGL, and a
 30-record full-entry sample showed strong but imperfect title precision. See
 [the Phase 2A audit](e001-feasibility-audit.md).
 
-**Decision status: CONDITIONAL GO.** D001 is not finally approved for terrain extraction. Exact
-labels must still pass full-entry review, geometry QA, Environment Agency 1 m DTM coverage and
-survey-provenance checks, geographic grouping, attribution review, and controlled-coordinate
-handling.
+**Decision status: FINAL GO for Phase 2B planning.** A deterministic 360-record audit produced 261
+positives that pass official full-entry review, designation-geometry QA, provisional 128 m terrain
+coverage, and complete single-signature provenance. Twelve provisional groups contain at least 12
+accepted sites and four pairwise nonadjacent groups are possible holdouts. See the
+[Phase 2A.5 gate](e001-phase-2a5-curation-gate.md).
+
+This approves the source strategy, not a final split or a model experiment. Phase 2B must match
+backgrounds within geography and acquisition strata, run a National-LIDAR-Programme-only sensitivity
+analysis, complete controlled attribution, and retain exact coordinates outside Git. Forty records
+still require an actual independent human reliability review; no agreement claim is permitted yet.
 
 ### Candidate terrain source
 

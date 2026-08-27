@@ -12,6 +12,7 @@ $required = @(
     'data/manifests/example-dataset.toml',
     'docs/environment-audit.md',
     'docs/e001-feasibility-audit.md',
+    'docs/e001-phase-2a5-curation-gate.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/dataset-decision-record.md',
