@@ -1,0 +1,22 @@
+# FICTIONAL SCHEMA EXAMPLE ONLY.
+# No dataset, archaeological site, coordinate, or terrain tile is represented here.
+
+[dataset]
+id = "EXAMPLE_FICTIONAL_DTM"
+name = "Fictional terrain manifest example"
+description = "A non-existent dataset used only to demonstrate required provenance fields."
+status = "template"
+sensitivity = "public"
+
+[source]
+provider = "Fictional Example Provider"
+url = "https://example.invalid/archaeoai/fictional-terrain"
+license = "Example-only placeholder; no real data license is asserted"
+
+[spatial]
+crs = "EPSG:27700"
+resolution_m = 1.0
+geographic_area = "Fictional example area; not a real place or archaeological location"
+
+[file]
+expected_local_path = "data/raw/fictional-example/elevation.tif"
