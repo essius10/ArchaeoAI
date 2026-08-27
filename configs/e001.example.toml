@@ -1,0 +1,21 @@
+# Example-only configuration for the planned E001 experiment.
+# The group names and paths below are placeholders, not acquired archaeological data.
+
+[experiment]
+id = "E001"
+seed = 20260915
+
+[paths]
+data_root = "data"
+output_root = "outputs/E001"
+dataset_manifest = "data/manifests/example-dataset.toml"
+
+[split]
+strategies = ["random", "geographic"]
+random_test_fraction = 0.20
+geographic_group_field = "example_region_id"
+geographic_holdout_groups = ["EXAMPLE_HOLDOUT_GROUP"]
+
+[parameters]
+tile_size_pixels = 128
+max_nodata_fraction = 0.20
