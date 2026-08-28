@@ -6,7 +6,26 @@ Tracked metadata belongs in `data/manifests/`. Raw, interim, processed, and sens
 
 `data/manifests/example-dataset.toml` is deliberately fictional. It demonstrates the schema but is not evidence that any dataset has been selected, accessed, downloaded, or verified.
 
+`data/manifests/e001-ea-lidar-dtm.toml` is the real E001 source manifest. Its status remains
+`planned` until bounded site-linked terrain has been downloaded and passed raster QA. The public
+manifest contains no extent or coordinate.
+
 Phase 2A.5 may use `data/private/e001_full_entry_reviews.json` as a local, ignored evidence cache.
 It is recreated from the deterministic public List Entry queue and the official Historic England
 Reasons and Details sections. It must not contain coordinates, National Grid References, maps, or
 polygons. Exact designation and EA index geometry is queried transiently and discarded.
+
+## Phase 2B controlled storage
+
+Site-linked terrain is georeferenced and therefore coordinate-bearing even when it contains no
+coordinate table. All such material is stored under the ignored `data/private/e001/` boundary:
+
+- `approved-site-locations.json`: reconstructable local link from approved List Entry IDs to BNG;
+- `terrain/raw/`: unmodified bounded WCS GeoTIFF responses;
+- `terrain/processed/`: deterministic arrays and representations;
+- `terrain/qa/`: local visual-QA images and private acquisition receipts.
+
+The generic `data/raw/`, `data/interim/`, and `data/processed/` paths remain ignored for future
+non-sensitive workflows, but E001 site rasters must stay inside `data/private/` because a GeoTIFF
+transform reveals its location. Only coordinate-safe manifests, checksums, aggregate reports, and
+the terrain index may be tracked. Git LFS is unnecessary for this bounded design.

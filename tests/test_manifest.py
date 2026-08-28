@@ -16,10 +16,14 @@ sensitivity = "restricted"
 provider = "Test provider"
 url = "https://example.invalid/test-dataset"
 license = "Test-only license placeholder"
+attribution = "Test attribution"
+edition = "Test edition"
+service_url = "https://example.invalid/test-wcs"
 access_date = 2026-08-27
 
 [spatial]
 crs = "EPSG:27700"
+vertical_datum = "Synthetic datum"
 resolution_m = 1.0
 geographic_area = "Synthetic test area"
 acquisition_date = 2026-01-01
@@ -27,6 +31,7 @@ acquisition_date = 2026-01-01
 [file]
 expected_local_path = "data/raw/test/elevation.tif"
 sha256 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+checksum_scope = "single synthetic file"
 """
 
 
@@ -58,6 +63,10 @@ def test_loads_valid_acquired_manifest(tmp_path: Path) -> None:
     assert manifest.status == "acquired"
     assert manifest.file.sha256 == "a" * 64
     assert manifest.file.expected_local_path == tmp_path / "data" / "raw" / "test" / "elevation.tif"
+    assert manifest.source.attribution == "Test attribution"
+    assert manifest.source.service_url == "https://example.invalid/test-wcs"
+    assert manifest.spatial.vertical_datum == "Synthetic datum"
+    assert manifest.file.checksum_scope == "single synthetic file"
 
 
 def test_rejects_invalid_checksum_syntax(tmp_path: Path) -> None:

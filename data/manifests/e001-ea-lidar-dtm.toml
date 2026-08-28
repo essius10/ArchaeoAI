@@ -1,0 +1,27 @@
+# REAL SOURCE MANIFEST; acquisition remains planned until a validated E001 pilot succeeds.
+# Site-linked GeoTIFFs are sensitive because their transforms expose exact locations.
+
+[dataset]
+id = "E001_EA_LIDAR_DTM_BOUNDED"
+name = "E001 bounded Environment Agency 1 m DTM patches"
+description = "Site-bounded terrain inputs for the approved E001 bowl-barrow records; no raster or coordinate is tracked in Git."
+status = "planned"
+sensitivity = "sensitive"
+
+[source]
+provider = "Environment Agency"
+url = "https://environment.data.gov.uk/dataset/13787b9a-26a4-4775-8523-806d13af58fc"
+license = "Open Government Licence v3.0"
+attribution = "© Environment Agency copyright and/or database right 2022. All rights reserved."
+edition = "2022 composite; dataset record revised 2023-12-15"
+service_url = "https://environment.data.gov.uk/spatialdata/lidar-composite-digital-terrain-model-dtm-1m/wcs"
+
+[spatial]
+crs = "EPSG:27700"
+vertical_datum = "Ordnance Datum Newlyn (ODN)"
+resolution_m = 1.0
+geographic_area = "Bounded approved E001 locations in England; exact extents are controlled locally"
+acquisition_date = 2022-04-02
+
+[file]
+expected_local_path = "data/private/e001/terrain/raw"

@@ -28,12 +28,16 @@ class SourceMetadata:
     provider: str
     url: str
     license: str
+    attribution: str | None
+    edition: str | None
+    service_url: str | None
     access_date: date | None
 
 
 @dataclass(frozen=True, slots=True)
 class SpatialMetadata:
     crs: str
+    vertical_datum: str | None
     resolution_m: float
     geographic_area: str
     acquisition_date: date | None
@@ -43,6 +47,7 @@ class SpatialMetadata:
 class FileMetadata:
     expected_local_path: Path
     sha256: str | None
+    checksum_scope: str | None
 
 
 @dataclass(frozen=True, slots=True)
@@ -103,6 +108,25 @@ def _optional_checksum(table: dict[str, Any]) -> str | None:
     return value.lower()
 
 
+def _optional_string(table: dict[str, Any], key: str, *, table_name: str) -> str | None:
+    value = table.get(key)
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.strip():
+        raise ManifestError(f"[{table_name}].{key} must be a non-empty string when supplied")
+    return value.strip()
+
+
+def _optional_https_url(table: dict[str, Any], key: str, *, table_name: str) -> str | None:
+    value = _optional_string(table, key, table_name=table_name)
+    if value is None:
+        return None
+    parsed = urlparse(value)
+    if parsed.scheme != "https" or not parsed.netloc:
+        raise ManifestError(f"[{table_name}].{key} must be a complete HTTPS URL")
+    return value
+
+
 def load_dataset_manifest(
     manifest_path: str | Path,
     *,
@@ -138,7 +162,11 @@ def load_dataset_manifest(
         raise ManifestError(f"Unsupported sensitivity classification: {sensitivity_raw}")
 
     source = _table(document, "source")
-    _reject_unknown(source, {"provider", "url", "license", "access_date"}, table_name="source")
+    _reject_unknown(
+        source,
+        {"provider", "url", "license", "attribution", "edition", "service_url", "access_date"},
+        table_name="source",
+    )
     source_url = _string(source, "url", table_name="source")
     parsed_url = urlparse(source_url)
     if parsed_url.scheme != "https" or not parsed_url.netloc:
@@ -148,7 +176,7 @@ def load_dataset_manifest(
     spatial = _table(document, "spatial")
     _reject_unknown(
         spatial,
-        {"crs", "resolution_m", "geographic_area", "acquisition_date"},
+        {"crs", "vertical_datum", "resolution_m", "geographic_area", "acquisition_date"},
         table_name="spatial",
     )
     resolution_m = _number(spatial, "resolution_m", table_name="spatial")
@@ -156,7 +184,11 @@ def load_dataset_manifest(
         raise ManifestError("[spatial].resolution_m must be positive")
 
     file_table = _table(document, "file")
-    _reject_unknown(file_table, {"expected_local_path", "sha256"}, table_name="file")
+    _reject_unknown(
+        file_table,
+        {"expected_local_path", "sha256", "checksum_scope"},
+        table_name="file",
+    )
     checksum = _optional_checksum(file_table)
 
     if status_raw == "template" and (access_date is not None or checksum is not None):
@@ -174,10 +206,14 @@ def load_dataset_manifest(
             provider=_string(source, "provider", table_name="source"),
             url=source_url,
             license=_string(source, "license", table_name="source"),
+            attribution=_optional_string(source, "attribution", table_name="source"),
+            edition=_optional_string(source, "edition", table_name="source"),
+            service_url=_optional_https_url(source, "service_url", table_name="source"),
             access_date=access_date,
         ),
         spatial=SpatialMetadata(
             crs=_string(spatial, "crs", table_name="spatial"),
+            vertical_datum=_optional_string(spatial, "vertical_datum", table_name="spatial"),
             resolution_m=resolution_m,
             geographic_area=_string(spatial, "geographic_area", table_name="spatial"),
             acquisition_date=_optional_date(
@@ -193,6 +229,7 @@ def load_dataset_manifest(
                 field_name="file.expected_local_path",
             ),
             sha256=checksum,
+            checksum_scope=_optional_string(file_table, "checksum_scope", table_name="file"),
         ),
         source_path=source_path,
     )
