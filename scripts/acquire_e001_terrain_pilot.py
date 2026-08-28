@@ -169,9 +169,15 @@ def main() -> int:
                     source_resolution_m=1.0,
                     processing_version=PROCESSING_VERSION,
                     patch_size_m=128,
+                    acquisition_status="verified",
+                    raw_qa_status="pass",
+                    representation_qa_status="pass",
                     representations=representations_available,
                     qa_status="pass",
+                    raw_sha256=raw_sha256,
                     patch_sha256=patch_digest,
+                    processed_sha256=hashlib.sha256(processed_path.read_bytes()).hexdigest(),
+                    cross_cell=len(tiles) > 1,
                 )
             )
             safe_rows.append(

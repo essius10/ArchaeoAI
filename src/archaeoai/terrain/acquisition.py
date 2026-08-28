@@ -23,6 +23,26 @@ EA_DTM_WCS_URL = (
 )
 EA_DTM_COVERAGE_ID = f"{EA_DTM_DATASET_ID}__Lidar_Composite_Elevation_DTM_1m"
 ACQUISITION_VERSION = "e001-wcs-v1"
+RETRYABLE_HTTP_CODES = frozenset({429, 500, 502, 503, 504})
+
+
+class WcsRequestError(RuntimeError):
+    """A reason-coded WCS response or transport failure."""
+
+    def __init__(self, reason: str, *, attempts: int, retries: int):
+        self.reason = reason
+        self.attempts = attempts
+        self.retries = retries
+        super().__init__(reason)
+
+
+@dataclass(frozen=True, slots=True)
+class WcsPayload:
+    content: bytes
+    sha256: str
+    size_bytes: int
+    attempts: int
+    retries: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -176,6 +196,75 @@ def build_wcs_url(bounds: Bounds) -> str:
     return f"{EA_DTM_WCS_URL}?{urllib.parse.urlencode(parameters)}"
 
 
+def fetch_wcs_payload(
+    bounds: Bounds,
+    *,
+    maximum_bytes: int = 8 * 1024 * 1024,
+    maximum_attempts: int = 4,
+    timeout_seconds: int = 90,
+    opener: Any = urllib.request.urlopen,
+    sleeper: Any = time.sleep,
+) -> WcsPayload:
+    """Fetch one bounded GeoTIFF with retry accounting and response checks."""
+    if maximum_attempts < 1:
+        raise ValueError("maximum_attempts must be positive")
+    request = urllib.request.Request(
+        build_wcs_url(bounds), headers={"User-Agent": f"ArchaeoAI/{ACQUISITION_VERSION}"}
+    )
+    for attempt_index in range(maximum_attempts):
+        attempts = attempt_index + 1
+        retries = attempt_index
+        try:
+            with opener(request, timeout=timeout_seconds) as response:
+                content_type = response.headers.get_content_type()
+                if content_type not in {"image/tiff", "image/geotiff"}:
+                    raise WcsRequestError(
+                        "unexpected_content_type", attempts=attempts, retries=retries
+                    )
+                content_length = response.headers.get("Content-Length")
+                if content_length and int(content_length) > maximum_bytes:
+                    raise WcsRequestError("response_too_large", attempts=attempts, retries=retries)
+                payload = response.read(maximum_bytes + 1)
+                if len(payload) > maximum_bytes:
+                    raise WcsRequestError("response_too_large", attempts=attempts, retries=retries)
+                if content_length and len(payload) != int(content_length):
+                    raise WcsRequestError("partial_response", attempts=attempts, retries=retries)
+                if not payload.startswith((b"II*\x00", b"MM\x00*")):
+                    raise WcsRequestError(
+                        "invalid_geotiff_signature", attempts=attempts, retries=retries
+                    )
+                return WcsPayload(
+                    content=payload,
+                    sha256=hashlib.sha256(payload).hexdigest(),
+                    size_bytes=len(payload),
+                    attempts=attempts,
+                    retries=retries,
+                )
+        except WcsRequestError as error:
+            if error.reason != "partial_response" or attempts == maximum_attempts:
+                if error.reason == "partial_response" and attempts == maximum_attempts:
+                    raise WcsRequestError(
+                        "retry_exhausted_partial", attempts=attempts, retries=retries
+                    ) from error
+                raise
+        except HTTPError as error:
+            if error.code not in RETRYABLE_HTTP_CODES:
+                raise WcsRequestError(
+                    f"http_{error.code}", attempts=attempts, retries=retries
+                ) from error
+            if attempts == maximum_attempts:
+                raise WcsRequestError(
+                    "retry_exhausted_http", attempts=attempts, retries=retries
+                ) from error
+        except (URLError, TimeoutError) as error:
+            if attempts == maximum_attempts:
+                raise WcsRequestError(
+                    "retry_exhausted_network", attempts=attempts, retries=retries
+                ) from error
+        sleeper(min(8, 2**attempt_index))
+    raise AssertionError("WCS retry loop terminated unexpectedly")
+
+
 def download_wcs_geotiff(
     bounds: Bounds,
     *,
@@ -186,26 +275,6 @@ def download_wcs_geotiff(
     output = ensure_private_output(project_root, destination)
     verify_git_ignored(project_root, output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    request = urllib.request.Request(
-        build_wcs_url(bounds), headers={"User-Agent": f"ArchaeoAI/{ACQUISITION_VERSION}"}
-    )
-    payload = b""
-    for attempt in range(4):
-        try:
-            with urllib.request.urlopen(request, timeout=90) as response:  # noqa: S310
-                content_type = response.headers.get_content_type()
-                if content_type not in {"image/tiff", "image/geotiff"}:
-                    raise RuntimeError(f"EA WCS returned unexpected content type: {content_type}")
-                content_length = response.headers.get("Content-Length")
-                if content_length and int(content_length) > maximum_bytes:
-                    raise RuntimeError("EA WCS response exceeds the bounded download limit")
-                payload = response.read(maximum_bytes + 1)
-                if len(payload) > maximum_bytes:
-                    raise RuntimeError("EA WCS response exceeds the bounded download limit")
-            break
-        except (HTTPError, URLError, TimeoutError):
-            if attempt == 3:
-                raise
-            time.sleep(2**attempt)
-    output.write_bytes(payload)
-    return output, hashlib.sha256(payload).hexdigest(), len(payload)
+    result = fetch_wcs_payload(bounds, maximum_bytes=maximum_bytes)
+    output.write_bytes(result.content)
+    return output, result.sha256, result.size_bytes

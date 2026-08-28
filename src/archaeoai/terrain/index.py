@@ -21,9 +21,15 @@ class TerrainIndexRecord:
     source_resolution_m: float
     processing_version: str
     patch_size_m: int
+    acquisition_status: str
+    raw_qa_status: str
+    representation_qa_status: str
     representations: str
     qa_status: str
+    raw_sha256: str
     patch_sha256: str
+    processed_sha256: str
+    cross_cell: bool
 
 
 INDEX_FIELDS = tuple(TerrainIndexRecord.__dataclass_fields__)
@@ -32,16 +38,50 @@ INDEX_FIELDS = tuple(TerrainIndexRecord.__dataclass_fields__)
 def validate_index(records: list[TerrainIndexRecord]) -> None:
     for record in records:
         assert_coordinate_safe_mapping(asdict(record))
+        if record.acquisition_status not in {"verified", "failed"}:
+            raise ValueError(f"unsupported acquisition status: {record.acquisition_status}")
+        if record.raw_qa_status not in {"pass", "failed", "not_run"}:
+            raise ValueError(f"unsupported raw QA status: {record.raw_qa_status}")
+        if record.representation_qa_status not in {"pass", "failed", "not_run"}:
+            raise ValueError(
+                f"unsupported representation QA status: {record.representation_qa_status}"
+            )
         if record.qa_status not in {"pass", "rejected"}:
             raise ValueError(f"unsupported terrain QA status: {record.qa_status}")
-        if len(record.patch_sha256) != 64 or any(
-            character not in "0123456789abcdef" for character in record.patch_sha256
-        ):
-            raise ValueError("patch_sha256 must be a lowercase SHA-256 digest")
+        checksums = (record.raw_sha256, record.patch_sha256, record.processed_sha256)
+        if record.qa_status == "pass":
+            if (
+                record.acquisition_status != "verified"
+                or record.raw_qa_status != "pass"
+                or record.representation_qa_status != "pass"
+            ):
+                raise ValueError("passed terrain rows require all acquisition and QA gates")
+            for checksum in checksums:
+                if len(checksum) != 64 or any(
+                    character not in "0123456789abcdef" for character in checksum
+                ):
+                    raise ValueError("passed rows require lowercase SHA-256 digests")
+            expected = {
+                "elevation_normalized",
+                "slope_degrees",
+                "hillshade_315_45",
+                "local_relief_r16m",
+            }
+            if set(record.representations.split(";")) != expected:
+                raise ValueError("passed rows require the frozen representation set")
+        elif any(checksums):
+            for checksum in (value for value in checksums if value):
+                if len(checksum) != 64 or any(
+                    character not in "0123456789abcdef" for character in checksum
+                ):
+                    raise ValueError("failure-row checksums must be valid when supplied")
     if len({record.sample_id for record in records}) != len(records):
         raise ValueError("duplicate terrain sample ID")
     if len({record.nhle_list_entry for record in records}) != len(records):
         raise ValueError("duplicate NHLE source observation")
+    passed_digests = [record.patch_sha256 for record in records if record.qa_status == "pass"]
+    if len(set(passed_digests)) != len(passed_digests):
+        raise ValueError("duplicate exact terrain patch digest")
     groups_by_source: dict[int, set[str]] = {}
     for record in records:
         groups_by_source.setdefault(record.nhle_list_entry, set()).add(record.geographic_group_id)

@@ -20,9 +20,15 @@ def _record(sample_id: str = "S1", list_entry: int = 1) -> TerrainIndexRecord:
         source_resolution_m=1.0,
         processing_version="test-v1",
         patch_size_m=128,
-        representations="raw",
+        acquisition_status="verified",
+        raw_qa_status="pass",
+        representation_qa_status="pass",
+        representations=("elevation_normalized;slope_degrees;hillshade_315_45;local_relief_r16m"),
         qa_status="pass",
-        patch_sha256="a" * 64,
+        raw_sha256="b" * 64,
+        patch_sha256=f"{list_entry:064x}",
+        processed_sha256="c" * 64,
+        cross_cell=False,
     )
 
 
@@ -52,6 +58,28 @@ def test_duplicate_samples_and_sources_are_rejected() -> None:
 def test_invalid_checksum_is_rejected() -> None:
     with pytest.raises(ValueError, match="SHA-256"):
         validate_index([replace(_record(), patch_sha256="bad")])
+
+
+def test_duplicate_exact_terrain_is_rejected() -> None:
+    with pytest.raises(ValueError, match="duplicate exact terrain"):
+        validate_index([_record(), replace(_record("S2", 2), patch_sha256=_record().patch_sha256)])
+
+
+def test_failure_checksum_must_use_lowercase_sha256_syntax() -> None:
+    failed = replace(
+        _record(),
+        acquisition_status="failed",
+        raw_qa_status="failed",
+        representation_qa_status="not_run",
+        representations="",
+        qa_status="rejected",
+        raw_sha256="G" * 64,
+        patch_sha256="",
+        processed_sha256="",
+    )
+
+    with pytest.raises(ValueError, match="failure-row checksums"):
+        validate_index([failed])
 
 
 def test_cross_group_overlap_detection_uses_private_locations() -> None:
