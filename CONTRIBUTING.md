@@ -66,4 +66,3 @@ reporting an accidental exposure.
 By contributing, you acknowledge that the repository does not yet declare an open-source licence.
 Discuss substantial contributions with the maintainer before investing significant work; see the
 [licensing audit](docs/licensing-and-attribution.md).
-

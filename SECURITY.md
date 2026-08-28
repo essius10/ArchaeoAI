@@ -30,4 +30,3 @@ not contain sensitive information can use the repository's issue templates.
 This policy covers software vulnerabilities and accidental data exposure. It is not a channel for
 submitting possible archaeological discoveries. ArchaeoAI does not assess, publish, or recommend
 visiting unreviewed locations.
-

@@ -37,4 +37,3 @@ body:
       options:
         - label: Logs contain no credentials, private paths, restricted data, or exact archaeological coordinates.
           required: true
-

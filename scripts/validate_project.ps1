@@ -6,7 +6,14 @@ param(
 $ErrorActionPreference = 'Stop'
 $required = @(
     'README.md',
+    'CONTRIBUTING.md',
+    'SECURITY.md',
+    'CITATION.cff',
     'pyproject.toml',
+    '.github/ISSUE_TEMPLATE/bug_report.yml',
+    '.github/ISSUE_TEMPLATE/research_methodology.yml',
+    '.github/ISSUE_TEMPLATE/reproducibility.yml',
+    '.github/ISSUE_TEMPLATE/documentation.yml',
     'configs/e001.example.toml',
     'data/README.md',
     'data/manifests/example-dataset.toml',
@@ -15,6 +22,7 @@ $required = @(
     'docs/e001-phase-2a5-curation-gate.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
+    'docs/licensing-and-attribution.md',
     'docs/dataset-decision-record.md',
     'docs/research-questions.md',
     'docs/roadmap.md',
@@ -55,8 +63,34 @@ if ($missing) {
     throw "Missing required research artifacts: $($missing -join ', ')"
 }
 
-if ((Get-Content -Raw 'README.md') -notmatch 'geographically disjoint holdout') {
+$readme = Get-Content -Raw 'README.md'
+if ($readme -notmatch 'geographically (?:disjoint|separated) holdouts?') {
     throw 'README must state the geographic-holdout principle.'
+}
+if (
+    $readme -notmatch 'No model has been trained' -or
+    $readme -notmatch 'has not discovered archaeological sites' -or
+    $readme -notmatch '261' -or
+    $readme -notmatch '12'
+) {
+    throw 'README must preserve the verified Phase 2A.5 status and explicit no-claim boundary.'
+}
+
+$citation = Get-Content -Raw 'CITATION.cff'
+if (
+    $citation -notmatch 'cff-version:\s*1\.2\.0' -or
+    $citation -notmatch 'repository-code:\s*"https://github\.com/essius10/ArchaeoAI"' -or
+    $citation -match '(?m)^\s*(?:doi|license):'
+) {
+    throw 'CITATION.cff must use verified repository metadata without a DOI or licence claim.'
+}
+
+$licensingAudit = Get-Content -Raw 'docs/licensing-and-attribution.md'
+if (
+    $licensingAudit -notmatch 'does \*\*not\*\* currently have a repository-wide licence' -or
+    $licensingAudit -notmatch 'Open Government Licence v3\.0'
+) {
+    throw 'The licensing audit must preserve the current no-licence status and OGL boundary.'
 }
 
 $projectConfig = Get-Content -Raw 'pyproject.toml'

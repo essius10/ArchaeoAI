@@ -42,4 +42,3 @@ body:
           required: true
         - label: I identified whether this is current-phase work or a future proposal.
           required: true
-
