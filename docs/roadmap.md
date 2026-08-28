@@ -1,5 +1,11 @@
 # Research roadmap — 15 September 2026 to March 2027
 
+## Current gate (28 August 2026)
+
+Phase 2B completed a five-site real-terrain pilot and returned **GO FOR FULL TERRAIN DATASET**. The
+remaining 256 positive patches have not been downloaded. Background sampling, split finalization,
+and all modelling remain blocked pending explicit approval and the safeguards in the Phase 2B memo.
+
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
 | Month | Learning and research focus | Engineering/experiment deliverable | Evidence / gate |

@@ -17,9 +17,11 @@ $required = @(
     'configs/e001.example.toml',
     'data/README.md',
     'data/manifests/example-dataset.toml',
+    'data/manifests/e001-ea-lidar-dtm.toml',
     'docs/environment-audit.md',
     'docs/e001-feasibility-audit.md',
     'docs/e001-phase-2a5-curation-gate.md',
+    'docs/e001-phase-2b-terrain.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -30,16 +32,29 @@ $required = @(
     'docs/project-quality-bar.md',
     'docs/claims-register.md',
     'research-log/README.md',
+    'research-log/2026-08-28-phase-2b.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
     'scripts/curate_e001_labels.py',
+    'scripts/reconstruct_e001_sites.py',
+    'scripts/acquire_e001_terrain_pilot.py',
+    'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
     'src/archaeoai/paths.py',
     'src/archaeoai/nhle_audit.py',
     'src/archaeoai/curation.py',
     'src/archaeoai/terrain_metadata.py',
+    'src/archaeoai/terrain/acquisition.py',
+    'src/archaeoai/terrain/background.py',
+    'src/archaeoai/terrain/index.py',
+    'src/archaeoai/terrain/patches.py',
+    'src/archaeoai/terrain/privacy.py',
+    'src/archaeoai/terrain/qa.py',
+    'src/archaeoai/terrain/raster.py',
+    'src/archaeoai/terrain/representations.py',
+    'src/archaeoai/terrain/validation.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -48,6 +63,13 @@ $required = @(
     'tests/test_nhle_audit.py',
     'tests/test_curation.py',
     'tests/test_terrain_metadata.py',
+    'tests/test_background_policy.py',
+    'tests/test_terrain_acquisition.py',
+    'tests/test_terrain_index.py',
+    'tests/test_terrain_patches.py',
+    'tests/test_terrain_qa.py',
+    'tests/test_terrain_raster.py',
+    'tests/test_terrain_representations.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -55,7 +77,10 @@ $required = @(
     'outputs/feasibility/e001_curated_records.csv',
     'outputs/feasibility/e001_group_counts.csv',
     'outputs/feasibility/e001_provenance_summary.csv',
-    'outputs/feasibility/e001_second_review_queue.csv'
+    'outputs/feasibility/e001_second_review_queue.csv',
+    'outputs/terrain/e001_pilot_summary.json',
+    'outputs/terrain/e001_terrain_index.csv',
+    'outputs/terrain/e001_acquisition_estimate.json'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -101,6 +126,15 @@ if ($projectConfig -notmatch 'requires-python\s*=\s*">=3\.12,<3\.15"') {
 $exampleManifest = Get-Content -Raw 'data/manifests/example-dataset.toml'
 if ($exampleManifest -notmatch 'status\s*=\s*"template"' -or $exampleManifest -notmatch 'example\.invalid') {
     throw 'The example dataset manifest must remain explicitly fictional and in template status.'
+}
+$terrainManifest = Get-Content -Raw 'data/manifests/e001-ea-lidar-dtm.toml'
+if (
+    $terrainManifest -notmatch 'status\s*=\s*"verified"' -or
+    $terrainManifest -notmatch 'sensitivity\s*=\s*"sensitive"' -or
+    $terrainManifest -notmatch 'access_date\s*=\s*2026-08-28' -or
+    $terrainManifest -notmatch 'sha256\s*=\s*"[0-9a-f]{64}"'
+) {
+    throw 'The real E001 terrain manifest must describe only the verified sensitive pilot.'
 }
 
 $auditSummary = Get-Content -Raw 'outputs/feasibility/bowl_barrow_summary.json' | ConvertFrom-Json
@@ -215,4 +249,22 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 1 configuration or manifest validation failed.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck."
+$terrainCheck = & $pythonExecutable -c 'import csv, json; from pathlib import Path; from archaeoai.data.manifest import load_dataset_manifest; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); manifest=load_dataset_manifest(root/"data/manifests/e001-ea-lidar-dtm.toml"); summary=json.loads((root/"outputs/terrain/e001_pilot_summary.json").read_text()); estimate=json.loads((root/"outputs/terrain/e001_acquisition_estimate.json").read_text()); rows=list(csv.DictReader((root/"outputs/terrain/e001_terrain_index.csv").open(encoding="utf-8-sig"))); assert_coordinate_safe_mapping(summary); assert_coordinate_safe_mapping(estimate); assert manifest.status=="verified" and manifest.sensitivity=="sensitive"; assert summary["attempted"]==summary["passed"]==5 and summary["rejected"]==0; assert len(rows)==5 and all(row["qa_status"]=="pass" for row in rows); assert estimate["decision"]=="GO FOR FULL TERRAIN DATASET" and estimate["accepted_sites"]==261 and not estimate["scope"]["full_download_started"]; print("Phase 2B pilot evidence valid")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2B manifest, pilot, index, estimate, or privacy validation failed.'
+}
+
+$terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
+if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
+    throw 'The tracked terrain index contains a coordinate-bearing field.'
+}
+$trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
+if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
+    throw "Sensitive or bulk terrain is tracked: $($trackedSensitive -join ', ')"
+}
+$privateTerrainIgnoreCheck = & git check-ignore 'data/private/e001/terrain/raw/private-sentinel.tif'
+if ($LASTEXITCODE -ne 0 -or -not $privateTerrainIgnoreCheck) {
+    throw 'Private E001 terrain must remain ignored by Git.'
+}
+
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck."

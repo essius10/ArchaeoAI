@@ -1,0 +1,41 @@
+{
+  "phase": "2B full terrain acquisition gate",
+  "generated_at": "2026-08-28T06:48:53.009554+00:00",
+  "decision": "GO FOR FULL TERRAIN DATASET",
+  "strategy": "261 independent 128 m WCS windows; do not download complete 5 km tiles",
+  "accepted_sites": 261,
+  "metadata_screened_complete_coverage": 261,
+  "pixel_verified_complete_coverage": 5,
+  "unique_required_5km_cells_if_tile_route_used": 200,
+  "sites_crossing_5km_cell_boundaries": 8,
+  "wcs_requests_required": 261,
+  "estimated_raw_wcs_bytes": 17214255,
+  "estimated_processed_compressed_bytes": 60241097,
+  "estimated_processed_uncompressed_bytes": 89800704,
+  "full_5km_tile_route_uncompressed_bytes": 20000000000,
+  "estimated_sequential_seconds_at_pilot_rate": 702,
+  "estimate_basis": {
+    "pilot_sites": 5,
+    "average_raw_bytes": 65955,
+    "average_processed_compressed_bytes": 230809,
+    "average_seconds_per_site": 2.691,
+    "warning": "Network/service variability and retries are not represented by five samples."
+  },
+  "spatial_integrity": {
+    "duplicate_exact_location_pairs": [],
+    "overlapping_128m_patch_pairs": 7,
+    "cross_group_overlapping_patch_pairs": [],
+    "policy": "Overlapping observations must stay grouped and cannot cross a future split."
+  },
+  "privacy": {
+    "coordinate_list_tracked": false,
+    "tile_cell_list_tracked": false,
+    "aggregate_counts_only": true
+  },
+  "scope": {
+    "full_download_started": false,
+    "background_generated": false,
+    "split_finalized": false,
+    "model_trained": false
+  }
+}

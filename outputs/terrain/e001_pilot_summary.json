@@ -1,0 +1,189 @@
+{
+  "phase": "2B bounded real-terrain pilot",
+  "processing_version": "e001-terrain-v1",
+  "acquisition_version": "e001-wcs-v1",
+  "generated_at": "2026-08-28T06:48:39.018447+00:00",
+  "source_dataset_id": "13787b9a-26a4-4775-8523-806d13af58fc",
+  "source_access_method": "Environment Agency WCS 2.0.1 bounded GetCoverage",
+  "patch_specification": {
+    "size_m": 128,
+    "resolution_m": 1.0,
+    "dimensions": [
+      128,
+      128
+    ],
+    "local_relief_radius_m": 16
+  },
+  "attempted": 5,
+  "passed": 5,
+  "rejected": 0,
+  "elapsed_seconds": 13.457,
+  "inventory_sha256": "809fbf958e2d60e4a66dad6390e598c38685c60276121a6d85c166680c56dbf1",
+  "records": [
+    {
+      "sample_id": "E001P-c13d981438dd",
+      "nhle_list_entry": 1009114,
+      "geographic_group_id": "BNG_100KM_E3_N4",
+      "terrain_provenance_id": "EAP-c590a5cb0139",
+      "survey_year": "2020",
+      "survey_program": "National LIDAR Programme",
+      "required_5km_cells": 1,
+      "crosses_5km_boundary": false,
+      "raw_bytes": 65955,
+      "raw_sha256": "74504caec71e089c5024e403d2083729b3e26763355d37a9d074dbbe61f1c2ba",
+      "processed_bytes": 251373,
+      "patch_sha256": "a4e15dbe45eef83a5b682adc2f8a92c5c6daaf707ca1d422244cd898e0dbc2b8",
+      "crs": "EPSG:27700",
+      "resolution_m": 1.0,
+      "dimensions": [
+        128,
+        128
+      ],
+      "nodata_fraction": 0.0,
+      "minimum_elevation_m": 290.3370056152344,
+      "maximum_elevation_m": 306.6650085449219,
+      "representations": [
+        "elevation_normalized",
+        "slope_degrees",
+        "hillshade_315_45",
+        "local_relief_r16m"
+      ],
+      "qa_status": "pass",
+      "acquisition_action": "refreshed_download"
+    },
+    {
+      "sample_id": "E001P-dbe1e64705ea",
+      "nhle_list_entry": 1012089,
+      "geographic_group_id": "BNG_100KM_E4_N4",
+      "terrain_provenance_id": "EAP-d85b0f0821f9",
+      "survey_year": "2018",
+      "survey_program": "National LIDAR Programme",
+      "required_5km_cells": 1,
+      "crosses_5km_boundary": false,
+      "raw_bytes": 65955,
+      "raw_sha256": "60d13bbba3ca03bb017dc341a6e5f1c6c7bcd7c23515b3dc5ccd6bd55e9ddad3",
+      "processed_bytes": 234601,
+      "patch_sha256": "09ffcd1359d37c79fe9d759e91ca9a437f093bafbce824e0fec3d4b3b49e9654",
+      "crs": "EPSG:27700",
+      "resolution_m": 1.0,
+      "dimensions": [
+        128,
+        128
+      ],
+      "nodata_fraction": 0.0,
+      "minimum_elevation_m": 133.17300415039062,
+      "maximum_elevation_m": 140.99000549316406,
+      "representations": [
+        "elevation_normalized",
+        "slope_degrees",
+        "hillshade_315_45",
+        "local_relief_r16m"
+      ],
+      "qa_status": "pass",
+      "acquisition_action": "refreshed_download"
+    },
+    {
+      "sample_id": "E001P-398e3e398328",
+      "nhle_list_entry": 1020357,
+      "geographic_group_id": "BNG_100KM_E5_N1",
+      "terrain_provenance_id": "EAP-71ad6a50942e",
+      "survey_year": "2021",
+      "survey_program": "National LIDAR Programme",
+      "required_5km_cells": 1,
+      "crosses_5km_boundary": false,
+      "raw_bytes": 65955,
+      "raw_sha256": "132e330bf84b3ccc3fdfb0828870b13236a9be50d06c6650257ba58f2f0bebc3",
+      "processed_bytes": 249993,
+      "patch_sha256": "775dccc83af6db8b2da53995ae823b53c78337cb866deeaf4435aec7ebab1f2b",
+      "crs": "EPSG:27700",
+      "resolution_m": 1.0,
+      "dimensions": [
+        128,
+        128
+      ],
+      "nodata_fraction": 0.0,
+      "minimum_elevation_m": 207.63099670410156,
+      "maximum_elevation_m": 214.52000427246094,
+      "representations": [
+        "elevation_normalized",
+        "slope_degrees",
+        "hillshade_315_45",
+        "local_relief_r16m"
+      ],
+      "qa_status": "pass",
+      "acquisition_action": "refreshed_download"
+    },
+    {
+      "sample_id": "E001P-7fcb5e488cac",
+      "nhle_list_entry": 1021126,
+      "geographic_group_id": "BNG_100KM_E5_N3",
+      "terrain_provenance_id": "EAP-8e32eccbc87e",
+      "survey_year": "2017",
+      "survey_program": "National LIDAR Programme",
+      "required_5km_cells": 1,
+      "crosses_5km_boundary": false,
+      "raw_bytes": 65955,
+      "raw_sha256": "257e9d8ce45b000659ff925676e52ca4cfa7b8a1e8453591b0faf66b5d701299",
+      "processed_bytes": 167555,
+      "patch_sha256": "b421e59c432521e70f8eb532873fac0b8572a96898e37ce7c42ee00de639229b",
+      "crs": "EPSG:27700",
+      "resolution_m": 1.0,
+      "dimensions": [
+        128,
+        128
+      ],
+      "nodata_fraction": 0.0,
+      "minimum_elevation_m": 57.619998931884766,
+      "maximum_elevation_m": 64.18000030517578,
+      "representations": [
+        "elevation_normalized",
+        "slope_degrees",
+        "hillshade_315_45",
+        "local_relief_r16m"
+      ],
+      "qa_status": "pass",
+      "acquisition_action": "refreshed_download"
+    },
+    {
+      "sample_id": "E001P-a686988f538b",
+      "nhle_list_entry": 1011521,
+      "geographic_group_id": "BNG_100KM_E3_N1",
+      "terrain_provenance_id": "EAP-d3a871d4f09e",
+      "survey_year": "2019",
+      "survey_program": "National LIDAR Programme",
+      "required_5km_cells": 1,
+      "crosses_5km_boundary": false,
+      "raw_bytes": 65955,
+      "raw_sha256": "95d16c2ef747577c6c4d87e3215eb8e277b5fabb75a4e90a17634ef6741d34ff",
+      "processed_bytes": 250522,
+      "patch_sha256": "e41b59f6188590620839e39821d6b9f2b7ddec69b41fd8836e2478de08cae597",
+      "crs": "EPSG:27700",
+      "resolution_m": 1.0,
+      "dimensions": [
+        128,
+        128
+      ],
+      "nodata_fraction": 0.0,
+      "minimum_elevation_m": 240.31900024414062,
+      "maximum_elevation_m": 255.89100646972656,
+      "representations": [
+        "elevation_normalized",
+        "slope_degrees",
+        "hillshade_315_45",
+        "local_relief_r16m"
+      ],
+      "qa_status": "pass",
+      "acquisition_action": "refreshed_download"
+    }
+  ],
+  "privacy": {
+    "stored_coordinates_in_tracked_output": false,
+    "stored_geometry_in_tracked_output": false,
+    "private_artifacts_git_ignored": true
+  },
+  "claims": {
+    "model_trained": false,
+    "model_result": false,
+    "archaeological_discovery": false
+  }
+}

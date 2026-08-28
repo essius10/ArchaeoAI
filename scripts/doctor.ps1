@@ -52,6 +52,11 @@ $ruffVersion = & $pythonExecutable -m ruff --version
 if ($LASTEXITCODE -ne 0) {
     throw 'Ruff is unavailable in the selected Python environment.'
 }
+$geospatialJson = & $pythonExecutable -c 'import json, numpy, pyproj, rasterio; print(json.dumps({"numpy": numpy.__version__, "rasterio": rasterio.__version__, "gdal": rasterio.__gdal_version__, "pyproj": pyproj.__version__, "proj": pyproj.proj_version_str, "epsg27700": pyproj.CRS.from_epsg(27700).name}))'
+if ($LASTEXITCODE -ne 0) {
+    throw 'The Phase 2B geospatial runtime is unavailable.'
+}
+$geospatial = $geospatialJson | ConvertFrom-Json
 
 $gitCommand = Get-Command git -ErrorAction SilentlyContinue
 if ($null -eq $gitCommand) {
@@ -71,13 +76,17 @@ Write-Output "Python executable: $($runtime.executable)"
 Write-Output "ArchaeoAI package: $packageVersion"
 Write-Output "pytest: $pytestVersion"
 Write-Output "Ruff: $ruffVersion"
+Write-Output "NumPy: $($geospatial.numpy)"
+Write-Output "Rasterio/GDAL: $($geospatial.rasterio) / $($geospatial.gdal)"
+Write-Output "PyProj/PROJ: $($geospatial.pyproj) / $($geospatial.proj)"
+Write-Output "CRS smoke test: EPSG:27700 = $($geospatial.epsg27700)"
 Write-Output "Git: $gitVersion"
 Write-Output "Git status: $($gitStatus -join ' | ')"
 
 $gpuCommand = Get-Command nvidia-smi -ErrorAction SilentlyContinue
 if ($null -eq $gpuCommand) {
-    Write-Output 'GPU: nvidia-smi not found (optional during Phase 1)'
+    Write-Output 'GPU: nvidia-smi not found (optional during Phase 2B)'
 } else {
     $gpuSummary = & $gpuCommand.Source --query-gpu=name,memory.total,driver_version --format=csv,noheader
-    Write-Output "GPU: $gpuSummary (optional during Phase 1)"
+    Write-Output "GPU: $gpuSummary (optional during Phase 2B)"
 }

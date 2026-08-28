@@ -7,9 +7,23 @@ Does a terrain representation that encodes local morphology outperform elevation
 ## Preconditions
 
 - D001 is approved and recorded.
-- One documented, non-sensitive earthwork class is selected.
+- The class is scheduled, single bowl barrows surviving as discrete upstanding earthworks in England.
+- The five-site Phase 2B positive-terrain pilot passes; full positive acquisition remains a separate gate.
 - Three or more spatial blocks contain positive and matched negative patches.
 - The feature/label licenses permit this use.
+
+## Frozen Phase 2B preprocessing
+
+- Primary positive patch: configurable 128 m square, aligned to the 1 m EPSG:27700 grid.
+- Terrain source: bounded EA LIDAR Composite DTM 1 m WCS responses, ODN heights.
+- Representations: per-patch median-normalized elevation, slope degrees, 315°/45° hillshade, and
+  16 m-radius local relief.
+- No-data above 20%, wrong CRS/resolution/dimensions, incomplete bounds, or extreme values reject a
+  patch; no-data is never silently filled.
+- No global normalization is permitted before the split; any later fitted transform uses training
+  groups only.
+- Overlapping positive patches must stay together. Provisional groups are preserved, but no
+  train/test assignment is frozen yet.
 
 ## Design
 

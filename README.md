@@ -2,9 +2,9 @@
 
 **LiDAR terrain research, spatial evaluation, and reproducible machine learning for archaeology.**
 
-![Research stage](https://img.shields.io/badge/research-Phase%202A.5%20FINAL%20GO-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%202B%20pilot%20passed-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-49%20passing-2f855a)
+![Tests](https://img.shields.io/badge/tests-83%20passing-2f855a)
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
 > that apparent skill survive when the model is tested somewhere geographically new?**
@@ -26,16 +26,17 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Viable provisional geographic groups | **12** |
 | Pairwise nonadjacent possible holdouts | **4** |
-| Automated tests | **49 passing** |
-| Terrain patches acquired | **No—not started** |
+| Automated tests | **83 passing** |
+| Real terrain pilot | **5/5 patches passed QA** |
+| Full positive terrain dataset | **Not acquired—GO gate only** |
 | Models trained / results reported | **No / none** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
-provisional 128 m terrain-coverage, and survey-provenance checks. They are **curated research
+128 m terrain-coverage, and survey-provenance checks. They are **curated research
 records, not unquestionable ground truth**. A frozen 40-record queue still awaits review by a
 different human reviewer.
 
-[Read the complete Phase 2A.5 decision →](docs/e001-phase-2a5-curation-gate.md)
+[Read the Phase 2B terrain decision →](docs/e001-phase-2b-terrain.md)
 
 ## Why this matters
 
@@ -55,7 +56,8 @@ the limits of the method—not a failed project.
 
 ## The experiment in 30 seconds
 
-Everything after the curated-label gate in this diagram is planned, not yet implemented.
+The bounded terrain and representation steps are implemented for a five-site pilot. Backgrounds,
+splits, and models remain planned.
 
 ```mermaid
 flowchart LR
@@ -81,8 +83,8 @@ will not be treated automatically as a true archaeological negative.
 | Data-source feasibility | ✅ Complete | [Phase 2A audit](docs/e001-feasibility-audit.md) |
 | Primary label curation and metadata QA | ✅ Complete | [Phase 2A.5 gate](docs/e001-phase-2a5-curation-gate.md) |
 | Independent label-reliability review | ⏳ Queued | 40-record blinded review queue |
-| Bounded terrain acquisition | ⏳ Not started | Phase 2B approval required |
-| Terrain processing and visual QA | ⏳ Not started | No raster pipeline yet |
+| Bounded terrain acquisition | 🧪 Pilot passed | 5/5 private patches; full 261 not started |
+| Terrain processing and visual QA | ✅ Foundation complete | Deterministic raster QA and four representations |
 | Matched background construction | ⏳ Not started | Must preserve uncertainty and provenance |
 | Baseline models | ⏳ Not started | Interpretable methods first |
 | Random vs geographic evaluation | ⏳ Not started | Final blocks and buffers not frozen |
@@ -96,13 +98,17 @@ will not be treated automatically as a true archaeological negative.
 - A reproducible NHLE metadata feasibility audit.
 - A deterministic 360-record curation queue and controlled review schema.
 - Coordinate-safe geometry, terrain-coverage, provenance, grouping, and holdout checks.
+- A bounded EA WCS acquisition client with private NHLE location reconstruction.
+- Deterministic 128 m raster extraction, 5 km grid discovery, cross-tile mosaics, and reason-coded QA.
+- Four tested terrain views: normalized elevation, slope, fixed hillshade, and local relief.
+- A coordinate-safe five-patch terrain index and aggregate 261-site acquisition estimate.
 - Tracked aggregate evidence and a claims register that limits public wording.
 - Windows-compatible environment and repository validation scripts.
 
 ## What does not exist yet
 
-- Downloaded or committed LiDAR terrain.
-- A raster clipping, tiling, or terrain-representation pipeline.
+- A full 261-site terrain dataset; only five private pilot patches exist locally.
+- Any committed LiDAR, exact coordinate table, georeferenced QA image, or private receipt.
 - Matched background samples or a finalized geographic split.
 - A trained classifier, deep-learning system, metric, plot, or headline result.
 - A map of predictions or coordinates for possible unrecorded sites.
@@ -124,9 +130,9 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m ruff format --check .
 ```
 
-Phase 1 has no third-party runtime dependencies. The development extra contains only pytest and
-Ruff. Scientific/geospatial dependencies will not be introduced until the relevant phase requires
-and verifies them.
+Phase 2B runtime dependencies are limited to NumPy, Rasterio, and PyProj. The development extra adds
+pytest and Ruff. CPython 3.14.7 is verified locally; CPython 3.12 remains the reference runtime but
+has not been reproduced on this machine because it is not installed.
 
 <details>
 <summary><strong>Reproduce the coordinate-safe metadata audits</strong></summary>
@@ -146,6 +152,17 @@ These commands query official metadata services. They do not download LiDAR or r
 coordinates in tracked outputs. The Phase 2A.5 input and recreation policy is documented in
 [`data/README.md`](data/README.md).
 
+```powershell
+# CONTROLLED: creates an ignored 261-site coordinate cache from official IDs
+.\.venv\Scripts\python.exe .\scripts\reconstruct_e001_sites.py
+
+# CONTROLLED: repeats the bounded five-site pilot in ignored private storage
+.\.venv\Scripts\python.exe .\scripts\acquire_e001_terrain_pilot.py --count 5
+
+# Aggregate-only estimate; downloads no additional terrain
+.\.venv\Scripts\python.exe .\scripts\estimate_e001_terrain_acquisition.py
+```
+
 </details>
 
 ## Repository map
@@ -155,7 +172,8 @@ configs/                 Example experiment configuration
 data/manifests/          Tracked provenance metadata, never bulk spatial data
 docs/                    Research decisions, audits, methods, and claim limits
 experiments/             Pre-specified E001 scientific protocol
-outputs/feasibility/     Reviewed, coordinate-safe gate evidence
+outputs/feasibility/     Reviewed, coordinate-safe label-gate evidence
+outputs/terrain/         Coordinate-safe pilot and workload evidence
 research-log/            Authorship and research-session record
 scripts/                 Audit, environment, and project-validation commands
 src/archaeoai/           Typed package and deterministic research logic
@@ -216,6 +234,7 @@ Neither source provider endorses ArchaeoAI. No supplied map is reproduced here.
 - [Dataset decision record](docs/dataset-decision-record.md)
 - [E001 Phase 2A feasibility audit](docs/e001-feasibility-audit.md)
 - [E001 Phase 2A.5 curation and terrain gate](docs/e001-phase-2a5-curation-gate.md)
+- [E001 Phase 2B bounded terrain pilot](docs/e001-phase-2b-terrain.md)
 - [Initial E001 experiment protocol](experiments/E001_geographic_baseline.md)
 - [Research quality bar](docs/project-quality-bar.md)
 - [Claims register](docs/claims-register.md)
