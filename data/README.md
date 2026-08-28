@@ -6,9 +6,9 @@ Tracked metadata belongs in `data/manifests/`. Raw, interim, processed, and sens
 
 `data/manifests/example-dataset.toml` is deliberately fictional. It demonstrates the schema but is not evidence that any dataset has been selected, accessed, downloaded, or verified.
 
-`data/manifests/e001-ea-lidar-dtm.toml` is the real E001 source manifest. Its status remains
-`planned` until bounded site-linked terrain has been downloaded and passed raster QA. The public
-manifest contains no extent or coordinate.
+`data/manifests/e001-ea-lidar-dtm.toml` is the real E001 source manifest. It records the verified
+261-record Phase 2B.5 positive-terrain freeze, aggregate inventory checksum, versions, and private
+storage scope. The public manifest contains no extent or coordinate.
 
 Phase 2A.5 may use `data/private/e001_full_entry_reviews.json` as a local, ignored evidence cache.
 It is recreated from the deterministic public List Entry queue and the official Historic England

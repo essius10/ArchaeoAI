@@ -2,8 +2,10 @@
 
 **Decision: GO FOR BACKGROUND AND SPLIT DESIGN**
 
-**Acquisition date:** 28 August 2026  
-**Freeze audit completed:** 29 August 2026  
+**Acquisition date:** 28 August 2026
+
+**Freeze audit completed:** 29 August 2026
+
 **Scope:** approved positive terrain only; no background, split, model, metric, prediction, site
 search, or archaeological discovery.
 

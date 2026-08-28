@@ -2,9 +2,9 @@
 
 **LiDAR terrain research, spatial evaluation, and reproducible machine learning for archaeology.**
 
-![Research stage](https://img.shields.io/badge/research-Phase%202B%20pilot%20passed-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%202B.5%20terrain%20frozen-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-83%20passing-2f855a)
+![Tests](https://img.shields.io/badge/tests-99%20passing-2f855a)
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
 > that apparent skill survive when the model is tested somewhere geographically new?**
@@ -26,9 +26,9 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Viable provisional geographic groups | **12** |
 | Pairwise nonadjacent possible holdouts | **4** |
-| Automated tests | **83 passing** |
+| Automated tests | **99 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
-| Full positive terrain dataset | **Not acquired—GO gate only** |
+| Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Models trained / results reported | **No / none** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
@@ -36,7 +36,7 @@ The 261 records passed official-entry, single-monument, upstanding-relief, desig
 records, not unquestionable ground truth**. A frozen 40-record queue still awaits review by a
 different human reviewer.
 
-[Read the Phase 2B terrain decision →](docs/e001-phase-2b-terrain.md)
+[Read the Phase 2B.5 terrain freeze decision →](docs/e001-phase-2b5-full-terrain.md)
 
 ## Why this matters
 
@@ -56,8 +56,8 @@ the limits of the method—not a failed project.
 
 ## The experiment in 30 seconds
 
-The bounded terrain and representation steps are implemented for a five-site pilot. Backgrounds,
-splits, and models remain planned.
+The bounded positive-terrain and representation steps are complete for all 261 accepted records.
+Backgrounds, splits, and models remain planned.
 
 ```mermaid
 flowchart LR
@@ -83,7 +83,7 @@ will not be treated automatically as a true archaeological negative.
 | Data-source feasibility | ✅ Complete | [Phase 2A audit](docs/e001-feasibility-audit.md) |
 | Primary label curation and metadata QA | ✅ Complete | [Phase 2A.5 gate](docs/e001-phase-2a5-curation-gate.md) |
 | Independent label-reliability review | ⏳ Queued | 40-record blinded review queue |
-| Bounded terrain acquisition | 🧪 Pilot passed | 5/5 private patches; full 261 not started |
+| Bounded terrain acquisition | ✅ Complete | 261/261 private positive patches passed QA |
 | Terrain processing and visual QA | ✅ Foundation complete | Deterministic raster QA and four representations |
 | Matched background construction | ⏳ Not started | Must preserve uncertainty and provenance |
 | Baseline models | ⏳ Not started | Interpretable methods first |
@@ -101,13 +101,12 @@ will not be treated automatically as a true archaeological negative.
 - A bounded EA WCS acquisition client with private NHLE location reconstruction.
 - Deterministic 128 m raster extraction, 5 km grid discovery, cross-tile mosaics, and reason-coded QA.
 - Four tested terrain views: normalized elevation, slope, fixed hillshade, and local relief.
-- A coordinate-safe five-patch terrain index and aggregate 261-site acquisition estimate.
+- A coordinate-safe 261-patch positive-terrain index, freeze audit, and overlap constraints.
 - Tracked aggregate evidence and a claims register that limits public wording.
 - Windows-compatible environment and repository validation scripts.
 
 ## What does not exist yet
 
-- A full 261-site terrain dataset; only five private pilot patches exist locally.
 - Any committed LiDAR, exact coordinate table, georeferenced QA image, or private receipt.
 - Matched background samples or a finalized geographic split.
 - A trained classifier, deep-learning system, metric, plot, or headline result.
@@ -159,7 +158,13 @@ coordinates in tracked outputs. The Phase 2A.5 input and recreation policy is do
 # CONTROLLED: repeats the bounded five-site pilot in ignored private storage
 .\.venv\Scripts\python.exe .\scripts\acquire_e001_terrain_pilot.py --count 5
 
-# Aggregate-only estimate; downloads no additional terrain
+# CONTROLLED: resumable full acquisition; skips every valid cached patch
+.\.venv\Scripts\python.exe .\scripts\acquire_e001_full_terrain.py --workers 2
+
+# CONTROLLED: revalidates the full cache and prepares private visual QA
+.\.venv\Scripts\python.exe .\scripts\audit_e001_full_terrain.py
+
+# Historical aggregate-only estimate; downloads no terrain
 .\.venv\Scripts\python.exe .\scripts\estimate_e001_terrain_acquisition.py
 ```
 
@@ -235,6 +240,7 @@ Neither source provider endorses ArchaeoAI. No supplied map is reproduced here.
 - [E001 Phase 2A feasibility audit](docs/e001-feasibility-audit.md)
 - [E001 Phase 2A.5 curation and terrain gate](docs/e001-phase-2a5-curation-gate.md)
 - [E001 Phase 2B bounded terrain pilot](docs/e001-phase-2b-terrain.md)
+- [E001 Phase 2B.5 full positive-terrain freeze](docs/e001-phase-2b5-full-terrain.md)
 - [Initial E001 experiment protocol](experiments/E001_geographic_baseline.md)
 - [Research quality bar](docs/project-quality-bar.md)
 - [Claims register](docs/claims-register.md)

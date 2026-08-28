@@ -1,10 +1,11 @@
 # Research roadmap — 15 September 2026 to March 2027
 
-## Current gate (28 August 2026)
+## Current gate (29 August 2026)
 
-Phase 2B completed a five-site real-terrain pilot and returned **GO FOR FULL TERRAIN DATASET**. The
-remaining 256 positive patches have not been downloaded. Background sampling, split finalization,
-and all modelling remain blocked pending explicit approval and the safeguards in the Phase 2B memo.
+Phase 2B.5 acquired and privately froze all 261 approved positive-terrain patches. The independent
+cache audit and 25-site visual sample passed, including all eight cross-cell cases. The seven
+overlap components are explicitly constrained to remain within one future partition. Background
+sampling, split finalization, and all modelling remain blocked pending explicit approval.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
