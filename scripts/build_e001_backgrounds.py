@@ -228,7 +228,7 @@ def _matching_terrain_metadata(
         return False, "missing_terrain", qa.year, qa.programme
     if qa.provenance_status != "pass":
         return False, "outside_provenance", qa.year, qa.programme
-    candidate_id = terrain_provenance_id(qa.year, qa.resolution, qa.programme)
+    candidate_id = terrain_provenance_id(qa.year, qa.resolution_m, qa.programme)
     return candidate_id == expected_provenance_id, "outside_provenance", qa.year, qa.programme
 
 

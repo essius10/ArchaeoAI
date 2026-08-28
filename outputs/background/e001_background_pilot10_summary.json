@@ -1,0 +1,91 @@
+{
+  "phase": "2C unlabelled-background pilot10",
+  "class_label": "unlabelled_background",
+  "algorithm_version": "e001-background-v1",
+  "processing_version": "e001-terrain-v1",
+  "started_at": "2026-08-28T21:17:52.969204+00:00",
+  "finished_at": "2026-08-28T21:20:04.810347+00:00",
+  "elapsed_seconds": 131.841,
+  "policy": {
+    "backgrounds_per_positive": 1,
+    "positive_exclusion_buffer_m": 500.0,
+    "known_archaeology_exclusion_buffer_m": 250.0,
+    "minimum_sample_separation_m": 256.0,
+    "sampling_annulus_m": [
+      1000.0,
+      5000.0
+    ],
+    "same_geographic_group_required": true,
+    "exact_provenance_match_required": true
+  },
+  "known_archaeology_exclusion": {
+    "source": "Historic England NHLE Scheduled Monuments",
+    "service": "https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer/6/query",
+    "access_date": "2026-08-29",
+    "interpretation": "Excludes known scheduled monuments only; it does not establish archaeology-free terrain."
+  },
+  "counts": {
+    "requested": 10,
+    "selected": 10,
+    "terrain_passed": 10,
+    "terrain_failed": 0,
+    "representations_passed": 10,
+    "new_downloads": 10,
+    "cache_verified": 0,
+    "processed_regenerated": 0,
+    "candidate_attempts_cumulative": 59,
+    "request_retries": 0
+  },
+  "candidate_rejections_cumulative": {
+    "known_archaeology_exclusion": 5,
+    "missing_terrain": 23,
+    "outside_geographic_group": 3,
+    "outside_provenance": 18
+  },
+  "terrain_failures": {},
+  "geographic_groups": {
+    "BNG_100KM_E3_N3": 1,
+    "BNG_100KM_E3_N4": 1,
+    "BNG_100KM_E4_N1": 1,
+    "BNG_100KM_E4_N2": 1,
+    "BNG_100KM_E4_N5": 2,
+    "BNG_100KM_E5_N2": 1,
+    "BNG_100KM_E5_N4": 1,
+    "BNG_100KM_E6_N1": 1,
+    "BNG_100KM_E6_N2": 1
+  },
+  "terrain_provenance_ids": {
+    "EAP-4f02812edece": 1,
+    "EAP-71ad6a50942e": 1,
+    "EAP-8e32eccbc87e": 1,
+    "EAP-a800a13742ee": 1,
+    "EAP-c590a5cb0139": 3,
+    "EAP-d3a871d4f09e": 1,
+    "EAP-d85b0f0821f9": 1,
+    "EAP-fa2ffbdc01b2": 1
+  },
+  "survey_years": {
+    "2009": 1,
+    "2016": 1,
+    "2017": 1,
+    "2018": 1,
+    "2019": 1,
+    "2020": 3,
+    "2021": 1,
+    "2022": 1
+  },
+  "source_resolutions_m": {
+    "1.0": 10
+  },
+  "inventory_sha256": "ab6598bba381c78078bbee35c8cd5993759f033570acb295a6caecadd7f0374f",
+  "privacy": {
+    "coordinates_tracked": false,
+    "sampling_geometry_tracked": false,
+    "private_state_ignored": true
+  },
+  "scope": {
+    "model_trained": false,
+    "metrics_computed": false,
+    "split_frozen": false
+  }
+}
