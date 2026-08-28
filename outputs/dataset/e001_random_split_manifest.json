@@ -1,0 +1,160 @@
+{
+  "schema_version": "e001-split-manifest-v1",
+  "split_version": "e001-splits-v1",
+  "creation_date": "2026-08-29",
+  "frozen": true,
+  "class_labels": [
+    "positive_bowl_barrow",
+    "unlabelled_background"
+  ],
+  "total_observations": 522,
+  "grouping_rules": [
+    "matched positive and background records remain together",
+    "all retained positive overlap-component members and their backgrounds remain together",
+    "each terrain representation remains part of its one source observation"
+  ],
+  "overlap_policy": "retain_grouped; components may never cross partitions",
+  "final_test_change_guard": "assignment SHA-256 must match this manifest",
+  "condition": "group_aware_random",
+  "algorithm": "SHA-256-ranked observational groups with exact pre-specified class targets",
+  "seed": "E001-group-aware-random-v1-2026-08-29",
+  "target_positive_counts": {
+    "development": 14,
+    "final_test": 31
+  },
+  "assignment_sha256": "723632c755d6796fb4be2b680f2ff475f90e78c860d44edac23190054246e83d",
+  "partitions": {
+    "train": {
+      "observations": 432,
+      "positives": 216,
+      "backgrounds": 216,
+      "observation_groups": 211,
+      "geographic_groups": [
+        "BNG_100KM_E1_N0",
+        "BNG_100KM_E2_N0",
+        "BNG_100KM_E2_N1",
+        "BNG_100KM_E3_N0",
+        "BNG_100KM_E3_N1",
+        "BNG_100KM_E3_N2",
+        "BNG_100KM_E3_N3",
+        "BNG_100KM_E3_N4",
+        "BNG_100KM_E3_N5",
+        "BNG_100KM_E4_N0",
+        "BNG_100KM_E4_N1",
+        "BNG_100KM_E4_N2",
+        "BNG_100KM_E4_N3",
+        "BNG_100KM_E4_N4",
+        "BNG_100KM_E4_N5",
+        "BNG_100KM_E5_N0",
+        "BNG_100KM_E5_N1",
+        "BNG_100KM_E5_N2",
+        "BNG_100KM_E5_N3",
+        "BNG_100KM_E5_N4",
+        "BNG_100KM_E6_N1",
+        "BNG_100KM_E6_N2",
+        "BNG_100KM_E6_N3"
+      ],
+      "survey_years": {
+        "2009": 2,
+        "2016": 4,
+        "2017": 18,
+        "2018": 100,
+        "2019": 64,
+        "2020": 128,
+        "2021": 98,
+        "2022": 18
+      },
+      "provenance_ids": {
+        "EAP-4f02812edece": 4,
+        "EAP-71ad6a50942e": 98,
+        "EAP-8e32eccbc87e": 18,
+        "EAP-a800a13742ee": 18,
+        "EAP-c590a5cb0139": 128,
+        "EAP-d3a871d4f09e": 64,
+        "EAP-d85b0f0821f9": 100,
+        "EAP-fa2ffbdc01b2": 2
+      },
+      "source_resolutions_m": {
+        "1.0": 432
+      }
+    },
+    "development": {
+      "observations": 28,
+      "positives": 14,
+      "backgrounds": 14,
+      "observation_groups": 13,
+      "geographic_groups": [
+        "BNG_100KM_E1_N0",
+        "BNG_100KM_E2_N0",
+        "BNG_100KM_E3_N0",
+        "BNG_100KM_E3_N4",
+        "BNG_100KM_E3_N5",
+        "BNG_100KM_E4_N0",
+        "BNG_100KM_E4_N2",
+        "BNG_100KM_E4_N4",
+        "BNG_100KM_E4_N5",
+        "BNG_100KM_E5_N1"
+      ],
+      "survey_years": {
+        "2018": 14,
+        "2019": 4,
+        "2020": 2,
+        "2021": 8
+      },
+      "provenance_ids": {
+        "EAP-71ad6a50942e": 8,
+        "EAP-c590a5cb0139": 2,
+        "EAP-d3a871d4f09e": 4,
+        "EAP-d85b0f0821f9": 14
+      },
+      "source_resolutions_m": {
+        "1.0": 28
+      }
+    },
+    "final_test": {
+      "observations": 62,
+      "positives": 31,
+      "backgrounds": 31,
+      "observation_groups": 30,
+      "geographic_groups": [
+        "BNG_100KM_E1_N0",
+        "BNG_100KM_E2_N0",
+        "BNG_100KM_E2_N1",
+        "BNG_100KM_E3_N1",
+        "BNG_100KM_E3_N2",
+        "BNG_100KM_E3_N3",
+        "BNG_100KM_E3_N4",
+        "BNG_100KM_E3_N5",
+        "BNG_100KM_E4_N1",
+        "BNG_100KM_E4_N2",
+        "BNG_100KM_E4_N3",
+        "BNG_100KM_E4_N5",
+        "BNG_100KM_E5_N0",
+        "BNG_100KM_E5_N1",
+        "BNG_100KM_E5_N4",
+        "BNG_100KM_E6_N1",
+        "BNG_100KM_E6_N2"
+      ],
+      "survey_years": {
+        "2017": 4,
+        "2018": 16,
+        "2019": 8,
+        "2020": 20,
+        "2021": 12,
+        "2022": 2
+      },
+      "provenance_ids": {
+        "EAP-71ad6a50942e": 12,
+        "EAP-8e32eccbc87e": 4,
+        "EAP-a800a13742ee": 2,
+        "EAP-c590a5cb0139": 20,
+        "EAP-d3a871d4f09e": 8,
+        "EAP-d85b0f0821f9": 16
+      },
+      "source_resolutions_m": {
+        "1.0": 62
+      }
+    }
+  },
+  "rationale": "A non-spatial comparison with the same development and final-test class counts as the geographic condition, while keeping related observations inseparable."
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": "e001-split-manifest-v1",
+  "split_version": "e001-splits-v1",
+  "creation_date": "2026-08-29",
+  "frozen": true,
+  "class_labels": [
+    "positive_bowl_barrow",
+    "unlabelled_background"
+  ],
+  "total_observations": 522,
+  "grouping_rules": [
+    "matched positive and background records remain together",
+    "all retained positive overlap-component members and their backgrounds remain together",
+    "each terrain representation remains part of its one source observation"
+  ],
+  "overlap_policy": "retain_grouped; components may never cross partitions",
+  "final_test_change_guard": "assignment SHA-256 must match this manifest",
+  "condition": "geographic_holdout",
+  "algorithm": "complete frozen BNG 100 km block assignment",
+  "seed": null,
+  "development_groups": [
+    "BNG_100KM_E2_N0"
+  ],
+  "final_test_groups": [
+    "BNG_100KM_E3_N2",
+    "BNG_100KM_E5_N4"
+  ],
+  "assignment_sha256": "61701c3d9cd3048fd515e8bb45e7d5239e0e971e3d5027e70357b77b83084f44",
+  "partitions": {
+    "train": {
+      "observations": 432,
+      "positives": 216,
+      "backgrounds": 216,
+      "observation_groups": 211,
+      "geographic_groups": [
+        "BNG_100KM_E1_N0",
+        "BNG_100KM_E2_N1",
+        "BNG_100KM_E3_N0",
+        "BNG_100KM_E3_N1",
+        "BNG_100KM_E3_N3",
+        "BNG_100KM_E3_N4",
+        "BNG_100KM_E3_N5",
+        "BNG_100KM_E4_N0",
+        "BNG_100KM_E4_N1",
+        "BNG_100KM_E4_N2",
+        "BNG_100KM_E4_N3",
+        "BNG_100KM_E4_N4",
+        "BNG_100KM_E4_N5",
+        "BNG_100KM_E5_N0",
+        "BNG_100KM_E5_N1",
+        "BNG_100KM_E5_N2",
+        "BNG_100KM_E5_N3",
+        "BNG_100KM_E6_N1",
+        "BNG_100KM_E6_N2",
+        "BNG_100KM_E6_N3"
+      ],
+      "survey_years": {
+        "2009": 2,
+        "2016": 4,
+        "2017": 22,
+        "2018": 114,
+        "2019": 64,
+        "2020": 100,
+        "2021": 108,
+        "2022": 18
+      },
+      "provenance_ids": {
+        "EAP-4f02812edece": 4,
+        "EAP-71ad6a50942e": 108,
+        "EAP-8e32eccbc87e": 22,
+        "EAP-a800a13742ee": 18,
+        "EAP-c590a5cb0139": 100,
+        "EAP-d3a871d4f09e": 64,
+        "EAP-d85b0f0821f9": 114,
+        "EAP-fa2ffbdc01b2": 2
+      },
+      "source_resolutions_m": {
+        "1.0": 432
+      }
+    },
+    "development": {
+      "observations": 28,
+      "positives": 14,
+      "backgrounds": 14,
+      "observation_groups": 12,
+      "geographic_groups": [
+        "BNG_100KM_E2_N0"
+      ],
+      "survey_years": {
+        "2018": 4,
+        "2019": 4,
+        "2020": 8,
+        "2021": 10,
+        "2022": 2
+      },
+      "provenance_ids": {
+        "EAP-71ad6a50942e": 10,
+        "EAP-a800a13742ee": 2,
+        "EAP-c590a5cb0139": 8,
+        "EAP-d3a871d4f09e": 4,
+        "EAP-d85b0f0821f9": 4
+      },
+      "source_resolutions_m": {
+        "1.0": 28
+      }
+    },
+    "final_test": {
+      "observations": 62,
+      "positives": 31,
+      "backgrounds": 31,
+      "observation_groups": 31,
+      "geographic_groups": [
+        "BNG_100KM_E3_N2",
+        "BNG_100KM_E5_N4"
+      ],
+      "survey_years": {
+        "2018": 12,
+        "2019": 8,
+        "2020": 42
+      },
+      "provenance_ids": {
+        "EAP-c590a5cb0139": 42,
+        "EAP-d3a871d4f09e": 8,
+        "EAP-d85b0f0821f9": 12
+      },
+      "source_resolutions_m": {
+        "1.0": 62
+      }
+    }
+  },
+  "final_test_block_envelope_separation_km": 141.421,
+  "candidate_designs_considered_without_modelling": [
+    {
+      "groups": [
+        "BNG_100KM_E3_N2",
+        "BNG_100KM_E5_N4"
+      ],
+      "positive_count": 31,
+      "decision": "selected_final_test"
+    },
+    {
+      "groups": [
+        "BNG_100KM_E3_N5"
+      ],
+      "positive_count": 15,
+      "decision": "not_selected_single_block_and_smaller_test"
+    },
+    {
+      "groups": [
+        "BNG_100KM_E2_N0"
+      ],
+      "positive_count": 14,
+      "decision": "selected_development"
+    },
+    {
+      "groups": [
+        "BNG_100KM_E4_N5"
+      ],
+      "positive_count": 15,
+      "decision": "not_selected_provenance_concentration"
+    }
+  ],
+  "rationale": "Two nonadjacent final blocks provide 31 positives and matched backgrounds. A separate southwestern block supports development without exposing the final geographic test."
+}
