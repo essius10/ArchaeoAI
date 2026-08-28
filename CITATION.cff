@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "No paper or DOI exists yet; please cite the repository version or commit you used."
+title: "ArchaeoAI"
+type: software
+authors:
+  - name: "ArchaeoAI contributors"
+abstract: >-
+  Reproducible research infrastructure for studying terrain representations and geographically
+  separated evaluation of documented archaeological earthworks in public LiDAR-derived terrain.
+repository-code: "https://github.com/essius10/ArchaeoAI"
+url: "https://github.com/essius10/ArchaeoAI"
+version: "0.1.0"
+keywords:
+  - archaeology
+  - lidar
+  - geospatial
+  - spatial validation
+  - research software
+  - machine learning
+

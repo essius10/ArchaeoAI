@@ -1,0 +1,45 @@
+name: Research or methodology discussion
+description: Propose or question an archaeological, geospatial, statistical, or ML method.
+title: "[Method]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Method changes must preserve the project's phase gates, claim limits, and coordinate policy."
+  - type: textarea
+    id: question
+    attributes:
+      label: Research question
+      description: State one bounded question or concern.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or rationale
+      description: Link primary sources or repository evidence; distinguish facts from assumptions.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change or test
+      description: Explain what would change and what result would count against the proposal.
+    validations:
+      required: true
+  - type: textarea
+    id: validity
+    attributes:
+      label: Validity and leakage risks
+      description: Consider geography, acquisition provenance, class definition, and background uncertainty.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Research boundaries
+      options:
+        - label: This proposal does not claim discovery or include sensitive coordinates.
+          required: true
+        - label: I identified whether this is current-phase work or a future proposal.
+          required: true
+

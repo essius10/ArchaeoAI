@@ -1,0 +1,29 @@
+name: Documentation improvement
+description: Report unclear, outdated, inaccessible, or incorrect documentation.
+title: "[Docs]: "
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Document location
+      description: Link the file and heading or line.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is unclear or incorrect?
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Suggested improvement
+      description: Proposed wording is welcome but not required.
+  - type: checkboxes
+    id: claims
+    attributes:
+      label: Claim check
+      options:
+        - label: The suggestion does not add unverified model, discovery, or performance claims.
+          required: true

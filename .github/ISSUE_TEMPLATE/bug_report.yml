@@ -1,0 +1,44 @@
+name: Bug report
+description: Report a reproducible defect in code, scripts, or validation.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Thank you. Do not include credentials, private data, or archaeological coordinates."
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Include the smallest safe example and exact command.
+      placeholder: "1. Run ...\n2. Observe ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, and ArchaeoAI commit hash.
+      placeholder: "Windows 11; CPython 3.14.7; commit abc1234"
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Data-safety check
+      options:
+        - label: I removed credentials, private paths, restricted data, and exact archaeological coordinates.
+          required: true
+
