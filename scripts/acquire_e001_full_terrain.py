@@ -23,6 +23,7 @@ from archaeoai.terrain.acquisition import (
     fetch_wcs_payload,
     load_accepted_sites,
     opaque_sample_id,
+    terrain_provenance_id,
 )
 from archaeoai.terrain.full_dataset import (
     REPRESENTATION_NAMES,
@@ -88,13 +89,11 @@ def _load_private_locations(path: Path) -> dict[int, PrivateSiteLocation]:
 
 
 def _provenance_id(location: PrivateSiteLocation) -> str:
-    fields = (
+    return terrain_provenance_id(
         location.terrain_year,
         location.source_resolution_m,
         location.survey_program,
-        EA_DTM_DATASET_ID,
     )
-    return "EAP-" + hashlib.sha256("|".join(fields).encode()).hexdigest()[:12]
 
 
 def _load_state(path: Path) -> dict[str, object]:

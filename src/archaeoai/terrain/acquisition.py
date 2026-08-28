@@ -70,6 +70,15 @@ def opaque_sample_id(list_entry: int) -> str:
     return f"E001P-{digest}"
 
 
+def terrain_provenance_id(
+    terrain_year: str,
+    source_resolution_m: str | float,
+    survey_program: str,
+) -> str:
+    fields = (terrain_year, str(source_resolution_m), survey_program, EA_DTM_DATASET_ID)
+    return "EAP-" + hashlib.sha256("|".join(fields).encode()).hexdigest()[:12]
+
+
 def load_accepted_sites(path: str | Path) -> tuple[AcceptedSite, ...]:
     records = []
     with Path(path).open(encoding="utf-8-sig", newline="") as file:
