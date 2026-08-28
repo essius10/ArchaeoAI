@@ -1,0 +1,87 @@
+{
+  "phase": "2C dataset freeze audit",
+  "counts": {
+    "positives": 261,
+    "unlabelled_backgrounds": 261,
+    "total_observations": 522,
+    "observation_groups": 254,
+    "overlap_components": 7
+  },
+  "hard_leakage_audit": {
+    "duplicate_sample_ids": 0,
+    "duplicate_patch_digests": 0,
+    "positive_background_buffer_violations": 0,
+    "background_spacing_violations": 0,
+    "geographic_assignment_mismatches": 0,
+    "random_cross_partition_window_overlaps": 0,
+    "geographic_cross_partition_window_overlaps": 0,
+    "random_group_integrity": "pass",
+    "geographic_group_integrity": "pass",
+    "overlap_component_integrity": "pass",
+    "frozen_assignment_digests": "pass"
+  },
+  "provenance_and_geography_audit": {
+    "class_joint_distribution_exactly_matched": true,
+    "provenance_class_correlation_by_design": "none_observed_in_counts",
+    "geographic_class_correlation_by_design": "none_observed_in_counts"
+  },
+  "descriptive_confound_audit": {
+    "positive_bowl_barrow": {
+      "patch_median_elevation_m": {
+        "median": 161.957489,
+        "q25": 76.93,
+        "q75": 227.761993
+      },
+      "patch_mean_slope_degrees": {
+        "median": 3.599275,
+        "q25": 2.576135,
+        "q75": 5.805833
+      },
+      "patch_mean_abs_local_relief_m": {
+        "median": 0.14986,
+        "q25": 0.102467,
+        "q75": 0.2536
+      }
+    },
+    "unlabelled_background": {
+      "patch_median_elevation_m": {
+        "median": 101.046997,
+        "q25": 53.07,
+        "q75": 182.149994
+      },
+      "patch_mean_slope_degrees": {
+        "median": 4.055607,
+        "q25": 2.6918,
+        "q75": 7.230177
+      },
+      "patch_mean_abs_local_relief_m": {
+        "median": 0.159738,
+        "q25": 0.096975,
+        "q75": 0.296625
+      }
+    }
+  },
+  "modern_feature_visual_audit": {
+    "sample_size": 25,
+    "passed": 25,
+    "hard_invalid": 0,
+    "observation_counts": {
+      "field_boundary_or_drainage": 8,
+      "forestry_pattern": 9,
+      "hard_anthropogenic_relief": 7,
+      "technical_ok": 25,
+      "track_or_road": 10
+    },
+    "interpretation": "Realistic hard confounds were retained; visual appearance was not used as an archaeological label filter."
+  },
+  "privacy": {
+    "coordinate_bearing_inputs_private_and_ignored": true,
+    "coordinates_or_sampling_geometry_tracked": false,
+    "audit_output_aggregate_only": true
+  },
+  "scope": {
+    "model_trained": false,
+    "metrics_computed": false,
+    "predictions_inspected": false
+  }
+}

@@ -67,3 +67,30 @@ def write_dataset_index(records: list[DatasetRecord], destination: Path) -> None
         writer = csv.DictWriter(file, fieldnames=DATASET_FIELDS)
         writer.writeheader()
         writer.writerows(asdict(record) for record in records)
+
+
+def read_dataset_index(path: str | Path) -> list[DatasetRecord]:
+    records = []
+    with Path(path).open(encoding="utf-8-sig", newline="") as file:
+        for row in csv.DictReader(file):
+            records.append(
+                DatasetRecord(
+                    sample_id=row["sample_id"],
+                    class_label=row["class_label"],
+                    observation_group_id=row["observation_group_id"],
+                    overlap_component_id=row["overlap_component_id"],
+                    geographic_block_id=row["geographic_block_id"],
+                    survey_year=row["survey_year"],
+                    provenance_id=row["provenance_id"],
+                    source_resolution_m=float(row["source_resolution_m"]),
+                    patch_size_m=int(row["patch_size_m"]),
+                    processing_version=row["processing_version"],
+                    qa_status=row["qa_status"],
+                    sampling_stratum=row["sampling_stratum"],
+                    patch_sha256=row["patch_sha256"],
+                    split_random=row["split_random"],
+                    split_geographic=row["split_geographic"],
+                )
+            )
+    validate_dataset_index(records)
+    return records

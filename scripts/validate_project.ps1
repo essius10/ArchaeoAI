@@ -23,6 +23,7 @@ $required = @(
     'docs/e001-phase-2a5-curation-gate.md',
     'docs/e001-phase-2b-terrain.md',
     'docs/e001-phase-2b5-full-terrain.md',
+    'docs/e001-phase-2c-background-and-splits.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -35,6 +36,7 @@ $required = @(
     'research-log/README.md',
     'research-log/2026-08-28-phase-2b.md',
     'research-log/2026-08-29-phase-2b5.md',
+    'research-log/2026-08-29-phase-2c.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -43,6 +45,10 @@ $required = @(
     'scripts/acquire_e001_terrain_pilot.py',
     'scripts/acquire_e001_full_terrain.py',
     'scripts/audit_e001_full_terrain.py',
+    'scripts/build_e001_backgrounds.py',
+    'scripts/audit_e001_background_pilot.py',
+    'scripts/freeze_e001_splits.py',
+    'scripts/audit_e001_dataset.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -61,6 +67,8 @@ $required = @(
     'src/archaeoai/terrain/representations.py',
     'src/archaeoai/terrain/full_dataset.py',
     'src/archaeoai/terrain/validation.py',
+    'src/archaeoai/dataset.py',
+    'src/archaeoai/splits.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -78,6 +86,8 @@ $required = @(
     'tests/test_terrain_qa.py',
     'tests/test_terrain_raster.py',
     'tests/test_terrain_representations.py',
+    'tests/test_splits.py',
+    'tests/test_dataset_freeze.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -92,7 +102,16 @@ $required = @(
     'outputs/terrain/e001_full_terrain_summary.json',
     'outputs/terrain/e001_full_terrain_audit.json',
     'outputs/terrain/e001_full_terrain_failures.csv',
-    'outputs/terrain/e001_overlap_decisions.csv'
+    'outputs/terrain/e001_overlap_decisions.csv',
+    'outputs/background/e001_background_pilot10_summary.json',
+    'outputs/background/e001_background_pilot40_summary.json',
+    'outputs/background/e001_background_pilot40_visual_qa.json',
+    'outputs/background/e001_background_full_summary.json',
+    'outputs/background/e001_background_index.csv',
+    'outputs/dataset/e001_modelling_index.csv',
+    'outputs/dataset/e001_random_split_manifest.json',
+    'outputs/dataset/e001_geographic_split_manifest.json',
+    'outputs/dataset/e001_dataset_audit.json'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -270,9 +289,22 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2B.5 manifest, acquisition, audit, index, overlap, or privacy validation failed.'
 }
 
+$phase2cCheck = & $pythonExecutable -c 'import csv, json; from collections import Counter; from pathlib import Path; from archaeoai.dataset import BACKGROUND_LABEL, POSITIVE_LABEL, read_dataset_index; from archaeoai.splits import validate_frozen_assignment; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); records=read_dataset_index(root/"outputs/dataset/e001_modelling_index.csv"); background=list(csv.DictReader((root/"outputs/background/e001_background_index.csv").open(encoding="utf-8-sig"))); full=json.loads((root/"outputs/background/e001_background_full_summary.json").read_text()); visual=json.loads((root/"outputs/background/e001_background_pilot40_visual_qa.json").read_text()); audit=json.loads((root/"outputs/dataset/e001_dataset_audit.json").read_text()); random=json.loads((root/"outputs/dataset/e001_random_split_manifest.json").read_text()); geographic=json.loads((root/"outputs/dataset/e001_geographic_split_manifest.json").read_text()); [assert_coordinate_safe_mapping(item) for item in (full,visual,audit,random,geographic)]; [assert_coordinate_safe_mapping(row) for row in background]; assert len(records)==522 and len(background)==261; assert Counter(row.class_label for row in records)==Counter({POSITIVE_LABEL:261,BACKGROUND_LABEL:261}); assert full["counts"]["terrain_passed"]==full["counts"]["representations_passed"]==261 and full["counts"]["terrain_failed"]==0; assert visual["sample_size"]==visual["passed"]==25 and visual["hard_invalid"]==0; assert audit["counts"]["observation_groups"]==254 and audit["counts"]["overlap_components"]==7; assert all(value==0 for key,value in audit["hard_leakage_audit"].items() if isinstance(value,int)); assert audit["provenance_and_geography_audit"]["class_joint_distribution_exactly_matched"] is True; assert random["frozen"] is True and geographic["frozen"] is True; validate_frozen_assignment(records,condition="random",expected_digest=random["assignment_sha256"]); validate_frozen_assignment(records,condition="geographic",expected_digest=geographic["assignment_sha256"]); assert geographic["final_test_groups"]==["BNG_100KM_E3_N2","BNG_100KM_E5_N4"]; print("Phase 2C dataset and split evidence valid")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2C background, dataset, split, leakage, or privacy validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
+}
+$backgroundIndexHeader = Get-Content 'outputs/background/e001_background_index.csv' -TotalCount 1
+$datasetIndexHeader = Get-Content 'outputs/dataset/e001_modelling_index.csv' -TotalCount 1
+if (
+    $backgroundIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center' -or
+    $datasetIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center'
+) {
+    throw 'A tracked Phase 2C index contains a coordinate-bearing field.'
 }
 $trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
@@ -282,5 +314,9 @@ $privateTerrainIgnoreCheck = & git check-ignore 'data/private/e001/terrain/raw/p
 if ($LASTEXITCODE -ne 0 -or -not $privateTerrainIgnoreCheck) {
     throw 'Private E001 terrain must remain ignored by Git.'
 }
+$privateBackgroundIgnoreCheck = & git check-ignore 'data/private/e001/backgrounds/private-sentinel.json'
+if ($LASTEXITCODE -ne 0 -or -not $privateBackgroundIgnoreCheck) {
+    throw 'Private E001 background coordinates and terrain must remain ignored by Git.'
+}
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck."

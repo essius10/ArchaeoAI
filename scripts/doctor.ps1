@@ -85,8 +85,14 @@ Write-Output "Git status: $($gitStatus -join ' | ')"
 
 $gpuCommand = Get-Command nvidia-smi -ErrorAction SilentlyContinue
 if ($null -eq $gpuCommand) {
-    Write-Output 'GPU: nvidia-smi not found (optional during Phase 2B)'
+    Write-Output 'GPU: nvidia-smi not found (optional during Phase 2C)'
 } else {
     $gpuSummary = & $gpuCommand.Source --query-gpu=name,memory.total,driver_version --format=csv,noheader
-    Write-Output "GPU: $gpuSummary (optional during Phase 2B)"
+    Write-Output "GPU: $gpuSummary (optional during Phase 2C)"
+}
+
+$datasetIndexPath = Join-Path $projectRootPath 'outputs\dataset\e001_modelling_index.csv'
+if (Test-Path $datasetIndexPath) {
+    $datasetRows = @(Import-Csv $datasetIndexPath)
+    Write-Output "Phase 2C modelling index: $($datasetRows.Count) coordinate-safe observations"
 }
