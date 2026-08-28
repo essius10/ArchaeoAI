@@ -21,7 +21,8 @@ geographic_group_field = "region_id"
 geographic_holdout_groups = ["EXAMPLE_REGION"]
 
 [parameters]
-tile_size_pixels = 128
+patch_size_m = 128
+target_resolution_m = 1.0
 max_nodata_fraction = 0.2
 """
 
@@ -42,6 +43,8 @@ def test_load_example_configuration() -> None:
     assert config.split.strategies == ("random", "geographic")
     assert config.paths.data_root == root / "data"
     assert config.paths.output_root == root / "outputs" / "E001"
+    assert config.parameters.patch_size_m == 128
+    assert config.parameters.target_resolution_m == 1.0
 
 
 def test_rejects_invalid_split_strategy(tmp_path: Path) -> None:
@@ -71,4 +74,13 @@ def test_rejects_malformed_toml(tmp_path: Path) -> None:
     path = _write_config(tmp_path, "[experiment\nid = 'E001'")
 
     with pytest.raises(ConfigurationError, match="Could not load configuration"):
+        load_experiment_config(path, project_root=tmp_path)
+
+
+def test_rejects_fractional_patch_dimensions(tmp_path: Path) -> None:
+    path = _write_config(
+        tmp_path, VALID_CONFIG.replace("target_resolution_m = 1.0", "target_resolution_m = 3.0")
+    )
+
+    with pytest.raises(ConfigurationError, match="integer number of target pixels"):
         load_experiment_config(path, project_root=tmp_path)

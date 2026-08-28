@@ -34,7 +34,8 @@ class SplitConfig:
 
 @dataclass(frozen=True, slots=True)
 class ExperimentParameters:
-    tile_size_pixels: int
+    patch_size_m: int
+    target_resolution_m: float
     max_nodata_fraction: float
 
 
@@ -180,12 +181,19 @@ def load_experiment_config(
     parameters = _table(document, "parameters")
     _reject_unknown(
         parameters,
-        {"tile_size_pixels", "max_nodata_fraction"},
+        {"patch_size_m", "target_resolution_m", "max_nodata_fraction"},
         table_name="parameters",
     )
-    tile_size_pixels = _integer(parameters, "tile_size_pixels", table_name="parameters")
-    if tile_size_pixels <= 0:
-        raise ConfigurationError("[parameters].tile_size_pixels must be positive")
+    patch_size_m = _integer(parameters, "patch_size_m", table_name="parameters")
+    if patch_size_m <= 0:
+        raise ConfigurationError("[parameters].patch_size_m must be positive")
+    target_resolution_m = _number(parameters, "target_resolution_m", table_name="parameters")
+    if target_resolution_m <= 0:
+        raise ConfigurationError("[parameters].target_resolution_m must be positive")
+    if not (patch_size_m / target_resolution_m).is_integer():
+        raise ConfigurationError(
+            "[parameters].patch_size_m must be an integer number of target pixels"
+        )
     max_nodata_fraction = _number(parameters, "max_nodata_fraction", table_name="parameters")
     if not 0.0 <= max_nodata_fraction <= 1.0:
         raise ConfigurationError("[parameters].max_nodata_fraction must be between 0 and 1")
@@ -196,7 +204,8 @@ def load_experiment_config(
         paths=path_config,
         split=split_config,
         parameters=ExperimentParameters(
-            tile_size_pixels=tile_size_pixels,
+            patch_size_m=patch_size_m,
+            target_resolution_m=target_resolution_m,
             max_nodata_fraction=max_nodata_fraction,
         ),
         source_path=source_path,

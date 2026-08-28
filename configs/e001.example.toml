@@ -17,5 +17,6 @@ geographic_group_field = "example_region_id"
 geographic_holdout_groups = ["EXAMPLE_HOLDOUT_GROUP"]
 
 [parameters]
-tile_size_pixels = 128
+patch_size_m = 128
+target_resolution_m = 1.0
 max_nodata_fraction = 0.20
