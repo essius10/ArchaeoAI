@@ -1,0 +1,24 @@
+{
+  "phase": "2C unlabelled-background pilot40 visual QA",
+  "seed": "E001-phase-2C-background-visual-QA-v1",
+  "sample_size": 25,
+  "geographic_groups": 23,
+  "survey_years": 8,
+  "provenance_ids": 8,
+  "reviewed": 25,
+  "pending": 0,
+  "passed": 25,
+  "hard_invalid": 0,
+  "observation_counts": {
+    "field_boundary_or_drainage": 8,
+    "forestry_pattern": 9,
+    "hard_anthropogenic_relief": 7,
+    "technical_ok": 25,
+    "track_or_road": 10
+  },
+  "policy": {
+    "technical_and_confound_review_only": true,
+    "archaeology_resemblance_not_a_rejection_reason": true,
+    "private_visuals_ignored": true
+  }
+}
