@@ -1,0 +1,106 @@
+{
+  "phase": "2C unlabelled-background full",
+  "class_label": "unlabelled_background",
+  "algorithm_version": "e001-background-v1",
+  "processing_version": "e001-terrain-v1",
+  "started_at": "2026-08-28T21:27:55.049362+00:00",
+  "finished_at": "2026-08-28T21:47:04.648509+00:00",
+  "elapsed_seconds": 1149.599,
+  "policy": {
+    "backgrounds_per_positive": 1,
+    "positive_exclusion_buffer_m": 500.0,
+    "known_archaeology_exclusion_buffer_m": 250.0,
+    "minimum_sample_separation_m": 256.0,
+    "sampling_annulus_m": [
+      1000.0,
+      5000.0
+    ],
+    "same_geographic_group_required": true,
+    "exact_provenance_match_required": true
+  },
+  "known_archaeology_exclusion": {
+    "source": "Historic England NHLE Scheduled Monuments",
+    "service": "https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer/6/query",
+    "access_date": "2026-08-29",
+    "interpretation": "Excludes known scheduled monuments only; it does not establish archaeology-free terrain."
+  },
+  "counts": {
+    "requested": 261,
+    "selected": 261,
+    "terrain_passed": 261,
+    "terrain_failed": 0,
+    "representations_passed": 261,
+    "new_downloads": 221,
+    "cache_verified": 40,
+    "processed_regenerated": 0,
+    "candidate_attempts_cumulative": 573,
+    "request_retries": 0
+  },
+  "candidate_rejections_cumulative": {
+    "known_archaeology_exclusion": 46,
+    "missing_terrain": 40,
+    "outside_geographic_group": 64,
+    "outside_provenance": 156,
+    "positive_exclusion": 6
+  },
+  "terrain_failures": {},
+  "geographic_groups": {
+    "BNG_100KM_E1_N0": 8,
+    "BNG_100KM_E2_N0": 14,
+    "BNG_100KM_E2_N1": 14,
+    "BNG_100KM_E3_N0": 9,
+    "BNG_100KM_E3_N1": 15,
+    "BNG_100KM_E3_N2": 16,
+    "BNG_100KM_E3_N3": 16,
+    "BNG_100KM_E3_N4": 9,
+    "BNG_100KM_E3_N5": 15,
+    "BNG_100KM_E4_N0": 11,
+    "BNG_100KM_E4_N1": 11,
+    "BNG_100KM_E4_N2": 14,
+    "BNG_100KM_E4_N3": 12,
+    "BNG_100KM_E4_N4": 11,
+    "BNG_100KM_E4_N5": 15,
+    "BNG_100KM_E5_N0": 4,
+    "BNG_100KM_E5_N1": 12,
+    "BNG_100KM_E5_N2": 13,
+    "BNG_100KM_E5_N3": 10,
+    "BNG_100KM_E5_N4": 15,
+    "BNG_100KM_E6_N1": 5,
+    "BNG_100KM_E6_N2": 9,
+    "BNG_100KM_E6_N3": 3
+  },
+  "terrain_provenance_ids": {
+    "EAP-4f02812edece": 2,
+    "EAP-71ad6a50942e": 59,
+    "EAP-8e32eccbc87e": 11,
+    "EAP-a800a13742ee": 10,
+    "EAP-c590a5cb0139": 75,
+    "EAP-d3a871d4f09e": 38,
+    "EAP-d85b0f0821f9": 65,
+    "EAP-fa2ffbdc01b2": 1
+  },
+  "survey_years": {
+    "2009": 1,
+    "2016": 2,
+    "2017": 11,
+    "2018": 65,
+    "2019": 38,
+    "2020": 75,
+    "2021": 59,
+    "2022": 10
+  },
+  "source_resolutions_m": {
+    "1.0": 261
+  },
+  "inventory_sha256": "22697dccd12e18f6830ad327f48a83261483671d2e3f2d18185049fcfc8e0691",
+  "privacy": {
+    "coordinates_tracked": false,
+    "sampling_geometry_tracked": false,
+    "private_state_ignored": true
+  },
+  "scope": {
+    "model_trained": false,
+    "metrics_computed": false,
+    "split_frozen": false
+  }
+}
