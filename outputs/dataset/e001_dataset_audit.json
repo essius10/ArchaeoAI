@@ -15,6 +15,7 @@
     "geographic_assignment_mismatches": 0,
     "random_cross_partition_window_overlaps": 0,
     "geographic_cross_partition_window_overlaps": 0,
+    "geographic_cross_partition_1km_buffer_violations": 0,
     "random_group_integrity": "pass",
     "geographic_group_integrity": "pass",
     "overlap_component_integrity": "pass",

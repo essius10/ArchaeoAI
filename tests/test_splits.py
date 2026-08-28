@@ -13,6 +13,7 @@ from archaeoai.splits import (
     assign_geographic,
     assign_group_aware_random,
     assignment_digest,
+    cross_partition_distance_violations,
     cross_partition_window_overlaps,
     terrain_windows_overlap,
     validate_frozen_assignment,
@@ -158,3 +159,5 @@ def test_cross_split_window_overlap_is_detected_without_serializing_coordinates(
         ("C", "train", (1000.0, 1000.0)),
     ]
     assert cross_partition_window_overlaps(samples, patch_size_m=128) == [("A", "B")]
+    assert cross_partition_distance_violations(samples, minimum_m=128) == [("A", "B")]
+    assert cross_partition_distance_violations(samples, minimum_m=100) == []

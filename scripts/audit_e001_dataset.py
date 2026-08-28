@@ -13,6 +13,7 @@ import numpy as np
 from archaeoai.dataset import DatasetRecord, validate_dataset_index
 from archaeoai.paths import find_project_root
 from archaeoai.splits import (
+    cross_partition_distance_violations,
     cross_partition_window_overlaps,
     validate_frozen_assignment,
     validate_split_integrity,
@@ -164,12 +165,17 @@ def main() -> int:
         geographic_group_id(centres[row.sample_id]) != row.geographic_block_id for row in records
     )
     cross_partition: dict[str, int] = {}
+    geographic_buffer_violations = 0
     for condition in ("random", "geographic"):
         samples = [
             (row.sample_id, getattr(row, f"split_{condition}"), centres[row.sample_id])
             for row in records
         ]
         cross_partition[condition] = len(cross_partition_window_overlaps(samples, patch_size_m=128))
+        if condition == "geographic":
+            geographic_buffer_violations = len(
+                cross_partition_distance_violations(samples, minimum_m=1000)
+            )
     class_joint_distributions = {}
     for label in ("positive_bowl_barrow", "unlabelled_background"):
         class_joint_distributions[label] = dict(
@@ -209,6 +215,7 @@ def main() -> int:
             "geographic_assignment_mismatches": geographic_mismatches,
             "random_cross_partition_window_overlaps": cross_partition["random"],
             "geographic_cross_partition_window_overlaps": cross_partition["geographic"],
+            "geographic_cross_partition_1km_buffer_violations": geographic_buffer_violations,
             "random_group_integrity": "pass",
             "geographic_group_integrity": "pass",
             "overlap_component_integrity": "pass",

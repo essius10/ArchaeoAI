@@ -81,6 +81,10 @@ def test_geographic_final_test_is_the_predeclared_complete_block_pair() -> None:
     }
     assert sum(row.class_label == POSITIVE_LABEL for row in final_rows) == 31
     assert sum(row.class_label == BACKGROUND_LABEL for row in final_rows) == 31
+    manifest = json.loads(
+        (ROOT / "outputs/dataset/e001_geographic_split_manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["minimum_cross_partition_centre_buffer_m"] == 1000
 
 
 def test_tracked_dataset_uses_no_false_negative_terminology() -> None:

@@ -174,6 +174,10 @@ examples. `BNG_100KM_E3_N5` was not selected because it is a single, smaller tes
 `BNG_100KM_E4_N5` was not selected because of concentrated provenance; `BNG_100KM_E2_N0` was
 reserved for development because it contains 14 positives across five provenance IDs.
 
+The coordinate-private freeze audit also enforces a 1 km minimum centre-to-centre buffer across all
+geographic partitions. It found zero violations. Only that threshold and aggregate result are
+tracked; exact nearest-neighbour distances remain private.
+
 A train/development/final-test structure is justified at this sample size: development permits
 threshold or representation decisions without viewing the final geographic result, while the final
 test still has 31 positives across two regions. The final assignment digest is frozen in the
@@ -188,6 +192,7 @@ The coordinate-private audit found:
 - zero background/background 256 m spacing violations;
 - zero geographic assignment mismatches;
 - zero cross-partition terrain-window overlaps in either condition;
+- zero 1 km cross-partition centre-buffer violations in the geographic condition;
 - all 254 observation groups and all seven overlap components intact;
 - exact frozen-assignment digest matches for both conditions.
 

@@ -165,3 +165,19 @@ def cross_partition_window_overlaps(
             ):
                 collisions.append((first_id, second_id))
     return collisions
+
+
+def cross_partition_distance_violations(
+    samples: list[tuple[str, str, tuple[float, float]]], *, minimum_m: float
+) -> list[tuple[str, str]]:
+    violations = []
+    for index, (first_id, first_partition, first_centre) in enumerate(samples):
+        for second_id, second_partition, second_centre in samples[index + 1 :]:
+            if first_partition != second_partition:
+                distance = (
+                    (first_centre[0] - second_centre[0]) ** 2
+                    + (first_centre[1] - second_centre[1]) ** 2
+                ) ** 0.5
+                if distance < minimum_m:
+                    violations.append((first_id, second_id))
+    return violations

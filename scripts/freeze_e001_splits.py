@@ -180,6 +180,7 @@ def main() -> int:
         "assignment_sha256": geographic_digest,
         "partitions": _partition_summary(records, "split_geographic"),
         "final_test_block_envelope_separation_km": 141.421,
+        "minimum_cross_partition_centre_buffer_m": 1000,
         "candidate_designs_considered_without_modelling": [
             {
                 "groups": ["BNG_100KM_E3_N2", "BNG_100KM_E5_N4"],
