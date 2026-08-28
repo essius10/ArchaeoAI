@@ -32,7 +32,7 @@ from archaeoai.terrain.full_dataset import (
     validate_representations,
     write_processed_archive,
 )
-from archaeoai.terrain.index import TerrainIndexRecord, write_index
+from archaeoai.terrain.index import TerrainIndexRecord, overlap_components, write_index
 from archaeoai.terrain.patches import patch_bounds, required_grid_tiles
 from archaeoai.terrain.privacy import (
     assert_coordinate_safe_mapping,
@@ -397,7 +397,7 @@ def _process_site(
     )
 
 
-def _index_record(result: SiteResult) -> TerrainIndexRecord:
+def _index_record(result: SiteResult, *, overlap_group_id: str) -> TerrainIndexRecord:
     passed = result.status == "pass"
     return TerrainIndexRecord(
         sample_id=result.sample_id,
@@ -417,6 +417,7 @@ def _index_record(result: SiteResult) -> TerrainIndexRecord:
         patch_sha256=result.patch_sha256,
         processed_sha256=result.processed_sha256,
         cross_cell=result.cross_cell,
+        overlap_group_id=overlap_group_id,
     )
 
 
@@ -526,7 +527,14 @@ def main() -> int:
     results.sort(key=lambda row: row.sample_id)
     finished_at = datetime.now(UTC)
     elapsed_seconds = time.perf_counter() - started_clock
-    index_records = [_index_record(result) for result in results]
+    overlap_mapping, _ = overlap_components(tuple(locations.values()), patch_size_m=128)
+    index_records = [
+        _index_record(
+            result,
+            overlap_group_id=overlap_mapping.get(result.nhle_list_entry, ""),
+        )
+        for result in results
+    ]
     output_root = root / "outputs/terrain"
     write_index(index_records, output_root / "e001_terrain_index.csv")
     failures = [result for result in results if result.status != "pass"]

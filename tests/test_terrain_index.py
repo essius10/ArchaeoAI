@@ -1,4 +1,5 @@
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 
@@ -6,7 +7,9 @@ from archaeoai.terrain.acquisition import PrivateSiteLocation
 from archaeoai.terrain.index import (
     TerrainIndexRecord,
     cross_group_patch_overlaps,
+    overlap_components,
     validate_index,
+    write_index,
 )
 
 
@@ -29,6 +32,7 @@ def _record(sample_id: str = "S1", list_entry: int = 1) -> TerrainIndexRecord:
         patch_sha256=f"{list_entry:064x}",
         processed_sha256="c" * 64,
         cross_cell=False,
+        overlap_group_id="",
     )
 
 
@@ -46,6 +50,24 @@ def _location(list_entry: int, x: float, group: str) -> PrivateSiteLocation:
 
 def test_valid_coordinate_safe_index() -> None:
     validate_index([_record(), _record("S2", 2)])
+
+
+def test_safe_index_serialization_excludes_coordinate_fields(tmp_path: Path) -> None:
+    destination = tmp_path / "index.csv"
+
+    write_index([_record(), _record("S2", 2)], destination)
+
+    header = destination.read_text(encoding="utf-8").splitlines()[0].casefold()
+    assert not {
+        "easting",
+        "northing",
+        "ngr",
+        "latitude",
+        "longitude",
+        "geometry",
+        "bounds",
+    }.intersection(header.split(","))
+    assert "overlap_group_id" in header
 
 
 def test_duplicate_samples_and_sources_are_rejected() -> None:
@@ -90,3 +112,34 @@ def test_cross_group_overlap_detection_uses_private_locations() -> None:
     )
 
     assert cross_group_patch_overlaps(locations, patch_size_m=128) == ((1, 2),)
+
+
+def test_overlap_components_are_stable_and_make_split_constraints_explicit() -> None:
+    locations = (
+        _location(1, 1000, "G1"),
+        _location(2, 1050, "G1"),
+        _location(3, 2000, "G2"),
+    )
+
+    mapping, pairs = overlap_components(locations, patch_size_m=128)
+
+    assert pairs == ((1, 2),)
+    assert mapping[1] == mapping[2]
+    assert 3 not in mapping
+
+
+def test_overlap_index_group_must_have_multiple_same_region_members() -> None:
+    with pytest.raises(ValueError, match="fewer than two"):
+        validate_index([replace(_record(), overlap_group_id="E001O-test")])
+
+    with pytest.raises(ValueError, match="crosses provisional"):
+        validate_index(
+            [
+                replace(_record(), overlap_group_id="E001O-test"),
+                replace(
+                    _record("S2", 2),
+                    geographic_group_id="G2",
+                    overlap_group_id="E001O-test",
+                ),
+            ]
+        )

@@ -69,6 +69,34 @@ def test_loads_valid_acquired_manifest(tmp_path: Path) -> None:
     assert manifest.file.checksum_scope == "single synthetic file"
 
 
+def test_loads_consistent_optional_dataset_freeze_counts(tmp_path: Path) -> None:
+    content = VALID_ACQUIRED_MANIFEST.replace(
+        'sensitivity = "restricted"',
+        'sensitivity = "restricted"\nrequested_records = 3\nacquired_records = 2\n'
+        'rejected_records = 1\nacquisition_version = "test-acquire-v1"\n'
+        'processing_version = "test-process-v1"',
+    )
+
+    manifest = load_dataset_manifest(_write_manifest(tmp_path, content), project_root=tmp_path)
+
+    assert manifest.requested_records == 3
+    assert manifest.acquired_records == 2
+    assert manifest.rejected_records == 1
+    assert manifest.acquisition_version == "test-acquire-v1"
+    assert manifest.processing_version == "test-process-v1"
+
+
+def test_rejects_inconsistent_dataset_freeze_counts(tmp_path: Path) -> None:
+    content = VALID_ACQUIRED_MANIFEST.replace(
+        'sensitivity = "restricted"',
+        'sensitivity = "restricted"\nrequested_records = 3\nacquired_records = 3\n'
+        "rejected_records = 1",
+    )
+
+    with pytest.raises(ManifestError, match="must equal requested"):
+        load_dataset_manifest(_write_manifest(tmp_path, content), project_root=tmp_path)
+
+
 def test_rejects_invalid_checksum_syntax(tmp_path: Path) -> None:
     content = VALID_ACQUIRED_MANIFEST.replace("a" * 64, "not-a-sha256")
 

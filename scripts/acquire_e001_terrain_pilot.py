@@ -178,6 +178,7 @@ def main() -> int:
                     patch_sha256=patch_digest,
                     processed_sha256=hashlib.sha256(processed_path.read_bytes()).hexdigest(),
                     cross_cell=len(tiles) > 1,
+                    overlap_group_id="",
                 )
             )
             safe_rows.append(

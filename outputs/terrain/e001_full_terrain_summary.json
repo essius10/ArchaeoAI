@@ -1,0 +1,128 @@
+{
+  "phase": "2B.5 full positive terrain acquisition",
+  "processing_version": "e001-terrain-v1",
+  "acquisition_version": "e001-wcs-v1",
+  "source_dataset_id": "13787b9a-26a4-4775-8523-806d13af58fc",
+  "started_at": "2026-08-28T07:09:35.105972+00:00",
+  "finished_at": "2026-08-28T07:12:46.024627+00:00",
+  "elapsed_seconds": 190.919,
+  "workers": 2,
+  "counts": {
+    "accepted_labels": 261,
+    "pilot_present_before_run": 5,
+    "remaining_before_run": 256,
+    "terrain_attempted": 261,
+    "new_wcs_downloads": 256,
+    "cache_verified": 5,
+    "processed_regenerated": 0,
+    "terrain_passed": 261,
+    "terrain_failed": 0,
+    "representations_passed": 261,
+    "request_attempts": 256,
+    "request_retries": 0,
+    "request_failures": 0
+  },
+  "failure_reasons": {},
+  "raw_qa": {
+    "nodata_fraction": {
+      "count": 261,
+      "minimum": 0.0,
+      "median": 0.0,
+      "maximum": 0.0
+    },
+    "minimum_elevation_m": {
+      "count": 261,
+      "minimum": -0.004999999888241291,
+      "median": 155.87600708007812,
+      "maximum": 478.87200927734375
+    },
+    "maximum_elevation_m": {
+      "count": 261,
+      "minimum": 2.003999948501587,
+      "median": 166.28799438476562,
+      "maximum": 485.52801513671875
+    }
+  },
+  "cross_cell": {
+    "total": 8,
+    "passed": 8,
+    "failed": 0
+  },
+  "integrity": {
+    "unique_sample_ids": 261,
+    "unique_source_ids": 261,
+    "duplicate_exact_patch_digests": 0,
+    "all_four_representations_for_passed": true
+  },
+  "geographic_groups": {
+    "BNG_100KM_E1_N0": 8,
+    "BNG_100KM_E2_N0": 14,
+    "BNG_100KM_E2_N1": 14,
+    "BNG_100KM_E3_N0": 9,
+    "BNG_100KM_E3_N1": 15,
+    "BNG_100KM_E3_N2": 16,
+    "BNG_100KM_E3_N3": 16,
+    "BNG_100KM_E3_N4": 9,
+    "BNG_100KM_E3_N5": 15,
+    "BNG_100KM_E4_N0": 11,
+    "BNG_100KM_E4_N1": 11,
+    "BNG_100KM_E4_N2": 14,
+    "BNG_100KM_E4_N3": 12,
+    "BNG_100KM_E4_N4": 11,
+    "BNG_100KM_E4_N5": 15,
+    "BNG_100KM_E5_N0": 4,
+    "BNG_100KM_E5_N1": 12,
+    "BNG_100KM_E5_N2": 13,
+    "BNG_100KM_E5_N3": 10,
+    "BNG_100KM_E5_N4": 15,
+    "BNG_100KM_E6_N1": 5,
+    "BNG_100KM_E6_N2": 9,
+    "BNG_100KM_E6_N3": 3
+  },
+  "survey_years": {
+    "2009": 1,
+    "2016": 2,
+    "2017": 11,
+    "2018": 65,
+    "2019": 38,
+    "2020": 75,
+    "2021": 59,
+    "2022": 10
+  },
+  "survey_programmes": {
+    "EA Composite source survey": 3,
+    "National LIDAR Programme": 258
+  },
+  "terrain_provenance_ids": {
+    "EAP-4f02812edece": 2,
+    "EAP-71ad6a50942e": 59,
+    "EAP-8e32eccbc87e": 11,
+    "EAP-a800a13742ee": 10,
+    "EAP-c590a5cb0139": 75,
+    "EAP-d3a871d4f09e": 38,
+    "EAP-d85b0f0821f9": 65,
+    "EAP-fa2ffbdc01b2": 1
+  },
+  "source_resolutions_m": {
+    "1.0": 261
+  },
+  "inventory_sha256": "d8e04d3aa583d4c2f1ffedd7cc83fa293865ac606e2b427b8b12354b899f0eea",
+  "storage_bytes_at_run_end": {
+    "raw_geotiff": 17214255,
+    "processed_npz": 58522332,
+    "private_qa": 233482,
+    "location_cache": 70319
+  },
+  "privacy": {
+    "coordinate_rows_tracked": false,
+    "georeferenced_rasters_tracked": false,
+    "private_state_git_ignored": true
+  },
+  "gates": {
+    "cpython_312_reproduced": false,
+    "independent_human_review": "outstanding",
+    "background_generated": false,
+    "split_finalized": false,
+    "model_trained": false
+  }
+}

@@ -22,6 +22,7 @@ $required = @(
     'docs/e001-feasibility-audit.md',
     'docs/e001-phase-2a5-curation-gate.md',
     'docs/e001-phase-2b-terrain.md',
+    'docs/e001-phase-2b5-full-terrain.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -33,12 +34,15 @@ $required = @(
     'docs/claims-register.md',
     'research-log/README.md',
     'research-log/2026-08-28-phase-2b.md',
+    'research-log/2026-08-29-phase-2b5.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
     'scripts/curate_e001_labels.py',
     'scripts/reconstruct_e001_sites.py',
     'scripts/acquire_e001_terrain_pilot.py',
+    'scripts/acquire_e001_full_terrain.py',
+    'scripts/audit_e001_full_terrain.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -47,6 +51,7 @@ $required = @(
     'src/archaeoai/curation.py',
     'src/archaeoai/terrain_metadata.py',
     'src/archaeoai/terrain/acquisition.py',
+    'src/archaeoai/terrain/audit.py',
     'src/archaeoai/terrain/background.py',
     'src/archaeoai/terrain/index.py',
     'src/archaeoai/terrain/patches.py',
@@ -54,6 +59,7 @@ $required = @(
     'src/archaeoai/terrain/qa.py',
     'src/archaeoai/terrain/raster.py',
     'src/archaeoai/terrain/representations.py',
+    'src/archaeoai/terrain/full_dataset.py',
     'src/archaeoai/terrain/validation.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
@@ -65,6 +71,8 @@ $required = @(
     'tests/test_terrain_metadata.py',
     'tests/test_background_policy.py',
     'tests/test_terrain_acquisition.py',
+    'tests/test_full_terrain_dataset.py',
+    'tests/test_terrain_audit.py',
     'tests/test_terrain_index.py',
     'tests/test_terrain_patches.py',
     'tests/test_terrain_qa.py',
@@ -80,7 +88,11 @@ $required = @(
     'outputs/feasibility/e001_second_review_queue.csv',
     'outputs/terrain/e001_pilot_summary.json',
     'outputs/terrain/e001_terrain_index.csv',
-    'outputs/terrain/e001_acquisition_estimate.json'
+    'outputs/terrain/e001_acquisition_estimate.json',
+    'outputs/terrain/e001_full_terrain_summary.json',
+    'outputs/terrain/e001_full_terrain_audit.json',
+    'outputs/terrain/e001_full_terrain_failures.csv',
+    'outputs/terrain/e001_overlap_decisions.csv'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -131,10 +143,14 @@ $terrainManifest = Get-Content -Raw 'data/manifests/e001-ea-lidar-dtm.toml'
 if (
     $terrainManifest -notmatch 'status\s*=\s*"verified"' -or
     $terrainManifest -notmatch 'sensitivity\s*=\s*"sensitive"' -or
+    $terrainManifest -notmatch 'requested_records\s*=\s*261' -or
+    $terrainManifest -notmatch 'acquired_records\s*=\s*261' -or
+    $terrainManifest -notmatch 'rejected_records\s*=\s*0' -or
+    $terrainManifest -notmatch 'processing_version\s*=\s*"e001-terrain-v1"' -or
     $terrainManifest -notmatch 'access_date\s*=\s*2026-08-28' -or
     $terrainManifest -notmatch 'sha256\s*=\s*"[0-9a-f]{64}"'
 ) {
-    throw 'The real E001 terrain manifest must describe only the verified sensitive pilot.'
+    throw 'The real E001 terrain manifest must describe the verified sensitive 261-site freeze.'
 }
 
 $auditSummary = Get-Content -Raw 'outputs/feasibility/bowl_barrow_summary.json' | ConvertFrom-Json
@@ -249,9 +265,9 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 1 configuration or manifest validation failed.'
 }
 
-$terrainCheck = & $pythonExecutable -c 'import csv, json; from pathlib import Path; from archaeoai.data.manifest import load_dataset_manifest; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); manifest=load_dataset_manifest(root/"data/manifests/e001-ea-lidar-dtm.toml"); summary=json.loads((root/"outputs/terrain/e001_pilot_summary.json").read_text()); estimate=json.loads((root/"outputs/terrain/e001_acquisition_estimate.json").read_text()); rows=list(csv.DictReader((root/"outputs/terrain/e001_terrain_index.csv").open(encoding="utf-8-sig"))); assert_coordinate_safe_mapping(summary); assert_coordinate_safe_mapping(estimate); assert manifest.status=="verified" and manifest.sensitivity=="sensitive"; assert summary["attempted"]==summary["passed"]==5 and summary["rejected"]==0; assert len(rows)==5 and all(row["qa_status"]=="pass" for row in rows); assert estimate["decision"]=="GO FOR FULL TERRAIN DATASET" and estimate["accepted_sites"]==261 and not estimate["scope"]["full_download_started"]; print("Phase 2B pilot evidence valid")'
+$terrainCheck = & $pythonExecutable -c 'import csv, json; from collections import Counter; from pathlib import Path; from archaeoai.data.manifest import load_dataset_manifest; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); manifest=load_dataset_manifest(root/"data/manifests/e001-ea-lidar-dtm.toml"); pilot=json.loads((root/"outputs/terrain/e001_pilot_summary.json").read_text()); full=json.loads((root/"outputs/terrain/e001_full_terrain_summary.json").read_text()); audit=json.loads((root/"outputs/terrain/e001_full_terrain_audit.json").read_text()); rows=list(csv.DictReader((root/"outputs/terrain/e001_terrain_index.csv").open(encoding="utf-8-sig"))); failures=list(csv.DictReader((root/"outputs/terrain/e001_full_terrain_failures.csv").open(encoding="utf-8-sig"))); overlaps=list(csv.DictReader((root/"outputs/terrain/e001_overlap_decisions.csv").open(encoding="utf-8-sig"))); [assert_coordinate_safe_mapping(item) for item in (pilot, full, audit)]; [assert_coordinate_safe_mapping(row) for row in rows]; assert manifest.status=="verified" and manifest.sensitivity=="sensitive" and manifest.requested_records==manifest.acquired_records==261 and manifest.rejected_records==0; assert pilot["attempted"]==pilot["passed"]==5 and pilot["rejected"]==0; assert full["counts"]["terrain_passed"]==full["counts"]["representations_passed"]==261 and full["counts"]["terrain_failed"]==full["counts"]["request_retries"]==0; assert audit["cache_revalidation"]["passed"]==audit["cache_revalidation"]["raw_files_present"]==audit["cache_revalidation"]["processed_archives_present"]==261 and audit["cache_revalidation"]["partial_artifacts"]==0; assert audit["visual_qa"]["reviewed"]==audit["visual_qa"]["status_counts"]["pass"]==25 and audit["visual_qa"]["pending"]==audit["visual_qa"]["technical_failures"]==audit["visual_qa"]["manual_review_required"]==0; assert audit["cross_cell"]["patches_passed"]==audit["cross_cell"]["correct_dimensions"]==audit["cross_cell"]["correct_transforms"]==audit["cross_cell"]["representations_passed"]==audit["cross_cell"]["automatic_boundary_checks_passed"]==8 and audit["cross_cell"]["duplicate_rows_or_columns"]==0; assert len(rows)==261 and len(failures)==0 and len(overlaps)==7; assert len({row["sample_id"] for row in rows})==len({row["nhle_list_entry"] for row in rows})==261; assert all(row["qa_status"]==row["raw_qa_status"]==row["representation_qa_status"]=="pass" for row in rows); assert sum(row["cross_cell"].casefold()=="true" for row in rows)==8; components=Counter(row["overlap_group_id"] for row in rows if row["overlap_group_id"]); assert len(components)==7 and set(components.values())=={2}; assert all(row["decision"]=="retain_grouped" for row in overlaps); print("Phase 2B.5 full terrain evidence valid")'
 if ($LASTEXITCODE -ne 0) {
-    throw 'Phase 2B manifest, pilot, index, estimate, or privacy validation failed.'
+    throw 'Phase 2B.5 manifest, acquisition, audit, index, overlap, or privacy validation failed.'
 }
 
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1

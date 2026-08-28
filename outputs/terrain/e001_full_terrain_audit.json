@@ -1,0 +1,99 @@
+{
+  "phase": "2B.5 full positive terrain freeze audit",
+  "cache_revalidation": {
+    "expected": 261,
+    "raw_files_present": 261,
+    "processed_archives_present": 261,
+    "partial_artifacts": 0,
+    "passed": 261,
+    "failed": 0,
+    "raw_checksum_matches": 261,
+    "patch_checksum_matches": 261,
+    "processed_checksum_matches": 261,
+    "four_representations_complete": 261
+  },
+  "cross_cell": {
+    "patches": 8,
+    "patches_passed": 8,
+    "correct_dimensions": 8,
+    "correct_transforms": 8,
+    "representations_passed": 8,
+    "internal_boundaries_checked": 8,
+    "automatic_boundary_checks_passed": 8,
+    "duplicate_rows_or_columns": 0,
+    "maximum_median_boundary_step_m": 0.1840057373046875,
+    "maximum_boundary_step_percentile": 78.94931102362204,
+    "visual_review_included": 8
+  },
+  "overlap_review": {
+    "pairs": 7,
+    "components": 7,
+    "retain_grouped": 7,
+    "merge_or_drop_candidate": 0,
+    "manual_review_required": 0,
+    "all_within_one_provisional_group": true,
+    "split_constraint_recorded_in_index": true
+  },
+  "visual_qa": {
+    "sample_size": 25,
+    "geographic_groups": 17,
+    "survey_years": 8,
+    "provenance_ids": 8,
+    "cross_cell_patches": 8,
+    "overlap_components": 7,
+    "description_diameter_extremes_included": 6,
+    "reviewed": 25,
+    "pending": 0,
+    "technical_failures": 0,
+    "manual_review_required": 0,
+    "status_counts": {
+      "pass": 25
+    },
+    "observation_counts": {
+      "building_or_structure": 1,
+      "extreme_local_object": 12,
+      "forestry_striping": 5,
+      "modern_linear_features": 11,
+      "road_or_track": 4,
+      "smooth_low_relief": 1,
+      "steep_terrain": 4,
+      "strong_local_contrast": 5,
+      "terrain_striping": 2,
+      "unusual_local_objects": 1
+    },
+    "cross_cell_seam_counts": {
+      "not_applicable": 17,
+      "not_observed": 8
+    }
+  },
+  "storage_bytes": {
+    "raw_terrain": 17214255,
+    "processed_terrain": 58522332,
+    "private_qa_images": 2518093,
+    "controlled_metadata_caches": 1297578,
+    "total_controlled_dataset": 79564680
+  },
+  "estimate_comparison": {
+    "raw_estimated_bytes": 17214255,
+    "raw_actual_difference_bytes": 0,
+    "processed_estimated_bytes": 60241097,
+    "processed_actual_difference_bytes": -1718765,
+    "sequential_seconds_estimated": 702,
+    "two_worker_actual_seconds": 190.919
+  },
+  "integrity": {
+    "unique_samples": 261,
+    "unique_sources": 261,
+    "unique_raw_checksums": 261,
+    "unique_patch_checksums": 261,
+    "unique_processed_checksums": 261,
+    "geographic_groups": 23,
+    "provenance_ids": 8
+  },
+  "privacy": {
+    "visual_outputs_private": true,
+    "coordinate_fields_tracked": false,
+    "georeferenced_outputs_tracked": false,
+    "precise_boundary_diagnostics_private": true
+  }
+}

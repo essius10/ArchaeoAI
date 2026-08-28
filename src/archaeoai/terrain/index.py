@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 from dataclasses import asdict, dataclass
+from itertools import combinations
 from pathlib import Path
 
 from archaeoai.terrain.acquisition import PrivateSiteLocation
@@ -30,6 +32,7 @@ class TerrainIndexRecord:
     patch_sha256: str
     processed_sha256: str
     cross_cell: bool
+    overlap_group_id: str
 
 
 INDEX_FIELDS = tuple(TerrainIndexRecord.__dataclass_fields__)
@@ -87,6 +90,15 @@ def validate_index(records: list[TerrainIndexRecord]) -> None:
         groups_by_source.setdefault(record.nhle_list_entry, set()).add(record.geographic_group_id)
     if any(len(groups) != 1 for groups in groups_by_source.values()):
         raise ValueError("one source observation appears in multiple geographic groups")
+    overlap_records: dict[str, list[TerrainIndexRecord]] = {}
+    for record in records:
+        if record.overlap_group_id:
+            overlap_records.setdefault(record.overlap_group_id, []).append(record)
+    for overlap_group_id, members in overlap_records.items():
+        if len(members) < 2:
+            raise ValueError(f"overlap group has fewer than two members: {overlap_group_id}")
+        if len({record.geographic_group_id for record in members}) != 1:
+            raise ValueError("overlap group crosses provisional geographic groups")
 
 
 def write_index(records: list[TerrainIndexRecord], destination: Path) -> None:
@@ -120,3 +132,49 @@ def cross_group_patch_overlaps(
             if overlaps:
                 conflicts.append(tuple(sorted((first.list_entry, second.list_entry))))
     return tuple(sorted(conflicts))
+
+
+def overlap_components(
+    locations: tuple[PrivateSiteLocation, ...], *, patch_size_m: float
+) -> tuple[dict[int, str], tuple[tuple[int, int], ...]]:
+    """Return stable overlap-component IDs and all overlapping source-ID pairs."""
+    parents = {location.list_entry: location.list_entry for location in locations}
+
+    def find(item: int) -> int:
+        while parents[item] != item:
+            parents[item] = parents[parents[item]]
+            item = parents[item]
+        return item
+
+    def union(first: int, second: int) -> None:
+        first_root = find(first)
+        second_root = find(second)
+        if first_root != second_root:
+            parents[max(first_root, second_root)] = min(first_root, second_root)
+
+    pairs: list[tuple[int, int]] = []
+    for first, second in combinations(locations, 2):
+        first_bounds = patch_bounds((first.easting, first.northing), patch_size_m=patch_size_m)
+        second_bounds = patch_bounds((second.easting, second.northing), patch_size_m=patch_size_m)
+        overlaps = (
+            first_bounds.left < second_bounds.right
+            and first_bounds.right > second_bounds.left
+            and first_bounds.bottom < second_bounds.top
+            and first_bounds.top > second_bounds.bottom
+        )
+        if overlaps:
+            pair = tuple(sorted((first.list_entry, second.list_entry)))
+            pairs.append(pair)
+            union(*pair)
+
+    members_by_root: dict[int, list[int]] = {}
+    for list_entry in parents:
+        members_by_root.setdefault(find(list_entry), []).append(list_entry)
+    mapping: dict[int, str] = {}
+    for members in members_by_root.values():
+        if len(members) < 2:
+            continue
+        serialized = ":".join(str(value) for value in sorted(members))
+        component_id = "E001O-" + hashlib.sha256(serialized.encode()).hexdigest()[:12]
+        mapping.update(dict.fromkeys(members, component_id))
+    return mapping, tuple(sorted(pairs))

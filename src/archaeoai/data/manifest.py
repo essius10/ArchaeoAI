@@ -57,6 +57,11 @@ class DatasetManifest:
     description: str
     status: DatasetStatus
     sensitivity: SensitivityClassification
+    requested_records: int | None
+    acquired_records: int | None
+    rejected_records: int | None
+    acquisition_version: str | None
+    processing_version: str | None
     source: SourceMetadata
     spatial: SpatialMetadata
     file: FileMetadata
@@ -117,6 +122,15 @@ def _optional_string(table: dict[str, Any], key: str, *, table_name: str) -> str
     return value.strip()
 
 
+def _optional_count(table: dict[str, Any], key: str, *, table_name: str) -> int | None:
+    value = table.get(key)
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ManifestError(f"[{table_name}].{key} must be a non-negative integer")
+    return value
+
+
 def _optional_https_url(table: dict[str, Any], key: str, *, table_name: str) -> str | None:
     value = _optional_string(table, key, table_name=table_name)
     if value is None:
@@ -148,7 +162,18 @@ def load_dataset_manifest(
     dataset = _table(document, "dataset")
     _reject_unknown(
         dataset,
-        {"id", "name", "description", "status", "sensitivity"},
+        {
+            "id",
+            "name",
+            "description",
+            "status",
+            "sensitivity",
+            "requested_records",
+            "acquired_records",
+            "rejected_records",
+            "acquisition_version",
+            "processing_version",
+        },
         table_name="dataset",
     )
     dataset_id = _string(dataset, "id", table_name="dataset")
@@ -160,6 +185,18 @@ def load_dataset_manifest(
     sensitivity_raw = _string(dataset, "sensitivity", table_name="dataset")
     if sensitivity_raw not in _ALLOWED_SENSITIVITY:
         raise ManifestError(f"Unsupported sensitivity classification: {sensitivity_raw}")
+    requested_records = _optional_count(dataset, "requested_records", table_name="dataset")
+    acquired_records = _optional_count(dataset, "acquired_records", table_name="dataset")
+    rejected_records = _optional_count(dataset, "rejected_records", table_name="dataset")
+    supplied_counts = (requested_records, acquired_records, rejected_records)
+    if any(value is not None for value in supplied_counts):
+        if any(value is None for value in supplied_counts):
+            raise ManifestError("Dataset record counts must be supplied together")
+        assert requested_records is not None
+        assert acquired_records is not None
+        assert rejected_records is not None
+        if acquired_records + rejected_records != requested_records:
+            raise ManifestError("Acquired and rejected record counts must equal requested records")
 
     source = _table(document, "source")
     _reject_unknown(
@@ -202,6 +239,11 @@ def load_dataset_manifest(
         description=_string(dataset, "description", table_name="dataset"),
         status=cast(DatasetStatus, status_raw),
         sensitivity=cast(SensitivityClassification, sensitivity_raw),
+        requested_records=requested_records,
+        acquired_records=acquired_records,
+        rejected_records=rejected_records,
+        acquisition_version=_optional_string(dataset, "acquisition_version", table_name="dataset"),
+        processing_version=_optional_string(dataset, "processing_version", table_name="dataset"),
         source=SourceMetadata(
             provider=_string(source, "provider", table_name="source"),
             url=source_url,

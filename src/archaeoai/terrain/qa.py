@@ -17,6 +17,13 @@ QA_ORDER = (
     "slope_degrees",
     "local_relief_r16m",
 )
+FULL_QA_ORDER = (
+    "elevation",
+    "elevation_normalized",
+    "slope_degrees",
+    "hillshade_315_45",
+    "local_relief_r16m",
+)
 
 
 def _scale_byte(values: np.ndarray) -> np.ndarray:
@@ -50,6 +57,26 @@ def qa_mosaic(representations: dict[str, np.ndarray], *, gutter: int = 2) -> np.
     return mosaic
 
 
+def qa_strip(layers: dict[str, np.ndarray], *, gutter: int = 2) -> np.ndarray:
+    """Return raw and four frozen views in the documented left-to-right order."""
+    missing = set(FULL_QA_ORDER) - set(layers)
+    if missing:
+        raise ValueError(f"missing full QA layers: {sorted(missing)}")
+    shapes = {layers[name].shape for name in FULL_QA_ORDER}
+    if len(shapes) != 1:
+        raise ValueError("full QA layers must have matching dimensions")
+    height, width = next(iter(shapes))
+    strip = np.full(
+        (height, len(FULL_QA_ORDER) * width + (len(FULL_QA_ORDER) - 1) * gutter),
+        255,
+        dtype=np.uint8,
+    )
+    for index, name in enumerate(FULL_QA_ORDER):
+        column = index * (width + gutter)
+        strip[:, column : column + width] = _scale_byte(layers[name])
+    return strip
+
+
 def write_private_qa_png(
     representations: dict[str, np.ndarray], *, destination: Path, project_root: Path
 ) -> Path:
@@ -69,4 +96,26 @@ def write_private_qa_png(
             dtype="uint8",
         ) as dataset:
             dataset.write(mosaic, 1)
+    return output
+
+
+def write_private_qa_strip(
+    layers: dict[str, np.ndarray], *, destination: Path, project_root: Path
+) -> Path:
+    output = ensure_private_output(project_root, destination)
+    verify_git_ignored(project_root, output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    strip = qa_strip(layers)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", NotGeoreferencedWarning)
+        with rasterio.open(
+            output,
+            "w",
+            driver="PNG",
+            width=strip.shape[1],
+            height=strip.shape[0],
+            count=1,
+            dtype="uint8",
+        ) as dataset:
+            dataset.write(strip, 1)
     return output
