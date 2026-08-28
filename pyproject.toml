@@ -12,6 +12,7 @@ dependencies = [
     "numpy>=2.5,<3",
     "pyproj>=3.7,<4",
     "rasterio>=1.5,<2",
+    "scikit-learn>=1.9,<2",
 ]
 
 [project.optional-dependencies]
