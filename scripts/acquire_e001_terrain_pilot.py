@@ -43,6 +43,11 @@ PROCESSING_VERSION = "e001-terrain-v1"
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--count", type=int, choices=range(1, 6), default=5)
+    parser.add_argument(
+        "--refresh",
+        action="store_true",
+        help="redownload the same bounded pilot windows for acquisition timing",
+    )
     return parser.parse_args()
 
 
@@ -112,7 +117,8 @@ def main() -> int:
             metadata_qa = fetch_terrain_qa((location.easting, location.northing), patch_size_m=128)
             if metadata_qa.coverage_status != "pass" or metadata_qa.provenance_status != "pass":
                 raise RuntimeError("current EA metadata gate did not pass")
-            if raw_path.exists():
+            existing_download = raw_path.exists()
+            if existing_download and not args.refresh:
                 raw_sha256 = sha256_file(raw_path)
                 raw_bytes = raw_path.stat().st_size
                 acquisition_action = "reused_validated_private_download"
@@ -122,7 +128,7 @@ def main() -> int:
                     destination=raw_path,
                     project_root=root,
                 )
-                acquisition_action = "downloaded"
+                acquisition_action = "refreshed_download" if existing_download else "downloaded"
             patch = extract_patch(
                 [raw_path],
                 centre=(location.easting, location.northing),
