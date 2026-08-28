@@ -2,10 +2,11 @@
 
 ## Current gate (29 August 2026)
 
-Phase 2B.5 acquired and privately froze all 261 approved positive-terrain patches. The independent
-cache audit and 25-site visual sample passed, including all eight cross-cell cases. The seven
-overlap components are explicitly constrained to remain within one future partition. Background
-sampling, split finalization, and all modelling remain blocked pending explicit approval.
+Phase 2C froze 261 approved positive-terrain and 261 matched unlabelled-background patches. Both the
+group-aware random condition and the complete-block geographic condition now contain 216/14/31
+examples per class in train/development/final test. All seven overlap components remain intact and
+the two final-test block assignments are hash-guarded. Modelling remains blocked pending explicit
+Phase 2D approval.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
@@ -27,7 +28,7 @@ Target commitment: 6–8 hours/week during school terms. Increase only during br
 | 2 | Python/geospatial environment and data manifest | 6 h | Clean environment installs; one raw tile checksum recorded. |
 | 3 | CRS and raster QA notebook | 6 h | One DTM renders correctly; units, nodata, bounds, and CRS verified. |
 | 4 | Terrain-derivative specification | 6 h | Equations/parameters justified; 50 visual checks logged. |
-| 5 | Label and negative-sampling specification | 7 h | Exclusion buffers and matching rules fixed before model fitting. |
+| 5 | Label and unlabelled-background sampling specification | 7 h | Exclusion buffers and matching rules fixed before model fitting. |
 | 6 | Spatial split generator + tests | 7 h | No spatial block appears in more than one split. |
 | 7 | Patch generator and dataset card v0.1 | 7 h | Patches reproducible from manifest/seed. |
 | 8 | Descriptive data audit | 6 h | Class counts, region counts, missingness, and acquisition confounds reported. |

@@ -2,9 +2,9 @@
 
 **LiDAR terrain research, spatial evaluation, and reproducible machine learning for archaeology.**
 
-![Research stage](https://img.shields.io/badge/research-Phase%202B.5%20terrain%20frozen-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%202C%20dataset%20frozen-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-99%20passing-2f855a)
+![Tests](https://img.shields.io/badge/tests-119%20passing-2f855a)
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
 > that apparent skill survive when the model is tested somewhere geographically new?**
@@ -24,11 +24,14 @@ the score reflects genuine geographic generalization rather than spatial or surv
 |---|---:|
 | Official Historic England entries reviewed | **360** |
 | Records accepted through all Phase 2A.5 gates | **261** |
-| Viable provisional geographic groups | **12** |
-| Pairwise nonadjacent possible holdouts | **4** |
-| Automated tests | **99 passing** |
+| Occupied coarse geographic groups | **23** |
+| Frozen nonadjacent final-test groups | **2** |
+| Automated tests | **119 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
+| Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
+| Frozen dataset | **522 observations; 254 assignment groups** |
+| Geographic final test | **2 nonadjacent blocks; 31 + 31 observations by class** |
 | Models trained / results reported | **No / none** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
@@ -36,7 +39,7 @@ The 261 records passed official-entry, single-monument, upstanding-relief, desig
 records, not unquestionable ground truth**. A frozen 40-record queue still awaits review by a
 different human reviewer.
 
-[Read the Phase 2B.5 terrain freeze decision →](docs/e001-phase-2b5-full-terrain.md)
+[Read the Phase 2C dataset and split freeze →](docs/e001-phase-2c-background-and-splits.md)
 
 ## Why this matters
 
@@ -56,8 +59,8 @@ the limits of the method—not a failed project.
 
 ## The experiment in 30 seconds
 
-The bounded positive-terrain and representation steps are complete for all 261 accepted records.
-Backgrounds, splits, and models remain planned.
+The positive terrain, matched unlabelled backgrounds, and two evaluation conditions are frozen.
+Model implementation remains unapproved and has not begun.
 
 ```mermaid
 flowchart LR
@@ -71,8 +74,8 @@ flowchart LR
 ```
 
 The planned comparison starts with interpretable baselines before any deep-learning experiment.
-Background terrain must be matched by geography and acquisition provenance; an unrecorded location
-will not be treated automatically as a true archaeological negative.
+Background terrain is matched by geography and acquisition provenance. An unrecorded location is
+called `unlabelled_background`, never a true archaeological negative.
 
 ## Research roadmap
 
@@ -85,9 +88,10 @@ will not be treated automatically as a true archaeological negative.
 | Independent label-reliability review | ⏳ Queued | 40-record blinded review queue |
 | Bounded terrain acquisition | ✅ Complete | 261/261 private positive patches passed QA |
 | Terrain processing and visual QA | ✅ Foundation complete | Deterministic raster QA and four representations |
-| Matched background construction | ⏳ Not started | Must preserve uncertainty and provenance |
+| Matched background construction | ✅ Complete | 261/261; uncertainty-aware 1:1 design |
+| Leakage-resistant split freeze | ✅ Complete | Group-aware random plus two-block geographic test |
 | Baseline models | ⏳ Not started | Interpretable methods first |
-| Random vs geographic evaluation | ⏳ Not started | Final blocks and buffers not frozen |
+| Random vs geographic evaluation | ⏳ Frozen, not run | Final assignments protected by hashes |
 | Results and research interface | ⏳ Not started | No metrics or public predictions exist |
 
 ## What exists today
@@ -102,13 +106,18 @@ will not be treated automatically as a true archaeological negative.
 - Deterministic 128 m raster extraction, 5 km grid discovery, cross-tile mosaics, and reason-coded QA.
 - Four tested terrain views: normalized elevation, slope, fixed hillshade, and local relief.
 - A coordinate-safe 261-patch positive-terrain index, freeze audit, and overlap constraints.
+- A deterministic 261-patch unlabelled-background index with positive, Scheduled Monument,
+  provenance, geography, and spacing controls.
+- A coordinate-safe 522-record modelling index and frozen group-aware random and complete-block
+  geographic train/development/final-test manifests.
+- Private-window leakage audits and aggregate elevation, slope, relief, provenance, geography, and
+  modern-confound evidence.
 - Tracked aggregate evidence and a claims register that limits public wording.
 - Windows-compatible environment and repository validation scripts.
 
 ## What does not exist yet
 
 - Any committed LiDAR, exact coordinate table, georeferenced QA image, or private receipt.
-- Matched background samples or a finalized geographic split.
 - A trained classifier, deep-learning system, metric, plot, or headline result.
 - A map of predictions or coordinates for possible unrecorded sites.
 - A formal paper, DOI, archived release, or institutional affiliation.
@@ -163,6 +172,16 @@ coordinates in tracked outputs. The Phase 2A.5 input and recreation policy is do
 
 # CONTROLLED: revalidates the full cache and prepares private visual QA
 .\.venv\Scripts\python.exe .\scripts\audit_e001_full_terrain.py
+
+# CONTROLLED: deterministic staged background acquisition (10, then 40, then 261)
+.\.venv\Scripts\python.exe .\scripts\build_e001_backgrounds.py --target-count 10
+.\.venv\Scripts\python.exe .\scripts\build_e001_backgrounds.py --target-count 40
+.\.venv\Scripts\python.exe .\scripts\build_e001_backgrounds.py --target-count 261
+
+# Prepare/finalize private background visual QA, freeze splits, and audit leakage
+.\.venv\Scripts\python.exe .\scripts\audit_e001_background_pilot.py
+.\.venv\Scripts\python.exe .\scripts\freeze_e001_splits.py
+.\.venv\Scripts\python.exe .\scripts\audit_e001_dataset.py
 
 # Historical aggregate-only estimate; downloads no terrain
 .\.venv\Scripts\python.exe .\scripts\estimate_e001_terrain_acquisition.py
@@ -241,6 +260,7 @@ Neither source provider endorses ArchaeoAI. No supplied map is reproduced here.
 - [E001 Phase 2A.5 curation and terrain gate](docs/e001-phase-2a5-curation-gate.md)
 - [E001 Phase 2B bounded terrain pilot](docs/e001-phase-2b-terrain.md)
 - [E001 Phase 2B.5 full positive-terrain freeze](docs/e001-phase-2b5-full-terrain.md)
+- [E001 Phase 2C background and split freeze](docs/e001-phase-2c-background-and-splits.md)
 - [Initial E001 experiment protocol](experiments/E001_geographic_baseline.md)
 - [Research quality bar](docs/project-quality-bar.md)
 - [Claims register](docs/claims-register.md)

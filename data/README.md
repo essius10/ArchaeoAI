@@ -29,3 +29,18 @@ The generic `data/raw/`, `data/interim/`, and `data/processed/` paths remain ign
 non-sensitive workflows, but E001 site rasters must stay inside `data/private/` because a GeoTIFF
 transform reveals its location. Only coordinate-safe manifests, checksums, aggregate reports, and
 the terrain index may be tracked. Git LFS is unnecessary for this bounded design.
+
+## Phase 2C background and split storage
+
+Precise background sampling locations can reveal exclusion geometry and therefore remain private,
+even though they are not known archaeological locations. Controlled files live under
+`data/private/e001/backgrounds/`:
+
+- `sampling_state.json`: deterministic candidate lineage, exact locations, and reason-coded state;
+- `raw/` and `processed/`: georeferenced WCS terrain and the frozen arrays;
+- `qa/`: private strips, contact sheets, selection receipt, and technical/confound review.
+
+Tracked Phase 2C artifacts use only opaque sample and observation-group IDs, coarse BNG groups,
+terrain provenance, checksums, aggregate rejection/audit counts, and frozen partition assignments.
+They must never contain Easting, Northing, bounding boxes, geometry, exact positive distance, or
+reconstructable sampling coordinates.
