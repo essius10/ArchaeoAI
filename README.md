@@ -2,9 +2,9 @@
 
 **LiDAR terrain research, spatial evaluation, and reproducible machine learning for archaeology.**
 
-![Research stage](https://img.shields.io/badge/research-Phase%202E--B0%20CNN%20setup-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%202E--B%20complete-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-173%20passing-2f855a)
+![Tests](https://img.shields.io/badge/tests-180%20passing-2f855a)
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
 > that apparent skill survive when the model is tested somewhere geographically new?**
@@ -18,7 +18,8 @@ the score reflects genuine geographic generalization rather than spatial or surv
 > **Active research, not a discovery system.** The frozen baseline reached **0.871 balanced
 > accuracy** on two specific geographically held-out groups (n=62; 95% whole-group bootstrap CI
 > 0.774–0.952). A separate post-hoc five-fold robustness analysis averaged 0.823 without replacing
-> that confirmatory result. This remains a bounded classification task, and ArchaeoAI has not
+> that confirmatory result. A frozen compact CNN later averaged 0.701 on the same robustness folds,
+> versus 0.823 for the Random Forest. This remains a bounded classification task: ArchaeoAI has not
 > discovered archaeological sites.
 
 ## Current research status
@@ -29,7 +30,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **173 passing** |
+| Automated tests | **180 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
@@ -40,7 +41,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Primary geographic final result | **0.871 [0.774, 0.952]; n=62** |
 | Post-hoc geographic robustness | **5-fold mean 0.823; range 0.790–0.861** |
 | Robustness classification | **ROBUST under the frozen Phase 2E-A rule** |
-| Compact CNN protocol | **READY_NOT_TRAINED; no CNN metrics exist** |
+| Post-hoc compact CNN | **5-fold/3-seed mean 0.701; CNN not justified at current scale** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
@@ -49,7 +50,7 @@ different human reviewer.
 
 [Read the post-hoc robustness and sensitivity report →](docs/e001-phase-2e-robustness.md)
 
-[Read the frozen compact-CNN methodology →](docs/e001-phase-2eb-compact-cnn.md)
+[Read the compact-CNN stronger-model comparison →](docs/e001-phase-2eb-compact-cnn.md)
 
 ## Why this matters
 
@@ -85,7 +86,7 @@ flowchart LR
     E2 --> F
 ```
 
-The planned comparison starts with interpretable baselines before any deep-learning experiment.
+The comparison started with interpretable baselines before testing one frozen compact CNN.
 Background terrain is matched by geography and acquisition provenance. An unrecorded location is
 called `unlabelled_background`, never a true archaeological negative.
 
@@ -105,7 +106,7 @@ called `unlabelled_background`, never a true archaeological negative.
 | Baseline infrastructure and selection | ✅ Complete | Dummy, L2 logistic, modest random forest |
 | Random vs geographic evaluation | ✅ Complete | Geographic 0.871 vs random 0.823 balanced accuracy |
 | Robustness and failure analysis | ✅ Complete | Five geographic folds; ablations, seeds, training size, shortcuts |
-| Stronger-model comparison | 🧱 Setup frozen | Compact CNN is `READY_NOT_TRAINED`; training requires a new approval |
+| Stronger-model comparison | ✅ Complete | CNN 0.701 vs RF 0.823; retain Random Forest |
 | Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today
@@ -133,16 +134,16 @@ called `unlabelled_background`, never a true archaeological negative.
   aggregate error analysis, and a no-retuning audit trail.
 - A score-independent five-fold post-hoc robustness analysis with representation, seed, training-
   size, permutation, correlation, score-distribution, and serialization/offset diagnostics.
-- A frozen, privacy-safe 59,145-parameter compact-CNN protocol and synthetic setup tests; no real
-  CNN training or performance metrics.
+- A frozen, privacy-safe 59,145-parameter compact-CNN protocol plus 15-run geographic evaluation,
+  aggregate diagnostics, and a no-retuning record.
 - Tracked aggregate evidence and a claims register that limits public wording.
 - Windows-compatible environment and repository validation scripts.
 
 ## What does not exist yet
 
 - Any committed LiDAR, exact coordinate table, georeferenced QA image, or private receipt.
-- A trained deep-learning model, independent reproduction, or evidence beyond the bounded E001
-  classes and two held-out geographic groups.
+- A deep-learning advantage, independent reproduction, or evidence beyond the bounded E001 classes
+  and evaluated coarse geographic groups.
 - A hard-background stress dataset with complete model-independent confound annotations.
 - A map of predictions or coordinates for possible unrecorded sites.
 - A formal paper, DOI, archived release, or institutional affiliation.

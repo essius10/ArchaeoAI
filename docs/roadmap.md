@@ -10,9 +10,11 @@ pooled Random Forest using only geographic development. Phase 2D-B then recorded
 accuracy [0.774194, 0.951613] on the one-way geographic final test. Phase 2E-A then classified the
 baseline as ROBUST under a pre-committed five-fold post-hoc protocol (mean 0.823406; fold range
 0.790000–0.861111). Phase 2E-B0 has now frozen a privacy-safe 59,145-parameter compact-CNN
-protocol against the same five folds. Its status is `READY_NOT_TRAINED`: no real CNN training,
-geographic CV, or CNN performance calculation has occurred. The next gate is separately authorized
-Phase 2E-B training.
+protocol against the same five folds. Phase 2E-B then completed all 15 frozen runs without tuning.
+The CNN averaged 0.700866 balanced accuracy, 0.122540 below the Random Forest mean, and showed
+internal-validation overfitting despite modest seed variation. The stronger-model classification is
+`CNN NOT JUSTIFIED AT CURRENT DATA SCALE`; the model recommendation for any separately approved
+Phase 2F is `USE RANDOM FOREST FOR PHASE 2F`.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
