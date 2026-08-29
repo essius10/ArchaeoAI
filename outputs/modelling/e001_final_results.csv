@@ -1,0 +1,3 @@
+condition,role,n,positive_bowl_barrow_n,unlabelled_background_n,balanced_accuracy,balanced_accuracy_ci95_lower,balanced_accuracy_ci95_upper,accuracy,precision,recall,f1,roc_auc,average_precision,tn_background_correct,fp_background_predicted_positive,fn_positive_predicted_background,tp_positive_correct
+random,secondary_descriptive_comparison,62,31,31,0.8225806451612903,0.71875,0.9166666666666667,0.8225806451612904,0.8333333333333334,0.8064516129032258,0.819672131147541,0.927159209157128,0.9376860829556997,26,5,6,25
+geographic,primary_scientific_endpoint,62,31,31,0.8709677419354839,0.7741935483870968,0.9516129032258065,0.8709677419354839,0.8709677419354839,0.8709677419354839,0.8709677419354839,0.9531737773152965,0.9569333428051077,27,4,4,27

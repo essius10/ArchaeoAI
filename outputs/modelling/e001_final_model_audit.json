@@ -1,0 +1,363 @@
+{
+  "schema_version": "e001-final-model-audit-v1",
+  "final_metrics_frozen_before_error_analysis": true,
+  "primary_config_sha256": "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4",
+  "conditions": {
+    "random": {
+      "metadata_counts_and_errors": {
+        "geographic_block_id": {
+          "BNG_100KM_E1_N0": {
+            "correct": 6,
+            "positive_bowl_barrow": 3,
+            "unlabelled_background": 3
+          },
+          "BNG_100KM_E2_N0": {
+            "correct": 5,
+            "error": 1,
+            "positive_bowl_barrow": 3,
+            "unlabelled_background": 3
+          },
+          "BNG_100KM_E2_N1": {
+            "correct": 2,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "BNG_100KM_E3_N1": {
+            "correct": 1,
+            "error": 1,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "BNG_100KM_E3_N2": {
+            "correct": 4,
+            "error": 2,
+            "positive_bowl_barrow": 3,
+            "unlabelled_background": 3
+          },
+          "BNG_100KM_E3_N3": {
+            "correct": 3,
+            "error": 1,
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "BNG_100KM_E3_N4": {
+            "correct": 4,
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "BNG_100KM_E3_N5": {
+            "correct": 7,
+            "error": 3,
+            "positive_bowl_barrow": 5,
+            "unlabelled_background": 5
+          },
+          "BNG_100KM_E4_N1": {
+            "correct": 2,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "BNG_100KM_E4_N2": {
+            "correct": 2,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "BNG_100KM_E4_N3": {
+            "correct": 1,
+            "error": 1,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "BNG_100KM_E4_N5": {
+            "correct": 1,
+            "error": 1,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "BNG_100KM_E5_N0": {
+            "correct": 2,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "BNG_100KM_E5_N1": {
+            "correct": 4,
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "BNG_100KM_E5_N4": {
+            "correct": 4,
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "BNG_100KM_E6_N1": {
+            "correct": 2,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "BNG_100KM_E6_N2": {
+            "correct": 1,
+            "error": 1,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          }
+        },
+        "provenance_id": {
+          "EAP-71ad6a50942e": {
+            "correct": 9,
+            "error": 3,
+            "positive_bowl_barrow": 6,
+            "unlabelled_background": 6
+          },
+          "EAP-8e32eccbc87e": {
+            "correct": 4,
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "EAP-a800a13742ee": {
+            "correct": 1,
+            "error": 1,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "EAP-c590a5cb0139": {
+            "correct": 17,
+            "error": 3,
+            "positive_bowl_barrow": 10,
+            "unlabelled_background": 10
+          },
+          "EAP-d3a871d4f09e": {
+            "correct": 8,
+            "positive_bowl_barrow": 4,
+            "unlabelled_background": 4
+          },
+          "EAP-d85b0f0821f9": {
+            "correct": 12,
+            "error": 4,
+            "positive_bowl_barrow": 8,
+            "unlabelled_background": 8
+          }
+        },
+        "survey_year": {
+          "2017": {
+            "correct": 4,
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "2018": {
+            "correct": 12,
+            "error": 4,
+            "positive_bowl_barrow": 8,
+            "unlabelled_background": 8
+          },
+          "2019": {
+            "correct": 8,
+            "positive_bowl_barrow": 4,
+            "unlabelled_background": 4
+          },
+          "2020": {
+            "correct": 17,
+            "error": 3,
+            "positive_bowl_barrow": 10,
+            "unlabelled_background": 10
+          },
+          "2021": {
+            "correct": 9,
+            "error": 3,
+            "positive_bowl_barrow": 6,
+            "unlabelled_background": 6
+          },
+          "2022": {
+            "correct": 1,
+            "error": 1,
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          }
+        },
+        "source_resolution_m": {
+          "1.0": {
+            "correct": 51,
+            "error": 11,
+            "positive_bowl_barrow": 31,
+            "unlabelled_background": 31
+          }
+        }
+      },
+      "terrain_summary_by_correctness": {
+        "correct": {
+          "observations": 51,
+          "median_absolute_elevation_m": {
+            "mean": 167.43571218322305,
+            "median": 157.58299255371094
+          },
+          "mean_slope_degrees": {
+            "mean": 5.569539307671435,
+            "median": 4.505026817321777
+          },
+          "mean_absolute_local_relief_m": {
+            "mean": 0.2318765564145995,
+            "median": 0.18084071576595306
+          },
+          "missing_fraction": {
+            "mean": 1.0,
+            "median": 1.0
+          }
+        },
+        "error": {
+          "observations": 11,
+          "median_absolute_elevation_m": {
+            "mean": 215.90817989002574,
+            "median": 234.22999572753906
+          },
+          "mean_slope_degrees": {
+            "mean": 4.603003371845592,
+            "median": 4.852730751037598
+          },
+          "mean_absolute_local_relief_m": {
+            "mean": 0.17437457496469672,
+            "median": 0.15953785181045532
+          },
+          "missing_fraction": {
+            "mean": 1.0,
+            "median": 1.0
+          }
+        }
+      },
+      "feature_policy": {
+        "model_features": [
+          "elevation_normalized",
+          "slope_degrees",
+          "hillshade_315_45",
+          "local_relief_r16m"
+        ],
+        "metadata_features": [],
+        "identifier_path_or_filename_features": [],
+        "raw_absolute_elevation_is_model_feature": false,
+        "class_specific_serialization_schema": false
+      },
+      "flag_limit": "Hard-relief, forestry, and road/track flags are unavailable consistently for all final observations and were not inferred post hoc."
+    },
+    "geographic": {
+      "metadata_counts_and_errors": {
+        "geographic_block_id": {
+          "BNG_100KM_E3_N2": {
+            "correct": 28,
+            "error": 4,
+            "positive_bowl_barrow": 16,
+            "unlabelled_background": 16
+          },
+          "BNG_100KM_E5_N4": {
+            "correct": 26,
+            "error": 4,
+            "positive_bowl_barrow": 15,
+            "unlabelled_background": 15
+          }
+        },
+        "provenance_id": {
+          "EAP-c590a5cb0139": {
+            "correct": 35,
+            "error": 7,
+            "positive_bowl_barrow": 21,
+            "unlabelled_background": 21
+          },
+          "EAP-d3a871d4f09e": {
+            "correct": 7,
+            "error": 1,
+            "positive_bowl_barrow": 4,
+            "unlabelled_background": 4
+          },
+          "EAP-d85b0f0821f9": {
+            "correct": 12,
+            "positive_bowl_barrow": 6,
+            "unlabelled_background": 6
+          }
+        },
+        "survey_year": {
+          "2018": {
+            "correct": 12,
+            "positive_bowl_barrow": 6,
+            "unlabelled_background": 6
+          },
+          "2019": {
+            "correct": 7,
+            "error": 1,
+            "positive_bowl_barrow": 4,
+            "unlabelled_background": 4
+          },
+          "2020": {
+            "correct": 35,
+            "error": 7,
+            "positive_bowl_barrow": 21,
+            "unlabelled_background": 21
+          }
+        },
+        "source_resolution_m": {
+          "1.0": {
+            "correct": 54,
+            "error": 8,
+            "positive_bowl_barrow": 31,
+            "unlabelled_background": 31
+          }
+        }
+      },
+      "terrain_summary_by_correctness": {
+        "correct": {
+          "observations": 54,
+          "median_absolute_elevation_m": {
+            "mean": 190.22430546636934,
+            "median": 159.71275329589844
+          },
+          "mean_slope_degrees": {
+            "mean": 5.78065613022557,
+            "median": 4.310943365097046
+          },
+          "mean_absolute_local_relief_m": {
+            "mean": 0.24094482566471453,
+            "median": 0.17737992107868195
+          },
+          "missing_fraction": {
+            "mean": 1.0,
+            "median": 1.0
+          }
+        },
+        "error": {
+          "observations": 8,
+          "median_absolute_elevation_m": {
+            "mean": 209.7426860332489,
+            "median": 172.69924926757812
+          },
+          "mean_slope_degrees": {
+            "mean": 5.510813683271408,
+            "median": 3.9086759090423584
+          },
+          "mean_absolute_local_relief_m": {
+            "mean": 0.22370571084320545,
+            "median": 0.14548610895872116
+          },
+          "missing_fraction": {
+            "mean": 1.0,
+            "median": 1.0
+          }
+        }
+      },
+      "feature_policy": {
+        "model_features": [
+          "elevation_normalized",
+          "slope_degrees",
+          "hillshade_315_45",
+          "local_relief_r16m"
+        ],
+        "metadata_features": [],
+        "identifier_path_or_filename_features": [],
+        "raw_absolute_elevation_is_model_feature": false,
+        "class_specific_serialization_schema": false
+      },
+      "flag_limit": "Hard-relief, forestry, and road/track flags are unavailable consistently for all final observations and were not inferred post hoc."
+    }
+  },
+  "privacy": {
+    "aggregate_only": true,
+    "coordinates_in_output": false,
+    "sample_identifiers_in_output": false,
+    "maps_created": false
+  },
+  "no_post_final_training_or_tuning": true
+}
