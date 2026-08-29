@@ -74,7 +74,12 @@ def _verify_clean_committed_start(root: Path) -> str:
         raise ValueError("local main must equal origin/main before private inference")
     if _git(root, "status", "--porcelain"):
         raise ValueError("private inference requires a clean working tree")
-    if not _git(root, "merge-base", "--is-ancestor", EXPECTED_HEAD_PARENT, head):
+    ancestry = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", EXPECTED_HEAD_PARENT, head],
+        cwd=root,
+        check=False,
+    )
+    if ancestry.returncode != 0:
         raise ValueError("the approved GitHub-polish HEAD is not in current history")
     return head
 
