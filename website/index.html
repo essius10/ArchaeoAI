@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArchaeoAI — Responsible geospatial AI for archaeological terrain research</title>
+    <meta
+      name="description"
+      content="Student-led research into archaeological machine learning, LiDAR terrain, geographic generalization, and responsible location privacy."
+    />
+    <meta
+      name="keywords"
+      content="archaeological machine learning, LiDAR archaeology, geospatial AI, remote sensing, terrain analysis, digital archaeology, reproducible machine learning"
+    />
+    <meta name="author" content="ArchaeoAI" />
+    <meta name="theme-color" content="#111512" />
+    <link rel="canonical" href="https://essius10.github.io/ArchaeoAI/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ArchaeoAI — Responsible geospatial AI" />
+    <meta
+      property="og:description"
+      content="Can machine learning recognize documented archaeological earthwork terrain patterns while controlling geographic leakage and protecting sensitive locations?"
+    />
+    <meta
+      property="og:image"
+      content="https://essius10.github.io/ArchaeoAI/assets/terrain-contours.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ArchaeoAI — Responsible geospatial AI" />
+    <meta
+      name="twitter:description"
+      content="A reproducible, privacy-conscious study of machine learning on LiDAR-derived archaeological terrain."
+    />
+    <meta
+      name="twitter:image"
+      content="https://essius10.github.io/ArchaeoAI/assets/terrain-contours.png"
+    />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="ArchaeoAI home">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>ArchaeoAI</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="#question">Question</a>
+        <a href="#results">Results</a>
+        <a href="#responsibility">Responsibility</a>
+        <a href="#status">Status</a>
+      </nav>
+      <a class="header-cta" href="https://github.com/essius10/ArchaeoAI">View research</a>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <img
+          class="hero-texture"
+          src="assets/terrain-contours.png"
+          alt="Abstract synthetic topographic contour texture"
+        />
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-content">
+          <p class="eyebrow"><span></span> Student-led research · E001</p>
+          <h1 id="hero-title">Responsible geospatial AI for archaeological terrain research.</h1>
+          <p class="hero-lede">
+            ArchaeoAI investigates whether machine learning can recognize documented earthwork
+            patterns in LiDAR-derived terrain—while testing geographic generalization and keeping
+            sensitive locations private.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#results">Explore verified results</a>
+            <a class="button button-quiet" href="#responsibility">Read the research boundary</a>
+          </div>
+          <p class="hero-disclaimer">Research prototype · Not a discovery system</p>
+        </div>
+        <aside class="hero-result" aria-label="Primary verified result">
+          <p class="metric-label">Geographic held-out test</p>
+          <p class="metric-value">87.1<span>%</span></p>
+          <p class="metric-caption">balanced accuracy</p>
+          <dl>
+            <div><dt>Observations</dt><dd>62</dd></div>
+            <div><dt>Held-out blocks</dt><dd>2</dd></div>
+            <div><dt>Model</dt><dd>Random Forest</dd></div>
+          </dl>
+          <p class="metric-note">Pre-specified groups. Model scores are not archaeological probabilities.</p>
+        </aside>
+      </section>
+
+      <section class="trust-strip" aria-label="Research commitments">
+        <p><span>01</span> Geographic evaluation</p>
+        <p><span>02</span> Reproducible methods</p>
+        <p><span>03</span> Private coordinates</p>
+        <p><span>04</span> Bounded claims</p>
+      </section>
+
+      <section class="preview-question" id="question">
+        <p class="section-kicker">The research question</p>
+        <h2>Does a learned terrain signal survive when the landscape changes?</h2>
+        <p>
+          The project tests documented bowl-barrow terrain on geographically separate evaluation
+          groups, where nearby landscapes cannot quietly appear on both sides of the experiment.
+        </p>
+        <div class="question-note">
+          <span aria-hidden="true">↳</span>
+          <p>
+            E001 asks a narrow, falsifiable question—not whether AI can “find archaeology,” but
+            whether a documented earthwork terrain signature generalizes beyond familiar geography.
+          </p>
+        </div>
+      </section>
+
+      <section class="section process-section" id="method" aria-labelledby="method-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">How it works</p>
+            <h2 id="method-title">From terrain measurement to accountable review.</h2>
+          </div>
+          <p>
+            Every stage is bounded: interpretable terrain views, frozen evaluation groups, simple
+            baselines, private location handling, and review before interpretation.
+          </p>
+        </div>
+        <ol class="process-grid">
+          <li><span>01</span><strong>LiDAR terrain</strong><p>Public 1 m digital terrain models, with exact research locations kept private.</p></li>
+          <li><span>02</span><strong>Preprocessing</strong><p>Deterministic 128 m terrain windows and explicit quality checks.</p></li>
+          <li><span>03</span><strong>Representations</strong><p>Normalized elevation, slope, hillshade, and local relief.</p></li>
+          <li><span>04</span><strong>Machine learning</strong><p>Interpretable classical baselines before one compact CNN comparison.</p></li>
+          <li><span>05</span><strong>Controlled ranking</strong><p>Frozen model scores unseen terrain without changing thresholds or tuning.</p></li>
+          <li><span>06</span><strong>Human review</strong><p>Required before heritage checks or any interpretation of possible value.</p></li>
+        </ol>
+      </section>
+
+      <section class="section experiment-section" id="experiment" aria-labelledby="experiment-title">
+        <div class="experiment-copy">
+          <p class="section-kicker">E001 · bowl-barrow terrain</p>
+          <h2 id="experiment-title">A balanced, reproducible experiment—not a national detector.</h2>
+          <p>
+            E001 studies one narrowly defined earthwork class: documented, scheduled, surviving
+            single bowl barrows in England. Each positive terrain patch is paired with an
+            acquisition- and geography-matched <em>unlabelled background</em> patch.
+          </p>
+          <p class="boundary-copy">
+            “Unlabelled” matters: absence from an inventory is not proof that terrain contains no
+            archaeology.
+          </p>
+          <a class="text-link" href="https://github.com/essius10/ArchaeoAI/blob/main/docs/e001-phase-2d-baseline-modelling.md">
+            Read the full methodology <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <div class="dataset-panel" aria-label="E001 dataset composition">
+          <p class="panel-label">Frozen modelling dataset</p>
+          <p class="dataset-total">522</p>
+          <p class="dataset-caption">terrain observations</p>
+          <div class="dataset-split" aria-label="Balanced classes">
+            <div class="positive"><span style="--share: 50%"></span><strong>261</strong><small>documented bowl-barrow patches</small></div>
+            <div class="background"><span style="--share: 50%"></span><strong>261</strong><small>matched unlabelled-background patches</small></div>
+          </div>
+          <ul>
+            <li>23 coarse geographic groups</li>
+            <li>Frozen train, development, and final partitions</li>
+            <li>Zero coordinates in tracked modelling data</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section results-section" id="results" aria-labelledby="results-title">
+        <div class="section-heading results-heading">
+          <div>
+            <p class="section-kicker">Verified results</p>
+            <h2 id="results-title">The simpler model generalized better.</h2>
+          </div>
+          <p>
+            Balanced accuracy gives equal weight to both classes. The Random Forest remained the
+            primary model after outperforming the compact CNN across geographic folds.
+          </p>
+        </div>
+        <div class="result-cards">
+          <article class="result-card result-primary">
+            <p>Confirmatory geographic holdout</p>
+            <strong>87.1<span>%</span></strong>
+            <small>balanced accuracy · n=62 · two pre-specified blocks</small>
+          </article>
+          <article class="result-card">
+            <p>Five-fold RF robustness</p>
+            <strong>82.3<span>%</span></strong>
+            <small>mean geographic balanced accuracy · post-hoc robustness</small>
+          </article>
+          <article class="result-card result-negative">
+            <p>Compact CNN comparison</p>
+            <strong>70.1<span>%</span></strong>
+            <small>mean geographic balanced accuracy · weaker on every fold</small>
+          </article>
+        </div>
+        <div class="evidence-grid">
+          <figure class="figure-card">
+            <img src="assets/balanced-accuracy-comparison.svg" alt="Bar chart comparing aggregate random and geographic balanced accuracy" />
+            <figcaption>Frozen final comparison. The geographic result is the primary confirmatory evidence.</figcaption>
+          </figure>
+          <div class="finding-card">
+            <p class="panel-label">Why the CNN result matters</p>
+            <blockquote>More complex did not mean more reliable.</blockquote>
+            <p>
+              The 59,145-parameter compact CNN averaged 70.1% across the same five geographic folds,
+              versus 82.3% for the Random Forest. That negative result narrowed the project’s claims
+              and supported retaining the simpler, more interpretable model.
+            </p>
+            <img src="assets/cnn-vs-rf-by-fold.svg" alt="Aggregate chart comparing CNN and Random Forest balanced accuracy across five folds" />
+          </div>
+        </div>
+        <p class="results-caveat">
+          Scope: these results concern the frozen E001 dataset and evaluation groups. They do not
+          establish England-wide performance or archaeological discovery capability.
+        </p>
+      </section>
+
+      <section class="section geography-section" id="geography" aria-labelledby="geography-title">
+        <div class="geography-copy">
+          <p class="section-kicker">Why geography matters</p>
+          <h2 id="geography-title">Nearby terrain can make an easy test look convincing.</h2>
+          <p>
+            Random splitting can place similar landscapes, survey histories, or overlapping context
+            in both training and testing. Geographic holdouts ask the harder question: does the model
+            transfer to groups it has not seen?
+          </p>
+        </div>
+        <div class="split-comparison" aria-label="Random and geographic split comparison">
+          <article>
+            <div class="split-dots mixed" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <p class="panel-label">Random split</p>
+            <h3>Nearby contexts may mix</h3>
+            <p>Useful as a comparison, but vulnerable to shared landscape and acquisition context.</p>
+          </article>
+          <article>
+            <div class="split-dots separated" aria-hidden="true">
+              <span><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <span><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </div>
+            <p class="panel-label">Geographic holdout</p>
+            <h3>Whole groups stay apart</h3>
+            <p>A stricter test of transfer, with spatial and overlap groups kept intact.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section responsibility-section" id="responsibility" aria-labelledby="responsibility-title">
+        <div class="responsibility-lead">
+          <p class="section-kicker">Responsible archaeology</p>
+          <h2 id="responsibility-title">Evidence first. Locations protected. Claims bounded.</h2>
+          <p>
+            Archaeological coordinates can be sensitive, and model output can be misunderstood.
+            ArchaeoAI treats privacy and careful language as research requirements—not footnotes.
+          </p>
+        </div>
+        <div class="principles-grid">
+          <article><span>01</span><h3>Predictions are not discoveries</h3><p>A high terrain-similarity score does not establish that archaeology exists.</p></article>
+          <article><span>02</span><h3>Exact locations stay private</h3><p>No candidate coordinates, maps, rasters, review images, or private score tables are published.</p></article>
+          <article><span>03</span><h3>Scores are not probabilities</h3><p>A score of 0.90 does not mean a 90% chance of archaeology.</p></article>
+          <article><span>04</span><h3>Expert validation is required</h3><p>Human morphology review and later heritage checks are separate, necessary gates.</p></article>
+        </div>
+      </section>
+
+      <section class="section inference-section" id="inference" aria-labelledby="inference-title">
+        <div class="inference-panel">
+          <div class="status-chip"><span></span> Private run complete · Review deferred</div>
+          <p class="section-kicker">Phase 2F-B</p>
+          <h2 id="inference-title">One bounded inference run. No interpretation yet.</h2>
+          <p>
+            The frozen Random Forest scored one private 5 km × 5 km domain using 128 m windows at
+            64 m stride. All candidate-level material remains private. The blinded packet is ready
+            but deliberately unreviewed.
+          </p>
+          <div class="inference-metrics">
+            <div><strong>5,929</strong><span>valid terrain windows</span></div>
+            <div><strong>1,159</strong><span>units after spatial deduplication</span></div>
+            <div><strong>62</strong><span>blinded review items</span></div>
+          </div>
+          <div class="review-bands" aria-label="Private blinded review queue counts">
+            <p><span class="band-high"></span> HIGH <strong>12</strong></p>
+            <p><span class="band-medium"></span> MEDIUM <strong>25</strong></p>
+            <p><span class="band-random"></span> RANDOM <strong>25</strong></p>
+          </div>
+          <p class="inference-warning">
+            No human morphology review has been completed. No heritage cross-check has occurred.
+            These counts are not archaeological candidates of demonstrated value.
+          </p>
+        </div>
+        <figure class="inference-figure">
+          <img src="assets/private-inference-score-distribution.svg" alt="Aggregate distribution of terrain-similarity scores from the private controlled run" />
+          <figcaption>Coordinate-safe aggregate distribution only. No location or individual score is shown.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section status-section" id="status" aria-labelledby="status-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Current status</p>
+            <h2 id="status-title">A research trail built gate by gate.</h2>
+          </div>
+          <p>Each completed step leaves auditable code, frozen evidence, and explicit limitations.</p>
+        </div>
+        <ol class="timeline">
+          <li class="complete"><span></span><div><small>Phase 2A–B</small><strong>Dataset curation & terrain</strong><p>261 documented records and 261 matched backgrounds.</p></div></li>
+          <li class="complete"><span></span><div><small>Phase 2C</small><strong>Geographic split freeze</strong><p>Group-aware random and held-out geographic conditions.</p></div></li>
+          <li class="complete"><span></span><div><small>Phase 2D</small><strong>Random Forest baseline</strong><p>Pre-registered selection and one-way final evaluation.</p></div></li>
+          <li class="complete"><span></span><div><small>Phase 2E-A</small><strong>Robustness tests</strong><p>Five geographic folds, ablations, seeds, and shortcut audits.</p></div></li>
+          <li class="complete"><span></span><div><small>Phase 2E-B</small><strong>Compact CNN comparison</strong><p>Useful negative result; Random Forest retained.</p></div></li>
+          <li class="complete"><span></span><div><small>Phase 2F-A/B</small><strong>Controlled private inference</strong><p>One domain scored; blinded packet prepared.</p></div></li>
+          <li class="deferred"><span></span><div><small>Deferred</small><strong>Human morphology review</strong><p>No AI substitute and no heritage cross-check performed.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="section open-section" id="open-source" aria-labelledby="open-title">
+        <div class="open-card">
+          <p class="section-kicker">Open source & reproducibility</p>
+          <h2 id="open-title">Inspect the methods, not the sensitive places.</h2>
+          <p>
+            The public repository contains typed configuration, dataset manifests, deterministic
+            processing, leakage guards, tests, aggregate evidence, and explicit claim boundaries.
+            Private coordinates and terrain remain outside Git.
+          </p>
+          <div class="open-actions">
+            <a class="button button-primary" href="https://github.com/essius10/ArchaeoAI">Open GitHub repository <span aria-hidden="true">↗</span></a>
+            <a class="button button-quiet" href="https://github.com/essius10/ArchaeoAI/blob/main/CONTRIBUTING.md">Contribution guide</a>
+          </div>
+          <div class="repro-strip"><span>Python 3.12 reference</span><span>198 automated tests</span><span>Public CI</span><span>Hash-frozen protocols</span></div>
+        </div>
+      </section>
+
+      <section class="section contribute-section" id="contribute" aria-labelledby="contribute-title">
+        <div>
+          <p class="section-kicker">Contribute / collaborate</p>
+          <h2 id="contribute-title">Good research improves when disciplines meet.</h2>
+        </div>
+        <div>
+          <p>
+            ArchaeoAI welcomes coordinate-safe contributions from people working in archaeology,
+            GIS, remote sensing, machine learning, scientific computing, and reproducibility.
+          </p>
+          <ul class="discipline-list">
+            <li>Archaeology</li><li>GIS</li><li>Remote sensing</li><li>Machine learning</li><li>Scientific computing</li><li>Reproducibility</li>
+          </ul>
+          <a class="text-link" href="https://github.com/essius10/ArchaeoAI/blob/main/docs/contribution-opportunities.md">See useful contribution opportunities <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-brand"><span class="brand-mark" aria-hidden="true">A</span><div><strong>ArchaeoAI</strong><p>Responsible geospatial AI for archaeological terrain research.</p></div></div>
+      <p class="footer-boundary">Student-led research · No discovery claims · Sensitive locations protected</p>
+      <div class="footer-links"><a href="https://github.com/essius10/ArchaeoAI">GitHub</a><a href="#responsibility">Research boundary</a><a href="#top">Back to top ↑</a></div>
+    </footer>
+    <script src="site.js" defer></script>
+  </body>
+</html>

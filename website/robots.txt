@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://essius10.github.io/ArchaeoAI/sitemap.xml
