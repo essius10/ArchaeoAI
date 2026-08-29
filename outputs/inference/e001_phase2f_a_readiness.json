@@ -1,0 +1,78 @@
+{
+  "phase": "2F-A",
+  "status": "READY_NO_REAL_SCAN",
+  "protocol_sha256": "fa1f9cd12230df3f7c83c45febd5ec0ba751f371a098600873380bc47c624095",
+  "benchmark_scope": "synthetic_coordinate_free_CPU_smoke_only",
+  "synthetic_patch_count": 32,
+  "model_load_seconds": 0.05483650000041962,
+  "terrain_preprocessing_seconds": 0.0644959999999628,
+  "terrain_preprocessing_patches_per_second": 496.154800297979,
+  "model_scoring_repetitions": 100,
+  "model_scoring_seconds": 0.9101369999998496,
+  "model_patches_per_second": 3515.954191512408,
+  "model_latency_ms_per_patch": 0.284417812499953,
+  "end_to_end_patches_per_second": 434.79814564048723,
+  "estimated_incremental_grid_area_km2_per_hour_in_memory_synthetic_upper_bound": 6411.359536356369,
+  "private_model_size_bytes": 1300710,
+  "process_peak_working_set_bytes": 158953472,
+  "bottleneck": "terrain_representation_and_pooling",
+  "benchmark_excludes": [
+    "terrain_download",
+    "GeoTIFF_IO",
+    "mosaicking"
+  ],
+  "backend_feasibility": "FEASIBLE_FOR_BOUNDED_RESEARCH_DEMO",
+  "CPU_feasibility": true,
+  "GPU_required": false,
+  "safe_API_fields": [
+    "model_version",
+    "score_semantics",
+    "aggregate_counts",
+    "aggregate_score_distribution",
+    "pipeline_status"
+  ],
+  "never_public_API_fields": [
+    "exact_coordinates",
+    "NGR_or_grid_reference",
+    "private_window_token",
+    "source_filename_or_path",
+    "sample_identifier",
+    "candidate_raster_or_georeferenced_image",
+    "private_ranked_table"
+  ],
+  "aggregate_synthetic_smoke": {
+    "semantics": "terrain_similarity_model_score_not_archaeological_probability",
+    "total_windows": 32,
+    "valid_windows": 32,
+    "rejected_windows": 0,
+    "no_data_windows": 0,
+    "deduplicated_representatives": 32,
+    "score_distribution": {
+      "minimum": 0.3321443625430848,
+      "q25": 0.5278374207074988,
+      "median": 0.7058917202591539,
+      "q75": 0.8089977667122276,
+      "maximum": 0.8850189995189996
+    },
+    "review_queue_counts": {
+      "highest_score": 1,
+      "medium_score_diagnostic": 4,
+      "random_reference": 25
+    },
+    "model_state_sha256": "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939",
+    "privacy": {
+      "aggregate_only": true,
+      "exact_locations_written": false,
+      "candidate_identifiers_written": false,
+      "georeferenced_outputs_written": false
+    }
+  },
+  "privacy": {
+    "real_terrain_loaded": false,
+    "real_candidate_scan_completed": false,
+    "candidate_locations_created": false,
+    "candidate_locations_exposed": false,
+    "synthetic_per_patch_scores_written": false,
+    "aggregate_only": true
+  }
+}

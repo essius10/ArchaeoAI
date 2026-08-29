@@ -55,6 +55,7 @@ $required = @(
     'research-log/2026-08-29-phase-2e-a.md',
     'research-log/2026-08-29-phase-2eb0.md',
     'research-log/2026-08-29-phase-2eb.md',
+    'research-log/2026-08-29-phase-2f-a.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -77,6 +78,7 @@ $required = @(
     'scripts/run_e001_cnn_geographic_cv.py',
     'scripts/render_e001_cnn_figures.py',
     'scripts/freeze_e001_inference_protocol.py',
+    'scripts/smoke_e001_inference.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -190,7 +192,8 @@ $required = @(
     'outputs/deep_learning/figures/e001_cnn_vs_rf_by_fold.svg',
     'outputs/deep_learning/figures/e001_cnn_seed_stability.svg',
     'outputs/deep_learning/figures/e001_cnn_training_history.svg',
-    'outputs/deep_learning/figures/e001_cnn_confusion_summary.svg'
+    'outputs/deep_learning/figures/e001_cnn_confusion_summary.svg',
+    'outputs/inference/e001_phase2f_a_readiness.json'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -410,6 +413,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2F-A protocol, frozen RF fit, privacy, or immutable-artifact validation failed.'
 }
 
+$phase2fASmokeCheck = & $pythonExecutable -c 'import json; from pathlib import Path; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); receipt=json.loads((root/"outputs/inference/e001_phase2f_a_readiness.json").read_text()); assert_coordinate_safe_mapping(receipt); assert receipt["status"]=="READY_NO_REAL_SCAN" and receipt["protocol_sha256"]=="fa1f9cd12230df3f7c83c45febd5ec0ba751f371a098600873380bc47c624095" and receipt["benchmark_scope"]=="synthetic_coordinate_free_CPU_smoke_only"; assert receipt["synthetic_patch_count"]==32 and receipt["model_patches_per_second"]>0 and receipt["end_to_end_patches_per_second"]>0 and receipt["private_model_size_bytes"]>0 and receipt["process_peak_working_set_bytes"]>0; assert receipt["CPU_feasibility"] is True and receipt["GPU_required"] is False and receipt["privacy"]=={"real_terrain_loaded":False,"real_candidate_scan_completed":False,"candidate_locations_created":False,"candidate_locations_exposed":False,"synthetic_per_patch_scores_written":False,"aggregate_only":True}; print("Phase 2F-A coordinate-free synthetic CPU smoke evidence valid; no real candidate scan")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2F-A synthetic smoke, performance, or privacy validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -455,4 +463,4 @@ if ($LASTEXITCODE -ne 0 -or -not $trainingRunIgnoreCheck) {
     throw 'Private deep-learning training histories must remain ignored by Git.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck."

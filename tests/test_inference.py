@@ -207,3 +207,23 @@ def test_candidate_artifacts_are_constrained_to_private_ignored_tree() -> None:
     assert allowed.is_relative_to(ROOT / "data/private")
     with pytest.raises(ValueError, match="must remain"):
         ensure_private_output(ROOT, ROOT / "outputs/inference/candidates.json")
+
+
+def test_tracked_readiness_receipt_is_synthetic_aggregate_only() -> None:
+    receipt = json.loads(
+        (ROOT / "outputs/inference/e001_phase2f_a_readiness.json").read_text(encoding="utf-8")
+    )
+    assert_coordinate_safe_mapping(receipt)
+    assert receipt["benchmark_scope"] == "synthetic_coordinate_free_CPU_smoke_only"
+    assert receipt["CPU_feasibility"] is True
+    assert receipt["GPU_required"] is False
+    assert receipt["model_patches_per_second"] > 0
+    assert receipt["process_peak_working_set_bytes"] > 0
+    assert receipt["privacy"] == {
+        "real_terrain_loaded": False,
+        "real_candidate_scan_completed": False,
+        "candidate_locations_created": False,
+        "candidate_locations_exposed": False,
+        "synthetic_per_patch_scores_written": False,
+        "aggregate_only": True,
+    }
