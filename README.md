@@ -1,10 +1,37 @@
 # ArchaeoAI
 
-**LiDAR terrain research, spatial evaluation, and reproducible machine learning for archaeology.**
+**Student-led geospatial AI research at the intersection of archaeology, LiDAR terrain, responsible
+machine learning, and geographic generalization.**
 
+[![CI](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml/badge.svg)](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml)
 ![Research stage](https://img.shields.io/badge/research-Phase%202F--A%20ready-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-192%20passing-2f855a)
+
+ArchaeoAI tests whether machine learning can recognize the terrain signature of **documented bowl
+barrows** in public LiDAR-derived terrain—and whether that signal survives leakage-resistant
+evaluation on geographically new groups.
+
+## Results
+
+| Evidence | Balanced accuracy | Interpretation |
+|---|---:|---|
+| Frozen geographic final test | **87.1%** | Specific two-group holdout; n=62; primary confirmatory result |
+| Five-fold geographic RF robustness | **82.3% mean** | Post-hoc robustness across 23 coarse groups |
+| Compact CNN comparison | **70.1% mean** | Worse than the RF on every fold; RF retained |
+| Phase 2F-A | **Ready, no real scan** | Controlled ranking infrastructure; exact locations remain private |
+
+> [!IMPORTANT]
+> **Active research, not a discovery system.** The 0.871 balanced accuracy result (87.1%) applies only
+> to the frozen test of two
+> geographically held-out groups—not England as a whole. Model scores are not archaeological
+> probabilities. ArchaeoAI has not discovered archaeological sites, and no real candidate terrain
+> has been scanned.
+
+![Aggregate random and geographic balanced-accuracy comparison](outputs/modelling/figures/e001_balanced_accuracy_comparison.svg)
+
+*Coordinate-safe aggregate evaluation; no sites, maps, or candidate locations are shown.*
+
+## What is ArchaeoAI?
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
 > that apparent skill survive when the model is tested somewhere geographically new?**
@@ -14,16 +41,7 @@ experiment, E001, studies **scheduled, surviving single bowl barrows in England*
 LiDAR-derived terrain. The central concern is not simply whether a model scores well, but whether
 the score reflects genuine geographic generalization rather than spatial or survey leakage.
 
-> [!IMPORTANT]
-> **Active research, not a discovery system.** The frozen baseline reached **0.871 balanced
-> accuracy** on two specific geographically held-out groups (n=62; 95% whole-group bootstrap CI
-> 0.774–0.952). A separate post-hoc five-fold robustness analysis averaged 0.823 without replacing
-> that confirmatory result. A frozen compact CNN later averaged 0.701 on the same robustness folds,
-> versus 0.823 for the Random Forest. This remains a bounded classification task: ArchaeoAI has not
-> discovered archaeological sites. Phase 2F-A has frozen a controlled ranking design, but no real
-> candidate terrain has been scanned.
-
-## Current research status
+## Current status
 
 | E001 data gate | Verified status |
 |---|---:|
@@ -72,7 +90,7 @@ alongside predictive performance.
 A negative result is useful here. If performance collapses in a new region, that is evidence about
 the limits of the method—not a failed project.
 
-## The experiment in 30 seconds
+## How it works
 
 The positive terrain, matched unlabelled backgrounds, and two evaluation conditions were frozen
 before modelling. A pre-registered development-only matrix selected and hash-froze the primary
@@ -156,7 +174,7 @@ called `unlabelled_background`, never a true archaeological negative.
 - A bound real Phase 2F domain, real candidate scan, candidate claim, or public candidate table.
 - A formal paper, DOI, archived release, or institutional affiliation.
 
-## Quick start
+## Reproducibility
 
 The reference/reproducibility runtime is CPython 3.12. Development is supported on CPython
 `>=3.12,<3.15`; the current Windows environment was last verified on CPython 3.14.7.
@@ -244,7 +262,7 @@ src/archaeoai/           Typed package and deterministic research logic
 tests/                   Data-free automated tests
 ```
 
-## Research and data safeguards
+## Responsible archaeology
 
 ArchaeoAI evaluates **already documented** earthworks. It does not advise field visits, expose
 sensitive locations, or treat a model prediction as archaeological evidence.
@@ -264,6 +282,9 @@ Please read [SECURITY.md](SECURITY.md) before reporting data exposure and
 Thoughtful contributions are welcome in reproducibility, geospatial processing, spatial statistics,
 archaeological methodology, baseline evaluation, testing, and documentation. Research-method changes
 should begin with an issue so assumptions and evidence standards are visible before implementation.
+
+Start with the [coordinate-safe contribution opportunities](docs/contribution-opportunities.md),
+then read the contributor and security guidance below.
 
 If you are interested in reproducible machine learning for archaeology, consider starring the
 repository or following the project.

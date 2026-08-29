@@ -10,10 +10,22 @@ so scientific validity and responsible data handling matter as much as code qual
 - spatial statistics and leakage-resistant evaluation;
 - archaeological methodology and terminology;
 - interpretable machine-learning baselines;
-- tests, documentation, and accessibility.
+- aggregate visualization and accessibility;
+- synthetic terrain examples and inference benchmarks;
+- tests and documentation.
 
-Large method changes should begin with a research/methodology issue. Please do not implement Phase
-2B terrain acquisition or modeling unless that work has been explicitly approved and scoped.
+See [contribution opportunities](docs/contribution-opportunities.md) for five useful, coordinate-safe
+starting points. Large method changes should begin with a research/methodology issue. Do not begin a
+new research, training, terrain-acquisition, or inference phase unless it has been explicitly
+approved and scoped.
+
+## New-contributor workflow
+
+1. Choose a small issue or discuss the proposed scope before substantial work.
+2. Use synthetic or clearly fictional data for code and documentation examples.
+3. Create a focused branch and keep unrelated research artifacts unchanged.
+4. Run the public quality checks below.
+5. Open a pull request using the repository template and describe research/privacy impact.
 
 ## Local setup
 
@@ -22,12 +34,16 @@ The reference runtime is CPython 3.12; supported development versions are `>=3.1
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-.\scripts\doctor.ps1
 .\.venv\Scripts\python.exe -m pytest
 .\.venv\Scripts\python.exe -m ruff check .
 .\.venv\Scripts\python.exe -m ruff format --check .
+.\scripts\doctor.ps1
 .\scripts\validate_project.ps1
 ```
+
+The hosted CI runs installation, pytest, Ruff lint, and Ruff formatting on Python 3.12 without
+private terrain, coordinates, CUDA, or a GPU. The doctor and full project validator are additional
+local checks because they inspect the configured research environment and local evidence state.
 
 ## Research integrity
 
