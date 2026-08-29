@@ -27,7 +27,9 @@ and paths are excluded from the feature matrix. Candidate results cannot trigger
 Phase 2F-A.
 
 The fitted model and fit receipt are stored below `data/private/e001/inference/`, which Git ignores.
-The public protocol records only coordinate-safe data and model checksums.
+The public protocol records only coordinate-safe data and model checksums. The learned model-state
+SHA-256 is `e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939`;
+an independent refit reproduced it exactly.
 
 ## Controlled terrain domain
 
@@ -111,6 +113,20 @@ aggregate distributions, and pipeline status. It must never expose exact locatio
 private tokens, sample identifiers, ranked candidate tables, or georeferenced media. No API or
 website is built in Phase 2F-A.
 
+## Synthetic CPU readiness check
+
+After the protocol commit, a coordinate-free 32-patch synthetic smoke test exercised model loading,
+terrain representations, pooling, scoring, ranking, deduplication, and all three review queues. On
+this machine it measured approximately 0.055 seconds to load the private 1,300,710-byte model,
+496 synthetic patches/second for in-memory terrain preprocessing, 3,516 patches/second for batched
+model scoring, and 0.284 ms model latency per patch. Combined in-memory throughput was about 435
+patches/second with a measured process peak working set of 158,953,472 bytes (about 152 MiB).
+
+The corresponding 6,411 km²/hour grid-footprint calculation is explicitly an in-memory synthetic
+upper bound. It excludes terrain download, GeoTIFF I/O, mosaicking, and provider latency and must not
+be presented as field-ready throughput. Representation generation and pooling were the measured
+bottleneck. These checks support a bounded CPU backend; they provide no archaeological evidence.
+
 ## Stop conditions
 
 Inference must stop before review if any frozen hash changes; the private domain receipt is absent
@@ -126,4 +142,5 @@ frozen domain must be processed.
 
 The authoritative protocol is `configs/e001-phase-2f-a-inference-protocol.json`. Its SHA-256 is a
 canonical JSON digest excluding only its own `protocol_sha256` field. The protocol and fitted-model
-checksum are committed before any real candidate score is produced.
+checksum were committed before any real candidate score was produced. Protocol SHA-256:
+`fa1f9cd12230df3f7c83c45febd5ec0ba751f371a098600873380bc47c624095`.

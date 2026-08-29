@@ -16,6 +16,11 @@ internal-validation overfitting despite modest seed variation. The stronger-mode
 `CNN NOT JUSTIFIED AT CURRENT DATA SCALE`; the model recommendation for any separately approved
 Phase 2F is `USE RANDOM FOREST FOR PHASE 2F`.
 
+Phase 2F-A now freezes a controlled one-domain ranking design and a full-data Random Forest fit.
+Its status is `READY_NO_REAL_SCAN`: only a coordinate-free synthetic CPU smoke benchmark has run.
+The next gate is private, score-independent binding of one lawful 5 km domain followed by separate
+approval before any real scoring. No candidate terrain or candidate location currently exists.
+
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
 | Month | Learning and research focus | Engineering/experiment deliverable | Evidence / gate |
