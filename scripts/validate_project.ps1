@@ -16,6 +16,7 @@ $required = @(
     '.github/ISSUE_TEMPLATE/documentation.yml',
     'configs/e001.example.toml',
     'configs/e001-phase-2d-a-preregistered.json',
+    'configs/e001-phase-2d-b-final-protocol.json',
     'data/README.md',
     'data/manifests/example-dataset.toml',
     'data/manifests/e001-ea-lidar-dtm.toml',
@@ -27,6 +28,8 @@ $required = @(
     'docs/e001-phase-2c-background-and-splits.md',
     'docs/e001-phase-2d-a-preregistration.md',
     'docs/e001-phase-2d-a-development-selection.md',
+    'docs/e001-phase-2d-b-final-protocol.md',
+    'docs/e001-phase-2d-baseline-modelling.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -41,6 +44,7 @@ $required = @(
     'research-log/2026-08-29-phase-2b5.md',
     'research-log/2026-08-29-phase-2c.md',
     'research-log/2026-08-29-phase-2d-a.md',
+    'research-log/2026-08-29-phase-2d-b.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -54,6 +58,8 @@ $required = @(
     'scripts/freeze_e001_splits.py',
     'scripts/audit_e001_dataset.py',
     'scripts/run_e001_development_baselines.py',
+    'scripts/run_e001_final_evaluation.py',
+    'scripts/render_e001_final_figures.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -76,6 +82,7 @@ $required = @(
     'src/archaeoai/splits.py',
     'src/archaeoai/model_data.py',
     'src/archaeoai/modelling.py',
+    'src/archaeoai/final_evaluation.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -98,6 +105,7 @@ $required = @(
     'tests/test_model_data.py',
     'tests/test_modelling.py',
     'tests/test_baseline_freeze.py',
+    'tests/test_final_evaluation.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -123,7 +131,15 @@ $required = @(
     'outputs/dataset/e001_geographic_split_manifest.json',
     'outputs/dataset/e001_dataset_audit.json',
     'outputs/modelling/e001_phase_2d_a_development_results.json',
-    'outputs/modelling/e001_primary_baseline_config.json'
+    'outputs/modelling/e001_primary_baseline_config.json',
+    'outputs/modelling/e001_final_results.csv',
+    'outputs/modelling/e001_random_vs_geographic.json',
+    'outputs/modelling/e001_final_model_audit.json',
+    'outputs/modelling/figures/e001_balanced_accuracy_comparison.svg',
+    'outputs/modelling/figures/e001_geographic_confusion_matrix.svg',
+    'outputs/modelling/figures/e001_random_confusion_matrix.svg',
+    'outputs/modelling/figures/e001_roc_curves.svg',
+    'outputs/modelling/figures/e001_precision_recall_curves.svg'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -136,8 +152,8 @@ if ($readme -notmatch 'geographically (?:disjoint|separated) holdouts?') {
     throw 'README must state the geographic-holdout principle.'
 }
 if (
-    $readme -notmatch 'Development-only baselines have been trained' -or
-    $readme -notmatch 'no\s+(?:>\s*)?final-test result' -or
+    $readme -notmatch '0\.871 balanced' -or
+    $readme -notmatch 'geographically held-out groups' -or
     $readme -notmatch 'has not discovered\s+(?:>\s*)?archaeological sites' -or
     $readme -notmatch '261' -or
     $readme -notmatch '12'
@@ -310,9 +326,14 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2C background, dataset, split, leakage, or privacy validation failed.'
 }
 
-$phase2dACheck = & $pythonExecutable -c 'import json; from pathlib import Path; from archaeoai.model_data import authorize_final_test, validate_frozen_primary_config; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); result=json.loads((root/"outputs/modelling/e001_phase_2d_a_development_results.json").read_text()); config_path=root/"outputs/modelling/e001_primary_baseline_config.json"; config=validate_frozen_primary_config(config_path); assert_coordinate_safe_mapping(result); assert_coordinate_safe_mapping(config); assert result["condition"]=="geographic" and result["partitions_accessed"]==["train","development"] and result["final_test_accessed"] is False and result["random_condition_evaluated"] is False and len(result["results"])==15; assert all(item["maximum_absolute_class_count_difference"]==0 for fields in result["metadata_shortcut_audit"].values() for item in fields.values()); assert result["scope"]=={"final_accuracy_computed":False,"final_f1_computed":False,"final_roc_auc_computed":False,"predictions_inspected":False}; assert config["model"]=="random_forest" and config["representation"]=="all_four" and config["feature_count"]==4096 and config["classification_threshold"]==0.5 and config["final_test_evaluated"] is False; authorize_final_test(config_path,root/"outputs/dataset/e001_geographic_split_manifest.json",condition="geographic"); print("Phase 2D-A development selection evidence valid; final test untouched")'
+$phase2dACheck = & $pythonExecutable -c 'import json; from pathlib import Path; from archaeoai.model_data import authorize_final_test, validate_frozen_primary_config; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); result=json.loads((root/"outputs/modelling/e001_phase_2d_a_development_results.json").read_text()); config_path=root/"outputs/modelling/e001_primary_baseline_config.json"; config=validate_frozen_primary_config(config_path); assert_coordinate_safe_mapping(result); assert_coordinate_safe_mapping(config); assert result["condition"]=="geographic" and result["partitions_accessed"]==["train","development"] and result["final_test_accessed"] is False and result["random_condition_evaluated"] is False and len(result["results"])==15; assert all(item["maximum_absolute_class_count_difference"]==0 for fields in result["metadata_shortcut_audit"].values() for item in fields.values()); assert result["scope"]=={"final_accuracy_computed":False,"final_f1_computed":False,"final_roc_auc_computed":False,"predictions_inspected":False}; assert config["model"]=="random_forest" and config["representation"]=="all_four" and config["feature_count"]==4096 and config["classification_threshold"]==0.5 and config["final_test_evaluated"] is False; authorize_final_test(config_path,root/"outputs/dataset/e001_geographic_split_manifest.json",condition="geographic"); print("Phase 2D-A selection evidence valid; immutable pre-unlock state preserved")'
 if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2D-A preregistration, development result, frozen configuration, or final-test guard validation failed.'
+}
+
+$phase2dBCheck = & $pythonExecutable -c 'import csv, json; from pathlib import Path; from archaeoai.final_evaluation import validate_final_protocol; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); protocol,config=validate_final_protocol(root/"configs/e001-phase-2d-b-final-protocol.json",root/"outputs/modelling/e001_primary_baseline_config.json"); result=json.loads((root/"outputs/modelling/e001_random_vs_geographic.json").read_text()); audit=json.loads((root/"outputs/modelling/e001_final_model_audit.json").read_text()); rows=list(csv.DictReader((root/"outputs/modelling/e001_final_results.csv").open(encoding="utf-8"))); assert_coordinate_safe_mapping(result); assert_coordinate_safe_mapping(audit); assert result["final_test_evaluated"] is True and result["selection_commit"]=="790ac9f4b99da94e8f9bab2a6aed70b34ac88558" and result["primary_config_sha256"]==config["config_sha256"] and result["protocol_sha256"]==protocol["protocol_sha256"] and result["no_retuning_declaration"] is True and result["secondary_final_baselines"]==[]; assert len(rows)==2 and {row["condition"] for row in rows}=={"random","geographic"}; random=result["conditions"]["random"]; geographic=result["conditions"]["geographic"]; assert random["counts"]==geographic["counts"]=={"total":62,"positive_bowl_barrow":31,"unlabelled_background":31}; assert random["metrics"]["balanced_accuracy"]==0.8225806451612903 and geographic["metrics"]["balanced_accuracy"]==0.8709677419354839; assert result["random_minus_geographic_balanced_accuracy"]==random["metrics"]["balanced_accuracy"]-geographic["metrics"]["balanced_accuracy"]; assert all(item["valid_replicates"]==5000 and item["undefined_replicates"]==0 for condition in result["conditions"].values() for item in condition["bootstrap"]["intervals"].values()); assert all(condition["terrain_summary_by_correctness"][status]["missing_fraction"]=={"mean":0.0,"median":0.0} for condition in audit["conditions"].values() for status in ("correct","error")); assert audit["privacy"]=={"aggregate_only":True,"coordinates_in_output":False,"sample_identifiers_in_output":False,"maps_created":False} and audit["no_post_final_training_or_tuning"] is True; print("Phase 2D-B final baseline evidence valid; immutable pre-unlock config retained")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2D-B final result, uncertainty, audit, protocol, or privacy validation failed.'
 }
 
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
@@ -327,7 +348,7 @@ if (
 ) {
     throw 'A tracked Phase 2C index contains a coordinate-bearing field.'
 }
-$modellingOutputs = Get-Content -Raw 'outputs/modelling/e001_phase_2d_a_development_results.json', 'outputs/modelling/e001_primary_baseline_config.json'
+$modellingOutputs = Get-Content -Raw 'outputs/modelling/e001_phase_2d_a_development_results.json', 'outputs/modelling/e001_primary_baseline_config.json', 'outputs/modelling/e001_random_vs_geographic.json', 'outputs/modelling/e001_final_model_audit.json'
 if ($modellingOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center)"\s*:') {
     throw 'A tracked Phase 2D-A output contains a coordinate-bearing field.'
 }
@@ -344,4 +365,4 @@ if ($LASTEXITCODE -ne 0 -or -not $privateBackgroundIgnoreCheck) {
     throw 'Private E001 background coordinates and terrain must remain ignored by Git.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck."

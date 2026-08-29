@@ -6,8 +6,9 @@ Phase 2C froze 261 approved positive-terrain and 261 matched unlabelled-backgrou
 group-aware random condition and the complete-block geographic condition now contain 216/14/31
 examples per class in train/development/final test. All seven overlap components remain intact and
 the two final-test block assignments are hash-guarded. Phase 2D-A selected and froze an all-four
-pooled Random Forest using only geographic development. Final evaluation remains blocked pending
-explicit Phase 2D-B approval.
+pooled Random Forest using only geographic development. Phase 2D-B then recorded 0.870968 balanced
+accuracy [0.774194, 0.951613] on the one-way geographic final test. The next gate is a separately
+pre-registered Phase 2E robustness / stronger-model study; Phase 2E has not started.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 

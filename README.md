@@ -2,9 +2,9 @@
 
 **LiDAR terrain research, spatial evaluation, and reproducible machine learning for archaeology.**
 
-![Research stage](https://img.shields.io/badge/research-Phase%202D--A%20baseline%20selected-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%202D%20baseline%20evaluated-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-138%20passing-2f855a)
+![Tests](https://img.shields.io/badge/tests-143%20passing-2f855a)
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
 > that apparent skill survive when the model is tested somewhere geographically new?**
@@ -15,8 +15,9 @@ LiDAR-derived terrain. The central concern is not simply whether a model scores 
 the score reflects genuine geographic generalization rather than spatial or survey leakage.
 
 > [!IMPORTANT]
-> **Active research, not a discovery system.** Development-only baselines have been trained, but no
-> final-test result or geographic-generalization claim exists, and ArchaeoAI has not discovered
+> **Active research, not a discovery system.** The frozen baseline reached **0.871 balanced
+> accuracy** on two specific geographically held-out groups (n=62; 95% whole-group bootstrap CI
+> 0.774–0.952). This is a bounded classification result, and ArchaeoAI has not discovered
 > archaeological sites.
 
 ## Current research status
@@ -27,21 +28,22 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **138 passing** |
+| Automated tests | **143 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
 | Frozen dataset | **522 observations; 254 assignment groups** |
 | Geographic final test | **2 nonadjacent blocks; 31 + 31 observations by class** |
-| Baseline selection | **Development-only; primary configuration frozen** |
-| Final-test evaluation | **Not run** |
+| Development selection | **0.821 balanced accuracy; n=28** |
+| Random final comparison | **0.823 [0.719, 0.917]; n=62** |
+| Primary geographic final result | **0.871 [0.774, 0.952]; n=62** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
 records, not unquestionable ground truth**. A frozen 40-record queue still awaits review by a
 different human reviewer.
 
-[Read the Phase 2D-A development-only selection →](docs/e001-phase-2d-a-development-selection.md)
+[Read the complete frozen baseline evaluation →](docs/e001-phase-2d-baseline-modelling.md)
 
 ## Why this matters
 
@@ -61,9 +63,10 @@ the limits of the method—not a failed project.
 
 ## The experiment in 30 seconds
 
-The positive terrain, matched unlabelled backgrounds, and two evaluation conditions are frozen. A
-pre-registered development-only matrix selected and hash-froze the primary baseline. The geographic
-and random final tests remain unevaluated.
+The positive terrain, matched unlabelled backgrounds, and two evaluation conditions were frozen
+before modelling. A pre-registered development-only matrix selected and hash-froze the primary
+baseline. A separately committed one-way protocol then evaluated random and geographic final
+partitions without retuning.
 
 ```mermaid
 flowchart LR
@@ -94,8 +97,8 @@ called `unlabelled_background`, never a true archaeological negative.
 | Matched background construction | ✅ Complete | 261/261; uncertainty-aware 1:1 design |
 | Leakage-resistant split freeze | ✅ Complete | Group-aware random plus two-block geographic test |
 | Baseline infrastructure and selection | ✅ Complete | Dummy, L2 logistic, modest random forest |
-| Random vs geographic evaluation | ⏳ Frozen, not run | Final assignments protected by hashes |
-| Results and research interface | ⏳ Not started | No metrics or public predictions exist |
+| Random vs geographic evaluation | ✅ Complete | Geographic 0.871 vs random 0.823 balanced accuracy |
+| Results and research interface | 🔬 Report complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today
 
@@ -118,13 +121,16 @@ called `unlabelled_background`, never a true archaeological negative.
 - A fail-closed terrain-only model loader, deterministic 4×4 pooling, and three pre-registered
   scikit-learn baseline families.
 - A development-only 15-candidate result matrix and hash-frozen primary Random Forest configuration.
+- A one-way final evaluation with group-bootstrap uncertainty, confusion matrices, ROC/PR curves,
+  aggregate error analysis, and a no-retuning audit trail.
 - Tracked aggregate evidence and a claims register that limits public wording.
 - Windows-compatible environment and repository validation scripts.
 
 ## What does not exist yet
 
 - Any committed LiDAR, exact coordinate table, georeferenced QA image, or private receipt.
-- Any final-test metric, geographic-generalization result, deep-learning system, or headline claim.
+- A deep-learning system, independent reproduction, or evidence beyond the bounded E001 classes and
+  two held-out geographic groups.
 - A map of predictions or coordinates for possible unrecorded sites.
 - A formal paper, DOI, archived release, or institutional affiliation.
 
@@ -191,6 +197,9 @@ coordinates in tracked outputs. The Phase 2A.5 input and recreation policy is do
 
 # Phase 2D-A only: train/development matrix; the loader rejects final_test
 .\.venv\Scripts\python.exe .\scripts\run_e001_development_baselines.py
+
+# Phase 2D-B result files are immutable; do not rerun the exclusive-create final evaluator.
+# Coordinate-safe figures can be regenerated only after removing them deliberately in a new audit.
 
 # Historical aggregate-only estimate; downloads no terrain
 .\.venv\Scripts\python.exe .\scripts\estimate_e001_terrain_acquisition.py
@@ -272,6 +281,8 @@ Neither source provider endorses ArchaeoAI. No supplied map is reproduced here.
 - [E001 Phase 2C background and split freeze](docs/e001-phase-2c-background-and-splits.md)
 - [E001 Phase 2D-A preregistration](docs/e001-phase-2d-a-preregistration.md)
 - [E001 Phase 2D-A development selection](docs/e001-phase-2d-a-development-selection.md)
+- [E001 Phase 2D-B frozen protocol](docs/e001-phase-2d-b-final-protocol.md)
+- [E001 complete baseline modelling and final results](docs/e001-phase-2d-baseline-modelling.md)
 - [Initial E001 experiment protocol](experiments/E001_geographic_baseline.md)
 - [Research quality bar](docs/project-quality-bar.md)
 - [Claims register](docs/claims-register.md)
