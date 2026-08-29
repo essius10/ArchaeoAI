@@ -18,6 +18,7 @@ $required = @(
     'configs/e001-phase-2d-a-preregistered.json',
     'configs/e001-phase-2d-b-final-protocol.json',
     'configs/e001-phase-2e-a-robustness-protocol.json',
+    'outputs/deep_learning/e001_cnn_protocol.json',
     'data/README.md',
     'data/manifests/example-dataset.toml',
     'data/manifests/e001-ea-lidar-dtm.toml',
@@ -33,6 +34,7 @@ $required = @(
     'docs/e001-phase-2d-baseline-modelling.md',
     'docs/e001-phase-2e-a-robustness-protocol.md',
     'docs/e001-phase-2e-robustness.md',
+    'docs/e001-phase-2eb-compact-cnn.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -49,6 +51,7 @@ $required = @(
     'research-log/2026-08-29-phase-2d-a.md',
     'research-log/2026-08-29-phase-2d-b.md',
     'research-log/2026-08-29-phase-2e-a.md',
+    'research-log/2026-08-29-phase-2eb0.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -67,6 +70,7 @@ $required = @(
     'scripts/freeze_e001_robustness_folds.py',
     'scripts/run_e001_robustness.py',
     'scripts/render_e001_robustness_figures.py',
+    'scripts/freeze_e001_cnn_protocol.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -91,6 +95,7 @@ $required = @(
     'src/archaeoai/modelling.py',
     'src/archaeoai/final_evaluation.py',
     'src/archaeoai/robustness.py',
+    'src/archaeoai/deep_learning.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -115,6 +120,7 @@ $required = @(
     'tests/test_baseline_freeze.py',
     'tests/test_final_evaluation.py',
     'tests/test_robustness.py',
+    'tests/test_deep_learning.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -207,7 +213,10 @@ if ($projectConfig -notmatch 'requires-python\s*=\s*">=3\.12,<3\.15"') {
     throw 'pyproject.toml must support Python >=3.12,<3.15.'
 }
 if ($projectConfig -notmatch 'scikit-learn>=1\.9,<2') {
-    throw 'Phase 2D-A must declare only the approved scikit-learn modelling dependency.'
+    throw 'Phase 2D-A must retain the approved scikit-learn modelling dependency.'
+}
+if ($projectConfig -notmatch 'torch>=2\.13,<2\.14') {
+    throw 'Phase 2E-B0 must declare only the approved minimal PyTorch dependency.'
 }
 
 $exampleManifest = Get-Content -Raw 'data/manifests/example-dataset.toml'
@@ -365,6 +374,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2E-A folds, robustness results, shortcut audits, or Phase 2D immutability validation failed.'
 }
 
+$phase2eB0Check = & $pythonExecutable -c 'import hashlib, json; from pathlib import Path; from archaeoai.deep_learning import CNN_INPUT_SHAPE, CompactTerrainCNN, build_fold_partitions, read_cnn_records, read_fold_assignments, trainable_parameter_count, validate_cnn_protocol; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); protocol=validate_cnn_protocol(root/"outputs/deep_learning/e001_cnn_protocol.json"); assert_coordinate_safe_mapping(protocol); records=read_cnn_records(root/"outputs/dataset/e001_modelling_index.csv"); assignments=read_fold_assignments(root/"outputs/robustness/e001_geographic_fold_groups.csv"); assert len(records)==522 and len(assignments)==23 and CNN_INPUT_SHAPE==(4,128,128) and trainable_parameter_count(CompactTerrainCNN())==59145; partitions=[build_fold_partitions(records,assignments,held_out_fold=fold) for fold in range(5)]; assert all(len(item.internal_train)+len(item.internal_validation)+len(item.held_out)==522 for item in partitions); assert all(not ({row.geographic_block_id for row in item.internal_validation}&{row.geographic_block_id for row in item.held_out}) for item in partitions); assert protocol["status"]=="READY_NOT_TRAINED" and protocol["execution_state"]=={"real_e001_samples_loaded_by_cnn":False,"cnn_trained":False,"geographic_cv_run":False,"cnn_performance_metrics_computed":False,"random_forest_comparison_performed":False}; serialized=json.dumps(protocol,sort_keys=True).casefold(); assert "balanced_accuracy" not in serialized and "roc_auc" not in serialized; immutable={"outputs/modelling/e001_final_results.csv":"28b7503965ea75143616f5e726890b842030a20be8c283e2e9a7dd3c540e39a6","outputs/modelling/e001_random_vs_geographic.json":"6d6d8cf9ebca15d7cf28c99e9d05d9b94b5837695aaf29a973c80d708aad9055","outputs/modelling/e001_final_model_audit.json":"ad1204c002b6eb591b9ccf8cfdc89021ffcc6f8b709b30aae6fefd0ec9e891c2","outputs/robustness/e001_robustness_summary.json":"6ebf881562458110562e7181824c677acf7ecfa7edc673152e96bf1a7c319591","outputs/robustness/e001_geographic_fold_manifest.json":"2575232a392925eedcbabe343e599df58a789137bad3b356b3774e9ef9637157"}; assert all(hashlib.sha256((root/path).read_bytes()).hexdigest()==digest for path,digest in immutable.items()); print("Phase 2E-B0 CNN protocol valid; READY_NOT_TRAINED; Phase 2D/2E-A immutable")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2E-B0 CNN protocol, fold reuse, privacy, or immutability validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -385,7 +399,11 @@ $robustnessOutputs = Get-Content -Raw 'outputs/robustness/*.json', 'outputs/robu
 if ($robustnessOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id)"\s*:') {
     throw 'A tracked Phase 2E-A output contains a coordinate or sample identifier.'
 }
-$trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
+$deepLearningOutputs = Get-Content -Raw 'outputs/deep_learning/*.json'
+if ($deepLearningOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id)"\s*:') {
+    throw 'A tracked Phase 2E-B0 output contains a coordinate or sample identifier.'
+}
+$trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' '*.pt' '*.pth' '*.ckpt' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
     throw "Sensitive or bulk terrain is tracked: $($trackedSensitive -join ', ')"
 }
@@ -397,5 +415,13 @@ $privateBackgroundIgnoreCheck = & git check-ignore 'data/private/e001/background
 if ($LASTEXITCODE -ne 0 -or -not $privateBackgroundIgnoreCheck) {
     throw 'Private E001 background coordinates and terrain must remain ignored by Git.'
 }
+$checkpointIgnoreCheck = & git check-ignore 'outputs/deep_learning/private-sentinel.pt'
+if ($LASTEXITCODE -ne 0 -or -not $checkpointIgnoreCheck) {
+    throw 'PyTorch checkpoints must remain ignored by Git.'
+}
+$trainingRunIgnoreCheck = & git check-ignore 'outputs/deep_learning/training_runs/private-sentinel.json'
+if ($LASTEXITCODE -ne 0 -or -not $trainingRunIgnoreCheck) {
+    throw 'Private deep-learning training histories must remain ignored by Git.'
+}
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check."

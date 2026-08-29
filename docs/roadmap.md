@@ -9,8 +9,10 @@ the two final-test block assignments are hash-guarded. Phase 2D-A selected and f
 pooled Random Forest using only geographic development. Phase 2D-B then recorded 0.870968 balanced
 accuracy [0.774194, 0.951613] on the one-way geographic final test. Phase 2E-A then classified the
 baseline as ROBUST under a pre-committed five-fold post-hoc protocol (mean 0.823406; fold range
-0.790000–0.861111). The next gate is a separately pre-registered Phase 2E-B stronger-model study;
-Phase 2E-B has not started.
+0.790000–0.861111). Phase 2E-B0 has now frozen a privacy-safe 59,145-parameter compact-CNN
+protocol against the same five folds. Its status is `READY_NOT_TRAINED`: no real CNN training,
+geographic CV, or CNN performance calculation has occurred. The next gate is separately authorized
+Phase 2E-B training.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 

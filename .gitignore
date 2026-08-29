@@ -39,6 +39,8 @@ data/processed/
 *.pth
 *.ckpt
 *.onnx
+outputs/deep_learning/checkpoints/
+outputs/deep_learning/training_runs/
 
 # Generated experiment runs are reproducible artifacts, not source files.
 outputs/E*/

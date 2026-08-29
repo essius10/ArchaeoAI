@@ -57,6 +57,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'The Phase 2B geospatial runtime is unavailable.'
 }
 $geospatial = $geospatialJson | ConvertFrom-Json
+$torchJson = & $pythonExecutable -c 'import json, torch; available=torch.cuda.is_available(); print(json.dumps({"version":torch.__version__,"cuda_available":available,"cuda_runtime":torch.version.cuda,"gpu_count":torch.cuda.device_count(),"gpu_name":torch.cuda.get_device_name(0) if available else None,"device_capability":list(torch.cuda.get_device_capability(0)) if available else None}))'
+if ($LASTEXITCODE -ne 0) {
+    throw 'The Phase 2E-B0 PyTorch runtime is unavailable.'
+}
+$torchRuntime = $torchJson | ConvertFrom-Json
 
 $gitCommand = Get-Command git -ErrorAction SilentlyContinue
 if ($null -eq $gitCommand) {
@@ -81,16 +86,19 @@ Write-Output "Rasterio/GDAL: $($geospatial.rasterio) / $($geospatial.gdal)"
 Write-Output "PyProj/PROJ: $($geospatial.pyproj) / $($geospatial.proj)"
 Write-Output "SciPy: $($geospatial.scipy)"
 Write-Output "scikit-learn: $($geospatial.sklearn)"
+Write-Output "PyTorch: $($torchRuntime.version)"
+Write-Output "Torch CUDA available/runtime: $($torchRuntime.cuda_available) / $($torchRuntime.cuda_runtime)"
+Write-Output "Torch GPU: $($torchRuntime.gpu_name) (count $($torchRuntime.gpu_count); capability $($torchRuntime.device_capability -join '.'))"
 Write-Output "CRS smoke test: EPSG:27700 = $($geospatial.epsg27700)"
 Write-Output "Git: $gitVersion"
 Write-Output "Git status: $($gitStatus -join ' | ')"
 
 $gpuCommand = Get-Command nvidia-smi -ErrorAction SilentlyContinue
 if ($null -eq $gpuCommand) {
-    Write-Output 'GPU: nvidia-smi not found (optional during Phase 2E-A)'
+    Write-Output 'GPU: nvidia-smi not found (PyTorch CPU setup remains inspectable)'
 } else {
     $gpuSummary = & $gpuCommand.Source --query-gpu=name,memory.total,driver_version --format=csv,noheader
-    Write-Output "GPU: $gpuSummary (optional during Phase 2E-A)"
+    Write-Output "GPU: $gpuSummary"
 }
 
 $datasetIndexPath = Join-Path $projectRootPath 'outputs\dataset\e001_modelling_index.csv'

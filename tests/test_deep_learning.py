@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import io
+import random
 from dataclasses import fields
 from pathlib import Path
 
@@ -21,6 +22,7 @@ from archaeoai.deep_learning import (
     read_cnn_records,
     read_fold_assignments,
     trainable_parameter_count,
+    validate_cnn_protocol,
 )
 from archaeoai.terrain.full_dataset import REPRESENTATION_NAMES, terrain_content_digest
 
@@ -146,12 +148,15 @@ def test_matched_and_overlap_units_are_preserved_across_cnn_partitions() -> None
     assert all(len(parts) == 1 for parts in seen.values())
 
 
-def test_normalization_is_fitted_on_internal_training_only(tmp_path: Path) -> None:
+@pytest.mark.parametrize("forbidden_role", ("internal_validation", "held_out"))
+def test_normalization_is_fitted_on_internal_training_only(
+    tmp_path: Path, forbidden_role: str
+) -> None:
     records, private_root = _write_synthetic_case(tmp_path)
     training = E001TerrainDataset(records, private_root=private_root, role="internal_train")
     normalization = fit_training_normalization(training)
     assert normalization.fitted_on == "internal_train"
-    validation = E001TerrainDataset(records, private_root=private_root, role="internal_validation")
+    validation = E001TerrainDataset(records, private_root=private_root, role=forbidden_role)
     with pytest.raises(ValueError, match="only on internal training"):
         fit_training_normalization(validation)
 
@@ -167,6 +172,16 @@ def test_deterministic_cpu_inference() -> None:
     with torch.inference_mode():
         second_output = second(inputs)
     assert torch.equal(first_output, second_output)
+
+
+def test_seed_setup_covers_python_numpy_and_torch_cpu() -> None:
+    configure_determinism(20260830)
+    first = (random.random(), float(np.random.random()), torch.rand(3))
+    configure_determinism(20260830)
+    second = (random.random(), float(np.random.random()), torch.rand(3))
+    assert first[0] == second[0]
+    assert first[1] == second[1]
+    assert torch.equal(first[2], second[2])
 
 
 def test_checkpoint_payload_is_weights_only_and_coordinate_safe() -> None:
@@ -193,6 +208,23 @@ def test_torch_checkpoints_are_ignored_by_git(extension: str, tmp_path: Path) ->
         check=False,
     )
     assert result.returncode == 0
+
+
+def test_private_deep_learning_run_directories_are_ignored() -> None:
+    import subprocess
+
+    for relative_path in (
+        "outputs/deep_learning/checkpoints/private-model.bin",
+        "outputs/deep_learning/training_runs/private-history.json",
+    ):
+        result = subprocess.run(
+            ["git", "check-ignore", relative_path],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0
 
 
 @pytest.mark.parametrize(
@@ -223,3 +255,18 @@ def test_torch_checkpoints_are_ignored_by_git(extension: str, tmp_path: Path) ->
 def test_phase_2d_and_2e_a_artifacts_are_immutable(relative_path: str, expected: str) -> None:
     observed = hashlib.sha256((ROOT / relative_path).read_bytes()).hexdigest()
     assert observed == expected
+
+
+def test_frozen_cnn_protocol_is_ready_and_contains_no_results() -> None:
+    protocol = validate_cnn_protocol(ROOT / "outputs/deep_learning/e001_cnn_protocol.json")
+    assert protocol["status"] == "READY_NOT_TRAINED"
+    assert protocol["execution_state"] == {
+        "real_e001_samples_loaded_by_cnn": False,
+        "cnn_trained": False,
+        "geographic_cv_run": False,
+        "cnn_performance_metrics_computed": False,
+        "random_forest_comparison_performed": False,
+    }
+    serialized = str(protocol).casefold()
+    assert "balanced_accuracy" not in serialized
+    assert "roc_auc" not in serialized

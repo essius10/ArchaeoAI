@@ -1,0 +1,131 @@
+{
+  "phase": "2E-B0",
+  "status": "READY_NOT_TRAINED",
+  "purpose": "setup_only_no_real_e001_training_or_scoring",
+  "architecture": {
+    "name": "CompactTerrainCNN",
+    "input_shape": [
+      4,
+      128,
+      128
+    ],
+    "channels": [
+      "elevation_normalized",
+      "slope_degrees",
+      "hillshade_315_45",
+      "local_relief_r16m"
+    ],
+    "feature_extractor": [
+      "Conv2d(4,24,kernel_size=3,padding=1)",
+      "ReLU",
+      "MaxPool2d(2)",
+      "Conv2d(24,48,kernel_size=3,padding=1)",
+      "ReLU",
+      "MaxPool2d(2)",
+      "Conv2d(48,96,kernel_size=3,padding=1)",
+      "ReLU",
+      "MaxPool2d(2)",
+      "AdaptiveAvgPool2d(1)"
+    ],
+    "head": [
+      "Flatten",
+      "Linear(96,64)",
+      "ReLU",
+      "Linear(64,1)"
+    ],
+    "output": "one_binary_logit",
+    "pretrained": false
+  },
+  "parameter_count": 59145,
+  "loss": "BCEWithLogitsLoss",
+  "optimizer": {
+    "name": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08
+  },
+  "batch_size": 16,
+  "max_epochs": 100,
+  "early_stopping": {
+    "monitor": "internal_validation_bce_loss",
+    "mode": "min",
+    "patience_epochs": 12,
+    "minimum_delta": 0.0,
+    "restore_best_weights": true,
+    "internal_validation_fraction_of_outer_training_groups": 0.2,
+    "group_selection": "sha256_ranked_complete_BNG_groups_with_e001-cnn-internal-validation-v1_salt",
+    "matched_and_overlap_units_kept_together": true,
+    "held_out_geographic_fold_used": false
+  },
+  "normalization": {
+    "method": "per_channel_mean_and_population_standard_deviation",
+    "fitted_on": "internal_training_pixels_only_per_outer_fold",
+    "validation_or_holdout_statistics_used": false,
+    "degenerate_channel_policy": "fail_closed"
+  },
+  "augmentation": "none",
+  "seeds": [
+    20260829,
+    20260830,
+    20260831
+  ],
+  "determinism": {
+    "python_random_seeded": true,
+    "numpy_seeded": true,
+    "torch_cpu_seeded": true,
+    "torch_cuda_all_devices_seeded": true,
+    "deterministic_algorithms": true,
+    "cudnn_deterministic": true,
+    "cudnn_benchmark": false
+  },
+  "geographic_folds": {
+    "source": "outputs/robustness/e001_geographic_fold_groups.csv",
+    "fold_count": 5,
+    "geographic_group_count": 23,
+    "assignment_regenerated": false
+  },
+  "fold_assignment_sha256": "825eb1088a53f764f991bf6bb22f2c9fe6eeb868916a5abab92012eed85d90ab",
+  "data_policy": {
+    "input": "four_private_128x128_processed_terrain_representations",
+    "labels_source": "outputs/dataset/e001_modelling_index.csv_only",
+    "coordinates_as_features": false,
+    "geographic_group_as_feature": false,
+    "provenance_as_feature": false,
+    "survey_year_as_feature": false,
+    "sample_id_filename_or_path_as_feature": false
+  },
+  "checkpoint_policy": {
+    "private_and_git_ignored": true,
+    "weights_only_payload": true,
+    "sample_ids_coordinates_paths_and_provenance_excluded": true
+  },
+  "software_versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.2",
+    "torch": "2.13.0+cu130",
+    "torch_cuda_runtime": "13.0",
+    "cudnn": "92000",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "hardware_verification": {
+    "cuda_available": true,
+    "gpu_count": 1,
+    "gpu_name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "compute_capability": [
+      12,
+      0
+    ]
+  },
+  "execution_state": {
+    "real_e001_samples_loaded_by_cnn": false,
+    "cnn_trained": false,
+    "geographic_cv_run": false,
+    "cnn_performance_metrics_computed": false,
+    "random_forest_comparison_performed": false
+  },
+  "protocol_sha256": "6007a2b62157195c26a05474935d88f1e3ed7b6c6780572f35c1162ab08d39c0"
+}
