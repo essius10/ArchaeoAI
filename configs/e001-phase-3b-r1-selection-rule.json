@@ -1,0 +1,75 @@
+{
+  "schema_version": "e001-phase-3b-r1-selection-rule-v1",
+  "phase": "3B-R1",
+  "status": "RULE_FROZEN_BEFORE_SEARCH",
+  "frozen": true,
+  "source_commit": "0c30031028af2b9be3d4824f943d05f5e76ffee0",
+  "phase3a_protocol_sha256": "ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba",
+  "phase3b_stop_receipt_repository_sha256": "3836e8a880ae7c4fd54eb07ccd8cac7ad8bf1a1e9939bf5cbdc88dafec49f397",
+  "private_curation_manifest_sha256": "e7c73a5dccfec0e95126b0e0820fdbbb2517daf5bf8100f2dca403aadc2c17b9",
+  "frozen_sample_design": {
+    "existing_accepted_records_locked": 47,
+    "target_positive_count": 60,
+    "target_background_count": 60,
+    "minimum_positive_count": 50,
+    "minimum_background_count": 50,
+    "class_ratio": "one_to_one",
+    "additional_positives_to_target": 13,
+    "supplementary_planning_count": 15
+  },
+  "candidate_cell_definition": {
+    "crs": "EPSG:27700",
+    "cell_size_m": 25000,
+    "first_external_cell": "BNG_25KM_E16_N5",
+    "minimum_chebyshev_cell_index_difference_from_first_cell": 2,
+    "minimum_cell_boundary_separation_from_first_cell_m": 25000,
+    "exclude_any_cell_occupied_by_an_E001_observation": true,
+    "minimum_record_separation_from_all_E001_observations_m": 15000,
+    "minimum_record_separation_from_Phase2F_private_domain_m": 15000,
+    "exclude_all_360_previously_E001_reviewed_records": true,
+    "exclude_all_87_first_external_cell_reviewed_records": true
+  },
+  "metadata_eligibility": {
+    "label_source": "Historic England National Heritage List for England Scheduled Monuments",
+    "title_triage": "explicit singular probable bowl-barrow title under frozen E001 title rule",
+    "terrain_source": "Environment Agency LIDAR Composite Digital Terrain Model 1m",
+    "terrain_patch_dimensions_m": [128, 128],
+    "required_crs": "EPSG:27700",
+    "required_resolution_m": 1.0,
+    "complete_patch_coverage_required": true,
+    "single_provenance_signature_required": true,
+    "minimum_QA_pass_probable_records": 28,
+    "minimum_count_basis": "ceil(15 / (47 / 87)) = 28; planning feasibility only, not a label assumption",
+    "RF_scores_or_model_outputs_allowed": false
+  },
+  "deterministic_selection_rule": {
+    "eligible_cells_only": true,
+    "ordering": [
+      "QA_pass_probable_records_descending",
+      "independent_probable_records_descending",
+      "minimum_distance_to_first_external_cell_descending",
+      "cell_id_ascending"
+    ],
+    "selected_cell": null,
+    "performance_used": false
+  },
+  "scientific_invariants": {
+    "positive_evidence_gate_changed": false,
+    "background_policy_changed": false,
+    "terrain_pipeline_changed": false,
+    "RF_configuration_changed": false,
+    "metrics_changed": false,
+    "privacy_policy_changed": false,
+    "no_score_rule_changed": false
+  },
+  "execution_state": {
+    "metadata_feasibility_search_performed": false,
+    "supplementary_cell_selected": false,
+    "supplementary_records_curated": false,
+    "external_terrain_acquired": false,
+    "external_RF_loaded": false,
+    "external_RF_scoring_performed": false,
+    "external_performance_metrics_computed": false
+  },
+  "selection_rule_sha256": "6e5f2992fe453601940792ad4c1f7be373c12724f5849f43926c7ea680459578"
+}

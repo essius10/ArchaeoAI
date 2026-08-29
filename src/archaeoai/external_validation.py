@@ -15,6 +15,7 @@ import numpy as np
 from archaeoai.terrain.privacy import assert_coordinate_safe_mapping
 
 EXPECTED_PROTOCOL_SCHEMA = "e001-phase-3a-external-validation-v1"
+EXPECTED_EXPANSION_RULE_SCHEMA = "e001-phase-3b-r1-selection-rule-v1"
 EXPECTED_PRIMARY_CONFIG_SHA256 = "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"
 EXPECTED_MODEL_STATE_SHA256 = "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939"
 EXTERNAL_CELL_SIZE_M = 25_000
@@ -41,6 +42,44 @@ def protocol_hash(payload: Mapping[str, Any]) -> str:
     content = {key: value for key, value in payload.items() if key != "protocol_sha256"}
     encoded = json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(encoded).hexdigest()
+
+
+def expansion_rule_hash(payload: Mapping[str, Any]) -> str:
+    """Hash a canonical expansion rule without its self-referential receipt."""
+    content = {key: value for key, value in payload.items() if key != "selection_rule_sha256"}
+    encoded = json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def validate_expansion_selection_rule(path: str | Path) -> dict[str, Any]:
+    """Validate the pre-search Phase 3B-R1 rule without selecting a region."""
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    assert_coordinate_safe_mapping(payload)
+    if payload.get("schema_version") != EXPECTED_EXPANSION_RULE_SCHEMA:
+        raise ValueError("unexpected Phase 3B-R1 selection-rule schema")
+    if payload.get("status") != "RULE_FROZEN_BEFORE_SEARCH" or payload.get("frozen") is not True:
+        raise ValueError("Phase 3B-R1 selection rule is not frozen")
+    if expansion_rule_hash(payload) != payload.get("selection_rule_sha256"):
+        raise ValueError("Phase 3B-R1 selection-rule hash mismatch")
+    sample = payload.get("frozen_sample_design", {})
+    if sample.get("target_positive_count") != 60 or sample.get("minimum_positive_count") != 50:
+        raise ValueError("Phase 3B-R1 changed the frozen sample design")
+    geography = payload.get("candidate_cell_definition", {})
+    if geography.get("first_external_cell") != EXTERNAL_CELL_ID:
+        raise ValueError("Phase 3B-R1 changed the first external cell")
+    if geography.get("minimum_record_separation_from_all_E001_observations_m") != 15_000:
+        raise ValueError("Phase 3B-R1 weakened E001 separation")
+    eligibility = payload.get("metadata_eligibility", {})
+    if eligibility.get("minimum_QA_pass_probable_records") != 28:
+        raise ValueError("Phase 3B-R1 metadata feasibility threshold changed")
+    if eligibility.get("RF_scores_or_model_outputs_allowed") is not False:
+        raise ValueError("Phase 3B-R1 must prohibit model-informed geography selection")
+    selection = payload.get("deterministic_selection_rule", {})
+    if selection.get("selected_cell") is not None or selection.get("performance_used") is not False:
+        raise ValueError("pre-search Phase 3B-R1 rule must not contain a selected cell")
+    if any(payload.get("execution_state", {}).values()):
+        raise ValueError("pre-search Phase 3B-R1 execution state is contaminated")
+    return payload
 
 
 def artifact_digest_matches(
