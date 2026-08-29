@@ -1,0 +1,77 @@
+{
+  "schema_version": "e001-posthoc-geographic-folds-v1",
+  "analysis_label": "posthoc_geographic_robustness",
+  "created_before_robustness_scoring": true,
+  "algorithm": "sort whole BNG groups by descending observation count, descending related-unit count, then group ID; greedily assign to the fold with the fewest observations, fewest groups, then lowest fold number",
+  "fold_count": 5,
+  "assignment_sha256": "825eb1088a53f764f991bf6bb22f2c9fe6eeb868916a5abab92012eed85d90ab",
+  "folds": {
+    "fold_1": {
+      "observations": 108,
+      "positive_bowl_barrow": 54,
+      "unlabelled_background": 54,
+      "geographic_groups": 5,
+      "related_units": 51
+    },
+    "fold_2": {
+      "observations": 106,
+      "positive_bowl_barrow": 53,
+      "unlabelled_background": 53,
+      "geographic_groups": 5,
+      "related_units": 52
+    },
+    "fold_3": {
+      "observations": 100,
+      "positive_bowl_barrow": 50,
+      "unlabelled_background": 50,
+      "geographic_groups": 4,
+      "related_units": 47
+    },
+    "fold_4": {
+      "observations": 108,
+      "positive_bowl_barrow": 54,
+      "unlabelled_background": 54,
+      "geographic_groups": 5,
+      "related_units": 54
+    },
+    "fold_5": {
+      "observations": 100,
+      "positive_bowl_barrow": 50,
+      "unlabelled_background": 50,
+      "geographic_groups": 4,
+      "related_units": 50
+    }
+  },
+  "geographic_group_assignments": {
+    "BNG_100KM_E1_N0": "fold_4",
+    "BNG_100KM_E2_N0": "fold_1",
+    "BNG_100KM_E2_N1": "fold_4",
+    "BNG_100KM_E3_N0": "fold_1",
+    "BNG_100KM_E3_N1": "fold_3",
+    "BNG_100KM_E3_N2": "fold_1",
+    "BNG_100KM_E3_N3": "fold_2",
+    "BNG_100KM_E3_N4": "fold_3",
+    "BNG_100KM_E3_N5": "fold_4",
+    "BNG_100KM_E4_N0": "fold_5",
+    "BNG_100KM_E4_N1": "fold_1",
+    "BNG_100KM_E4_N2": "fold_5",
+    "BNG_100KM_E4_N3": "fold_2",
+    "BNG_100KM_E4_N4": "fold_3",
+    "BNG_100KM_E4_N5": "fold_3",
+    "BNG_100KM_E5_N0": "fold_1",
+    "BNG_100KM_E5_N1": "fold_4",
+    "BNG_100KM_E5_N2": "fold_2",
+    "BNG_100KM_E5_N3": "fold_5",
+    "BNG_100KM_E5_N4": "fold_5",
+    "BNG_100KM_E6_N1": "fold_4",
+    "BNG_100KM_E6_N2": "fold_2",
+    "BNG_100KM_E6_N3": "fold_2"
+  },
+  "integrity": {
+    "geographic_groups_kept_whole": true,
+    "matched_and_overlap_units_kept_whole": true,
+    "cross_fold_terrain_window_overlaps": 0,
+    "coordinates_written": false,
+    "model_scores_used": false
+  }
+}
