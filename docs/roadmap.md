@@ -23,6 +23,12 @@ private blinded packet contains 12 HIGH, 25 MEDIUM, and 25 RANDOM items. The cur
 blinded human morphology review: no review, heritage-record cross-check, candidate claim, second
 domain, or public location exists.
 
+Phase 3A has additionally frozen an independent external geographic-validation design for the
+unchanged Random Forest. A coordinate-safe metadata audit selected one new 25 km Salisbury Plain
+cell with zero E001 observations, a 15 km prior-study exclusion, a target of 60 matched pairs, and
+a minimum of 50. The next research gate is private Phase 3B dataset construction without model
+access; the 87-record screening estimate is not a verified label count or performance result.
+
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
 | Month | Learning and research focus | Engineering/experiment deliverable | Evidence / gate |

@@ -4,7 +4,7 @@
 machine learning, and geographic generalization.**
 
 [![CI](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml/badge.svg)](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml)
-![Research stage](https://img.shields.io/badge/research-Phase%202F--B%20review%20ready-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%203A%20protocol%20frozen-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
 
 ArchaeoAI tests whether machine learning can recognize the terrain signature of **documented bowl
@@ -61,7 +61,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **198 passing** |
+| Automated tests | **211 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
@@ -74,6 +74,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Robustness classification | **ROBUST under the frozen Phase 2E-A rule** |
 | Post-hoc compact CNN | **5-fold/3-seed mean 0.701; CNN not justified at current scale** |
 | First controlled private inference | **5,929/5,929 valid; 1,159 deduplicated; review pending** |
+| Independent external-validation design | **Frozen; no external model scoring performed** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
@@ -87,6 +88,8 @@ different human reviewer.
 [Read the controlled Random-Forest inference design →](docs/e001-phase-2f-a-controlled-inference.md)
 
 [Read the first controlled private inference report →](docs/e001-phase-2f-b-controlled-inference.md)
+
+[Read the independent external geographic-validation protocol →](docs/e001-phase-3a-external-validation.md)
 
 ## Why this matters
 
