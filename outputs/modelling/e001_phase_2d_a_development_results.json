@@ -1,0 +1,431 @@
+{
+  "phase": "2D-A geographic development-only baseline selection",
+  "preregistration": "configs/e001-phase-2d-a-preregistered.json",
+  "condition": "geographic",
+  "partitions_accessed": [
+    "train",
+    "development"
+  ],
+  "final_test_accessed": false,
+  "random_condition_evaluated": false,
+  "counts": {
+    "train": 432,
+    "development": 28,
+    "candidates": 15
+  },
+  "results": [
+    {
+      "model": "dummy",
+      "representation": "normalized_elevation",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.5,
+      "roc_auc": 0.5
+    },
+    {
+      "model": "dummy",
+      "representation": "slope",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.5,
+      "roc_auc": 0.5
+    },
+    {
+      "model": "dummy",
+      "representation": "hillshade",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.5,
+      "roc_auc": 0.5
+    },
+    {
+      "model": "dummy",
+      "representation": "local_relief",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.5,
+      "roc_auc": 0.5
+    },
+    {
+      "model": "dummy",
+      "representation": "all_four",
+      "feature_count": 4096,
+      "balanced_accuracy": 0.5,
+      "roc_auc": 0.5
+    },
+    {
+      "model": "logistic_regression",
+      "representation": "normalized_elevation",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.75,
+      "roc_auc": 0.8163265306122449
+    },
+    {
+      "model": "logistic_regression",
+      "representation": "slope",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.6428571428571428,
+      "roc_auc": 0.7295918367346939
+    },
+    {
+      "model": "logistic_regression",
+      "representation": "hillshade",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.6785714285714286,
+      "roc_auc": 0.8163265306122449
+    },
+    {
+      "model": "logistic_regression",
+      "representation": "local_relief",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.6071428571428571,
+      "roc_auc": 0.6862244897959183
+    },
+    {
+      "model": "logistic_regression",
+      "representation": "all_four",
+      "feature_count": 4096,
+      "balanced_accuracy": 0.6785714285714286,
+      "roc_auc": 0.7857142857142857
+    },
+    {
+      "model": "random_forest",
+      "representation": "normalized_elevation",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.75,
+      "roc_auc": 0.8418367346938775
+    },
+    {
+      "model": "random_forest",
+      "representation": "slope",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.5714285714285714,
+      "roc_auc": 0.7142857142857142
+    },
+    {
+      "model": "random_forest",
+      "representation": "hillshade",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.7857142857142857,
+      "roc_auc": 0.8979591836734694
+    },
+    {
+      "model": "random_forest",
+      "representation": "local_relief",
+      "feature_count": 1024,
+      "balanced_accuracy": 0.7857142857142857,
+      "roc_auc": 0.9285714285714286
+    },
+    {
+      "model": "random_forest",
+      "representation": "all_four",
+      "feature_count": 4096,
+      "balanced_accuracy": 0.8214285714285714,
+      "roc_auc": 0.9234693877551021
+    }
+  ],
+  "selected": {
+    "model": "random_forest",
+    "representation": "all_four",
+    "feature_count": 4096,
+    "balanced_accuracy": 0.8214285714285714,
+    "roc_auc": 0.9234693877551021
+  },
+  "selection_rule": {
+    "primary_metric": "balanced_accuracy",
+    "selection_partition": "geographic_development",
+    "effective_tie_absolute_difference_less_than": 0.02,
+    "tie_breaks": [
+      "prefer_logistic_regression",
+      "prefer_fewer_representation_channels",
+      "prefer_model_order_dummy_then_logistic_regression_then_random_forest",
+      "prefer_representation_order_normalized_elevation_then_slope_then_hillshade_then_local_relief_then_all_four"
+    ],
+    "secondary_metric_only": "roc_auc",
+    "classification_threshold": 0.5
+  },
+  "permutation_sanity_checks": [
+    {
+      "seed": 20260830,
+      "balanced_accuracy": 0.7142857142857143,
+      "roc_auc": 0.6377551020408163
+    },
+    {
+      "seed": 20260831,
+      "balanced_accuracy": 0.5714285714285714,
+      "roc_auc": 0.5204081632653061
+    },
+    {
+      "seed": 20260832,
+      "balanced_accuracy": 0.4642857142857143,
+      "roc_auc": 0.41326530612244894
+    },
+    {
+      "seed": 20260833,
+      "balanced_accuracy": 0.4642857142857143,
+      "roc_auc": 0.43367346938775514
+    },
+    {
+      "seed": 20260834,
+      "balanced_accuracy": 0.42857142857142855,
+      "roc_auc": 0.41836734693877553
+    }
+  ],
+  "permutation_sanity_summary": {
+    "runs": 5,
+    "mean_balanced_accuracy": 0.5285714285714286,
+    "minimum_balanced_accuracy": 0.42857142857142855,
+    "maximum_balanced_accuracy": 0.7142857142857143,
+    "mean_roc_auc": 0.48469387755102045,
+    "selected_score_exceeds_all_permutations": true,
+    "used_for_selection": false
+  },
+  "metadata_shortcut_audit": {
+    "train": {
+      "provenance_id": {
+        "category_counts": {
+          "EAP-4f02812edece": {
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "EAP-71ad6a50942e": {
+            "positive_bowl_barrow": 54,
+            "unlabelled_background": 54
+          },
+          "EAP-8e32eccbc87e": {
+            "positive_bowl_barrow": 11,
+            "unlabelled_background": 11
+          },
+          "EAP-a800a13742ee": {
+            "positive_bowl_barrow": 9,
+            "unlabelled_background": 9
+          },
+          "EAP-c590a5cb0139": {
+            "positive_bowl_barrow": 50,
+            "unlabelled_background": 50
+          },
+          "EAP-d3a871d4f09e": {
+            "positive_bowl_barrow": 32,
+            "unlabelled_background": 32
+          },
+          "EAP-d85b0f0821f9": {
+            "positive_bowl_barrow": 57,
+            "unlabelled_background": 57
+          },
+          "EAP-fa2ffbdc01b2": {
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          }
+        },
+        "maximum_absolute_class_count_difference": 0
+      },
+      "survey_year": {
+        "category_counts": {
+          "2009": {
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "2016": {
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "2017": {
+            "positive_bowl_barrow": 11,
+            "unlabelled_background": 11
+          },
+          "2018": {
+            "positive_bowl_barrow": 57,
+            "unlabelled_background": 57
+          },
+          "2019": {
+            "positive_bowl_barrow": 32,
+            "unlabelled_background": 32
+          },
+          "2020": {
+            "positive_bowl_barrow": 50,
+            "unlabelled_background": 50
+          },
+          "2021": {
+            "positive_bowl_barrow": 54,
+            "unlabelled_background": 54
+          },
+          "2022": {
+            "positive_bowl_barrow": 9,
+            "unlabelled_background": 9
+          }
+        },
+        "maximum_absolute_class_count_difference": 0
+      },
+      "geographic_block_id": {
+        "category_counts": {
+          "BNG_100KM_E1_N0": {
+            "positive_bowl_barrow": 8,
+            "unlabelled_background": 8
+          },
+          "BNG_100KM_E2_N1": {
+            "positive_bowl_barrow": 14,
+            "unlabelled_background": 14
+          },
+          "BNG_100KM_E3_N0": {
+            "positive_bowl_barrow": 9,
+            "unlabelled_background": 9
+          },
+          "BNG_100KM_E3_N1": {
+            "positive_bowl_barrow": 15,
+            "unlabelled_background": 15
+          },
+          "BNG_100KM_E3_N3": {
+            "positive_bowl_barrow": 16,
+            "unlabelled_background": 16
+          },
+          "BNG_100KM_E3_N4": {
+            "positive_bowl_barrow": 9,
+            "unlabelled_background": 9
+          },
+          "BNG_100KM_E3_N5": {
+            "positive_bowl_barrow": 15,
+            "unlabelled_background": 15
+          },
+          "BNG_100KM_E4_N0": {
+            "positive_bowl_barrow": 11,
+            "unlabelled_background": 11
+          },
+          "BNG_100KM_E4_N1": {
+            "positive_bowl_barrow": 11,
+            "unlabelled_background": 11
+          },
+          "BNG_100KM_E4_N2": {
+            "positive_bowl_barrow": 14,
+            "unlabelled_background": 14
+          },
+          "BNG_100KM_E4_N3": {
+            "positive_bowl_barrow": 12,
+            "unlabelled_background": 12
+          },
+          "BNG_100KM_E4_N4": {
+            "positive_bowl_barrow": 11,
+            "unlabelled_background": 11
+          },
+          "BNG_100KM_E4_N5": {
+            "positive_bowl_barrow": 15,
+            "unlabelled_background": 15
+          },
+          "BNG_100KM_E5_N0": {
+            "positive_bowl_barrow": 4,
+            "unlabelled_background": 4
+          },
+          "BNG_100KM_E5_N1": {
+            "positive_bowl_barrow": 12,
+            "unlabelled_background": 12
+          },
+          "BNG_100KM_E5_N2": {
+            "positive_bowl_barrow": 13,
+            "unlabelled_background": 13
+          },
+          "BNG_100KM_E5_N3": {
+            "positive_bowl_barrow": 10,
+            "unlabelled_background": 10
+          },
+          "BNG_100KM_E6_N1": {
+            "positive_bowl_barrow": 5,
+            "unlabelled_background": 5
+          },
+          "BNG_100KM_E6_N2": {
+            "positive_bowl_barrow": 9,
+            "unlabelled_background": 9
+          },
+          "BNG_100KM_E6_N3": {
+            "positive_bowl_barrow": 3,
+            "unlabelled_background": 3
+          }
+        },
+        "maximum_absolute_class_count_difference": 0
+      },
+      "source_resolution_m": {
+        "category_counts": {
+          "1.0": {
+            "positive_bowl_barrow": 216,
+            "unlabelled_background": 216
+          }
+        },
+        "maximum_absolute_class_count_difference": 0
+      }
+    },
+    "development": {
+      "provenance_id": {
+        "category_counts": {
+          "EAP-71ad6a50942e": {
+            "positive_bowl_barrow": 5,
+            "unlabelled_background": 5
+          },
+          "EAP-a800a13742ee": {
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          },
+          "EAP-c590a5cb0139": {
+            "positive_bowl_barrow": 4,
+            "unlabelled_background": 4
+          },
+          "EAP-d3a871d4f09e": {
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "EAP-d85b0f0821f9": {
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          }
+        },
+        "maximum_absolute_class_count_difference": 0
+      },
+      "survey_year": {
+        "category_counts": {
+          "2018": {
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "2019": {
+            "positive_bowl_barrow": 2,
+            "unlabelled_background": 2
+          },
+          "2020": {
+            "positive_bowl_barrow": 4,
+            "unlabelled_background": 4
+          },
+          "2021": {
+            "positive_bowl_barrow": 5,
+            "unlabelled_background": 5
+          },
+          "2022": {
+            "positive_bowl_barrow": 1,
+            "unlabelled_background": 1
+          }
+        },
+        "maximum_absolute_class_count_difference": 0
+      },
+      "geographic_block_id": {
+        "category_counts": {
+          "BNG_100KM_E2_N0": {
+            "positive_bowl_barrow": 14,
+            "unlabelled_background": 14
+          }
+        },
+        "maximum_absolute_class_count_difference": 0
+      },
+      "source_resolution_m": {
+        "category_counts": {
+          "1.0": {
+            "positive_bowl_barrow": 14,
+            "unlabelled_background": 14
+          }
+        },
+        "maximum_absolute_class_count_difference": 0
+      }
+    }
+  },
+  "split_hashes": {
+    "random": "723632c755d6796fb4be2b680f2ff475f90e78c860d44edac23190054246e83d",
+    "geographic": "61701c3d9cd3048fd515e8bb45e7d5239e0e971e3d5027e70357b77b83084f44"
+  },
+  "scope": {
+    "final_accuracy_computed": false,
+    "final_f1_computed": false,
+    "final_roc_auc_computed": false,
+    "predictions_inspected": false
+  }
+}

@@ -15,6 +15,7 @@ $required = @(
     '.github/ISSUE_TEMPLATE/reproducibility.yml',
     '.github/ISSUE_TEMPLATE/documentation.yml',
     'configs/e001.example.toml',
+    'configs/e001-phase-2d-a-preregistered.json',
     'data/README.md',
     'data/manifests/example-dataset.toml',
     'data/manifests/e001-ea-lidar-dtm.toml',
@@ -24,6 +25,8 @@ $required = @(
     'docs/e001-phase-2b-terrain.md',
     'docs/e001-phase-2b5-full-terrain.md',
     'docs/e001-phase-2c-background-and-splits.md',
+    'docs/e001-phase-2d-a-preregistration.md',
+    'docs/e001-phase-2d-a-development-selection.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -37,6 +40,7 @@ $required = @(
     'research-log/2026-08-28-phase-2b.md',
     'research-log/2026-08-29-phase-2b5.md',
     'research-log/2026-08-29-phase-2c.md',
+    'research-log/2026-08-29-phase-2d-a.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -49,6 +53,7 @@ $required = @(
     'scripts/audit_e001_background_pilot.py',
     'scripts/freeze_e001_splits.py',
     'scripts/audit_e001_dataset.py',
+    'scripts/run_e001_development_baselines.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -69,6 +74,8 @@ $required = @(
     'src/archaeoai/terrain/validation.py',
     'src/archaeoai/dataset.py',
     'src/archaeoai/splits.py',
+    'src/archaeoai/model_data.py',
+    'src/archaeoai/modelling.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -88,6 +95,9 @@ $required = @(
     'tests/test_terrain_representations.py',
     'tests/test_splits.py',
     'tests/test_dataset_freeze.py',
+    'tests/test_model_data.py',
+    'tests/test_modelling.py',
+    'tests/test_baseline_freeze.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -111,7 +121,9 @@ $required = @(
     'outputs/dataset/e001_modelling_index.csv',
     'outputs/dataset/e001_random_split_manifest.json',
     'outputs/dataset/e001_geographic_split_manifest.json',
-    'outputs/dataset/e001_dataset_audit.json'
+    'outputs/dataset/e001_dataset_audit.json',
+    'outputs/modelling/e001_phase_2d_a_development_results.json',
+    'outputs/modelling/e001_primary_baseline_config.json'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -124,8 +136,9 @@ if ($readme -notmatch 'geographically (?:disjoint|separated) holdouts?') {
     throw 'README must state the geographic-holdout principle.'
 }
 if (
-    $readme -notmatch 'No model has been trained' -or
-    $readme -notmatch 'has not discovered archaeological sites' -or
+    $readme -notmatch 'Development-only baselines have been trained' -or
+    $readme -notmatch 'no\s+(?:>\s*)?final-test result' -or
+    $readme -notmatch 'has not discovered\s+(?:>\s*)?archaeological sites' -or
     $readme -notmatch '261' -or
     $readme -notmatch '12'
 ) {
@@ -152,6 +165,9 @@ if (
 $projectConfig = Get-Content -Raw 'pyproject.toml'
 if ($projectConfig -notmatch 'requires-python\s*=\s*">=3\.12,<3\.15"') {
     throw 'pyproject.toml must support Python >=3.12,<3.15.'
+}
+if ($projectConfig -notmatch 'scikit-learn>=1\.9,<2') {
+    throw 'Phase 2D-A must declare only the approved scikit-learn modelling dependency.'
 }
 
 $exampleManifest = Get-Content -Raw 'data/manifests/example-dataset.toml'
@@ -294,6 +310,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2C background, dataset, split, leakage, or privacy validation failed.'
 }
 
+$phase2dACheck = & $pythonExecutable -c 'import json; from pathlib import Path; from archaeoai.model_data import authorize_final_test, validate_frozen_primary_config; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); result=json.loads((root/"outputs/modelling/e001_phase_2d_a_development_results.json").read_text()); config_path=root/"outputs/modelling/e001_primary_baseline_config.json"; config=validate_frozen_primary_config(config_path); assert_coordinate_safe_mapping(result); assert_coordinate_safe_mapping(config); assert result["condition"]=="geographic" and result["partitions_accessed"]==["train","development"] and result["final_test_accessed"] is False and result["random_condition_evaluated"] is False and len(result["results"])==15; assert all(item["maximum_absolute_class_count_difference"]==0 for fields in result["metadata_shortcut_audit"].values() for item in fields.values()); assert result["scope"]=={"final_accuracy_computed":False,"final_f1_computed":False,"final_roc_auc_computed":False,"predictions_inspected":False}; assert config["model"]=="random_forest" and config["representation"]=="all_four" and config["feature_count"]==4096 and config["classification_threshold"]==0.5 and config["final_test_evaluated"] is False; authorize_final_test(config_path,root/"outputs/dataset/e001_geographic_split_manifest.json",condition="geographic"); print("Phase 2D-A development selection evidence valid; final test untouched")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2D-A preregistration, development result, frozen configuration, or final-test guard validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -305,6 +326,10 @@ if (
     $datasetIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center'
 ) {
     throw 'A tracked Phase 2C index contains a coordinate-bearing field.'
+}
+$modellingOutputs = Get-Content -Raw 'outputs/modelling/e001_phase_2d_a_development_results.json', 'outputs/modelling/e001_primary_baseline_config.json'
+if ($modellingOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center)"\s*:') {
+    throw 'A tracked Phase 2D-A output contains a coordinate-bearing field.'
 }
 $trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
@@ -319,4 +344,4 @@ if ($LASTEXITCODE -ne 0 -or -not $privateBackgroundIgnoreCheck) {
     throw 'Private E001 background coordinates and terrain must remain ignored by Git.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck."

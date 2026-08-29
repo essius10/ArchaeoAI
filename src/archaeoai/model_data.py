@@ -82,6 +82,25 @@ def validate_frozen_primary_config(path: str | Path) -> dict[str, object]:
     return payload
 
 
+def authorize_final_test(
+    primary_config_path: str | Path,
+    split_manifest_path: str | Path,
+    *,
+    condition: str,
+) -> dict[str, object]:
+    """Validate the frozen config/split binding required by any future final evaluator."""
+    payload = validate_frozen_primary_config(primary_config_path)
+    manifest = json.loads(Path(split_manifest_path).read_text(encoding="utf-8"))
+    split_hashes = payload.get("split_hashes")
+    if not isinstance(split_hashes, dict):
+        raise ValueError("frozen configuration omits split hashes")
+    if split_hashes.get(condition) != manifest.get("assignment_sha256"):
+        raise ValueError("frozen configuration does not authorize this final-test split")
+    if payload.get("selection_condition") != condition:
+        raise ValueError("frozen configuration was selected for another condition")
+    return payload
+
+
 class DevelopmentDataLoader:
     """Load only an active condition's train/development data; final test is inaccessible."""
 

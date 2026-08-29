@@ -9,6 +9,7 @@ import pytest
 from archaeoai.model_data import (
     DevelopmentDataLoader,
     FinalTestAccessError,
+    authorize_final_test,
     configuration_hash,
     mean_pool_4x4,
     validate_frozen_primary_config,
@@ -142,7 +143,12 @@ def test_loader_rejects_patch_content_mismatch(tmp_path: Path) -> None:
 
 
 def test_frozen_configuration_hash_guard(tmp_path: Path) -> None:
-    payload: dict[str, object] = {"frozen": True, "model": "logistic_regression"}
+    payload: dict[str, object] = {
+        "frozen": True,
+        "model": "logistic_regression",
+        "selection_condition": "geographic",
+        "split_hashes": {"geographic": "abc"},
+    }
     payload["config_sha256"] = configuration_hash(payload)
     path = tmp_path / "primary.json"
     path.write_text(json.dumps(payload), encoding="utf-8")
@@ -152,3 +158,25 @@ def test_frozen_configuration_hash_guard(tmp_path: Path) -> None:
     path.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(ValueError, match="hash mismatch"):
         validate_frozen_primary_config(path)
+
+
+def test_future_final_authorization_requires_matching_frozen_config_and_split(
+    tmp_path: Path,
+) -> None:
+    payload: dict[str, object] = {
+        "frozen": True,
+        "selection_condition": "geographic",
+        "split_hashes": {"geographic": "abc"},
+    }
+    payload["config_sha256"] = configuration_hash(payload)
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps(payload), encoding="utf-8")
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps({"assignment_sha256": "abc"}), encoding="utf-8")
+
+    assert (
+        authorize_final_test(config_path, manifest_path, condition="geographic")["frozen"] is True
+    )
+    manifest_path.write_text(json.dumps({"assignment_sha256": "changed"}), encoding="utf-8")
+    with pytest.raises(ValueError, match="does not authorize"):
+        authorize_final_test(config_path, manifest_path, condition="geographic")

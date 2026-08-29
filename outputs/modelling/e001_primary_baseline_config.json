@@ -1,0 +1,122 @@
+{
+  "schema_version": "e001-primary-baseline-v1",
+  "frozen": true,
+  "creation_date": "2026-08-29",
+  "selection_condition": "geographic",
+  "selection_partition": "development",
+  "model": "random_forest",
+  "model_parameters": {
+    "n_estimators": 300,
+    "max_depth": 8,
+    "min_samples_leaf": 5,
+    "max_features": "sqrt",
+    "n_jobs": 1,
+    "random_state": 20260829
+  },
+  "representation": "all_four",
+  "representation_channels": [
+    "elevation_normalized",
+    "slope_degrees",
+    "hillshade_315_45",
+    "local_relief_r16m"
+  ],
+  "feature_count": 4096,
+  "pooling": {
+    "method": "non_overlapping_mean",
+    "block_shape": [
+      4,
+      4
+    ],
+    "input_shape": [
+      128,
+      128
+    ],
+    "output_shape": [
+      32,
+      32
+    ],
+    "features_per_representation": 1024
+  },
+  "standard_scaler": false,
+  "scaler_fit_scope": "none",
+  "classification_threshold": 0.5,
+  "seeds": {
+    "model": 20260829,
+    "permutation": [
+      20260830,
+      20260831,
+      20260832,
+      20260833,
+      20260834
+    ]
+  },
+  "software_versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "scikit_learn": "1.9.0"
+  },
+  "split_hashes": {
+    "random": "723632c755d6796fb4be2b680f2ff475f90e78c860d44edac23190054246e83d",
+    "geographic": "61701c3d9cd3048fd515e8bb45e7d5239e0e971e3d5027e70357b77b83084f44"
+  },
+  "selection_rule": {
+    "primary_metric": "balanced_accuracy",
+    "selection_partition": "geographic_development",
+    "effective_tie_absolute_difference_less_than": 0.02,
+    "tie_breaks": [
+      "prefer_logistic_regression",
+      "prefer_fewer_representation_channels",
+      "prefer_model_order_dummy_then_logistic_regression_then_random_forest",
+      "prefer_representation_order_normalized_elevation_then_slope_then_hillshade_then_local_relief_then_all_four"
+    ],
+    "secondary_metric_only": "roc_auc",
+    "classification_threshold": 0.5
+  },
+  "development_evidence": {
+    "model": "random_forest",
+    "representation": "all_four",
+    "feature_count": 4096,
+    "balanced_accuracy": 0.8214285714285714,
+    "roc_auc": 0.9234693877551021
+  },
+  "permutation_sanity_checks": [
+    {
+      "seed": 20260830,
+      "balanced_accuracy": 0.7142857142857143,
+      "roc_auc": 0.6377551020408163
+    },
+    {
+      "seed": 20260831,
+      "balanced_accuracy": 0.5714285714285714,
+      "roc_auc": 0.5204081632653061
+    },
+    {
+      "seed": 20260832,
+      "balanced_accuracy": 0.4642857142857143,
+      "roc_auc": 0.41326530612244894
+    },
+    {
+      "seed": 20260833,
+      "balanced_accuracy": 0.4642857142857143,
+      "roc_auc": 0.43367346938775514
+    },
+    {
+      "seed": 20260834,
+      "balanced_accuracy": 0.42857142857142855,
+      "roc_auc": 0.41836734693877553
+    }
+  ],
+  "permutation_sanity_summary": {
+    "runs": 5,
+    "mean_balanced_accuracy": 0.5285714285714286,
+    "minimum_balanced_accuracy": 0.42857142857142855,
+    "maximum_balanced_accuracy": 0.7142857142857143,
+    "mean_roc_auc": 0.48469387755102045,
+    "selected_score_exceeds_all_permutations": true,
+    "used_for_selection": false
+  },
+  "final_test_evaluated": false,
+  "future_final_evaluation_requires_this_hash": true,
+  "config_sha256": "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"
+}

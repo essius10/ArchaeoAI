@@ -5,8 +5,9 @@
 Phase 2C froze 261 approved positive-terrain and 261 matched unlabelled-background patches. Both the
 group-aware random condition and the complete-block geographic condition now contain 216/14/31
 examples per class in train/development/final test. All seven overlap components remain intact and
-the two final-test block assignments are hash-guarded. Modelling remains blocked pending explicit
-Phase 2D approval.
+the two final-test block assignments are hash-guarded. Phase 2D-A selected and froze an all-four
+pooled Random Forest using only geographic development. Final evaluation remains blocked pending
+explicit Phase 2D-B approval.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
