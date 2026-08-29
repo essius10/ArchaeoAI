@@ -16,6 +16,7 @@ from archaeoai.terrain.privacy import assert_coordinate_safe_mapping
 
 EXPECTED_PROTOCOL_SCHEMA = "e001-phase-3a-external-validation-v1"
 EXPECTED_EXPANSION_RULE_SCHEMA = "e001-phase-3b-r1-selection-rule-v1"
+EXPECTED_EXPANSION_FALLBACK_SCHEMA = "e001-phase-3b-r1-multicell-fallback-rule-v1"
 EXPECTED_PRIMARY_CONFIG_SHA256 = "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"
 EXPECTED_MODEL_STATE_SHA256 = "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939"
 EXTERNAL_CELL_SIZE_M = 25_000
@@ -51,6 +52,13 @@ def expansion_rule_hash(payload: Mapping[str, Any]) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def expansion_fallback_hash(payload: Mapping[str, Any]) -> str:
+    """Hash a canonical fallback rule without its self-referential receipt."""
+    content = {key: value for key, value in payload.items() if key != "fallback_rule_sha256"}
+    encoded = json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def validate_expansion_selection_rule(path: str | Path) -> dict[str, Any]:
     """Validate the pre-search Phase 3B-R1 rule without selecting a region."""
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -79,6 +87,39 @@ def validate_expansion_selection_rule(path: str | Path) -> dict[str, Any]:
         raise ValueError("pre-search Phase 3B-R1 rule must not contain a selected cell")
     if any(payload.get("execution_state", {}).values()):
         raise ValueError("pre-search Phase 3B-R1 execution state is contaminated")
+    return payload
+
+
+def validate_expansion_fallback_rule(path: str | Path) -> dict[str, Any]:
+    """Validate the frozen multi-cell fallback before terrain metadata search."""
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    assert_coordinate_safe_mapping(payload)
+    if payload.get("schema_version") != EXPECTED_EXPANSION_FALLBACK_SCHEMA:
+        raise ValueError("unexpected Phase 3B-R1 fallback-rule schema")
+    if payload.get("status") != "FALLBACK_FROZEN_BEFORE_TERRAIN_METADATA_SEARCH":
+        raise ValueError("Phase 3B-R1 fallback rule has an unexpected status")
+    if payload.get("frozen") is not True:
+        raise ValueError("Phase 3B-R1 fallback rule is not frozen")
+    if expansion_fallback_hash(payload) != payload.get("fallback_rule_sha256"):
+        raise ValueError("Phase 3B-R1 fallback-rule hash mismatch")
+    trigger = payload.get("trigger_evidence", {})
+    if trigger.get("single_cell_required_QA_pass_probable_records") != 28:
+        raise ValueError("Phase 3B-R1 fallback weakened the single-cell threshold")
+    if trigger.get("single_cell_rule_passed") is not False:
+        raise ValueError("Phase 3B-R1 fallback lacks a valid no-go trigger")
+    selection = payload.get("deterministic_multicell_rule", {})
+    if selection.get("combined_minimum_QA_pass_probable_records") != 28:
+        raise ValueError("Phase 3B-R1 fallback changed the combined feasibility threshold")
+    if selection.get("maximum_cells") != 5:
+        raise ValueError("Phase 3B-R1 fallback must remain bounded to five cells")
+    if selection.get("selected_cells") is not None:
+        raise ValueError("pre-search fallback must not contain selected cells")
+    if selection.get("performance_used") is not False:
+        raise ValueError("Phase 3B-R1 fallback must prohibit model-informed selection")
+    if any(payload.get("execution_state", {}).values()):
+        raise ValueError("pre-search Phase 3B-R1 fallback execution state is contaminated")
+    if any(payload.get("scientific_invariants", {}).values()):
+        raise ValueError("Phase 3B-R1 fallback changed a scientific invariant")
     return payload
 
 

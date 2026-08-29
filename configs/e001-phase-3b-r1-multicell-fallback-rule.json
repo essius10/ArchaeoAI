@@ -1,0 +1,62 @@
+{
+  "schema_version": "e001-phase-3b-r1-multicell-fallback-rule-v1",
+  "phase": "3B-R1",
+  "status": "FALLBACK_FROZEN_BEFORE_TERRAIN_METADATA_SEARCH",
+  "frozen": true,
+  "source_rule_commit": "1882cf1ea740bdcbc01de71aaf7a16a7152ac5db",
+  "source_selection_rule_sha256": "6e5f2992fe453601940792ad4c1f7be373c12724f5849f43926c7ea680459578",
+  "trigger_evidence": {
+    "search_scope": "official_NHLE_metadata_only_before_EA_terrain_metadata_queries",
+    "eligible_candidate_cell_count": 40,
+    "single_cell_required_QA_pass_probable_records": 28,
+    "largest_single_cell_independent_probable_records": 11,
+    "single_cell_rule_passed": false,
+    "model_output_consulted": false
+  },
+  "cell_eligibility_inherited_unchanged": {
+    "source": "configs/e001-phase-3b-r1-selection-rule.json",
+    "minimum_chebyshev_cell_index_difference_from_first_cell": 2,
+    "exclude_any_cell_occupied_by_an_E001_observation": true,
+    "minimum_record_separation_from_all_E001_observations_m": 15000,
+    "minimum_record_separation_from_Phase2F_private_domain_m": 15000,
+    "exclude_all_previously_reviewed_E001_and_first_external_records": true,
+    "required_resolution_m": 1.0,
+    "complete_patch_coverage_required": true,
+    "single_provenance_signature_required": true
+  },
+  "deterministic_multicell_rule": {
+    "minimum_preterrain_independent_probable_records_per_cell": 4,
+    "combined_minimum_QA_pass_probable_records": 28,
+    "maximum_cells": 5,
+    "ordering": [
+      "QA_pass_probable_records_descending",
+      "independent_probable_records_descending",
+      "minimum_distance_to_first_external_cell_descending",
+      "cell_id_ascending"
+    ],
+    "selection_operation": "shortest_prefix_of_ordered_eligible_cells_reaching_combined_minimum",
+    "failure_rule": "NO_GO_if_no_prefix_of_at_most_five_cells_reaches_28_QA_pass_probable_records",
+    "selected_cells": null,
+    "performance_used": false
+  },
+  "scientific_invariants": {
+    "positive_evidence_gate_changed": false,
+    "background_policy_changed": false,
+    "terrain_pipeline_changed": false,
+    "RF_configuration_changed": false,
+    "metrics_changed": false,
+    "privacy_policy_changed": false,
+    "no_score_rule_changed": false,
+    "target_or_minimum_changed": false
+  },
+  "execution_state": {
+    "EA_terrain_metadata_search_performed": false,
+    "supplementary_cells_selected": false,
+    "supplementary_records_curated": false,
+    "external_terrain_acquired": false,
+    "external_RF_loaded": false,
+    "external_RF_scoring_performed": false,
+    "external_performance_metrics_computed": false
+  },
+  "fallback_rule_sha256": "adaba743b3e5877a28f2d88b5f058b5c94fc261b9e97ddaa1f5a2a108b71408b"
+}

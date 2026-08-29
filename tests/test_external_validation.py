@@ -15,10 +15,12 @@ from archaeoai.external_validation import (
     assert_external_independence,
     classify_external_result,
     coarse_cell_id,
+    expansion_fallback_hash,
     expansion_rule_hash,
     paired_cluster_bootstrap_indices,
     protocol_hash,
     selected_positive_ids,
+    validate_expansion_fallback_rule,
     validate_expansion_selection_rule,
     validate_external_protocol,
     validate_private_manifest,
@@ -30,6 +32,7 @@ PROTOCOL_PATH = ROOT / "configs/e001-phase-3a-external-validation.json"
 FEASIBILITY_PATH = ROOT / "outputs/external_validation/e001_phase3a_feasibility.json"
 CURATION_GATE_PATH = ROOT / "outputs/external_validation/e001_phase3b_curation_gate.json"
 EXPANSION_RULE_PATH = ROOT / "configs/e001-phase-3b-r1-selection-rule.json"
+EXPANSION_FALLBACK_PATH = ROOT / "configs/e001-phase-3b-r1-multicell-fallback-rule.json"
 
 
 def test_external_protocol_is_hash_frozen_before_model_access() -> None:
@@ -128,6 +131,21 @@ def test_phase3b_r1_rule_is_frozen_before_supplementary_search() -> None:
     assert rule["metadata_eligibility"]["minimum_QA_pass_probable_records"] == 28
     assert rule["deterministic_selection_rule"]["selected_cell"] is None
     assert not any(rule["execution_state"].values())
+
+
+def test_phase3b_r1_multicell_fallback_is_frozen_before_terrain_metadata_search() -> None:
+    fallback = validate_expansion_fallback_rule(EXPANSION_FALLBACK_PATH)
+    assert expansion_fallback_hash(fallback) == fallback["fallback_rule_sha256"]
+    assert fallback["source_selection_rule_sha256"] == (
+        "6e5f2992fe453601940792ad4c1f7be373c12724f5849f43926c7ea680459578"
+    )
+    assert fallback["trigger_evidence"]["largest_single_cell_independent_probable_records"] == 11
+    assert (
+        fallback["deterministic_multicell_rule"]["combined_minimum_QA_pass_probable_records"] == 28
+    )
+    assert fallback["deterministic_multicell_rule"]["maximum_cells"] == 5
+    assert fallback["deterministic_multicell_rule"]["selected_cells"] is None
+    assert not any(fallback["execution_state"].values())
 
 
 def test_external_spatial_gate_accepts_only_independent_synthetic_point() -> None:
