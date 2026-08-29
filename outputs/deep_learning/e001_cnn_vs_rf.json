@@ -1,0 +1,49 @@
+{
+  "analysis_label": "posthoc_stronger_model_geographic_cv",
+  "protocol_sha256": "6007a2b62157195c26a05474935d88f1e3ed7b6c6780572f35c1162ab08d39c0",
+  "fold_assignment_sha256": "825eb1088a53f764f991bf6bb22f2c9fe6eeb868916a5abab92012eed85d90ab",
+  "folds": [
+    {
+      "fold": "fold_1",
+      "cnn_mean_balanced_accuracy": 0.7561728395061729,
+      "cnn_population_standard_deviation": 0.01154832526782082,
+      "rf_balanced_accuracy": 0.796296,
+      "cnn_minus_rf": -0.04012316049382714
+    },
+    {
+      "fold": "fold_2",
+      "cnn_mean_balanced_accuracy": 0.660377358490566,
+      "cnn_population_standard_deviation": 0.03851398966640216,
+      "rf_balanced_accuracy": 0.839623,
+      "cnn_minus_rf": -0.179245641509434
+    },
+    {
+      "fold": "fold_3",
+      "cnn_mean_balanced_accuracy": 0.69,
+      "cnn_population_standard_deviation": 0.0,
+      "rf_balanced_accuracy": 0.79,
+      "cnn_minus_rf": -0.10000000000000009
+    },
+    {
+      "fold": "fold_4",
+      "cnn_mean_balanced_accuracy": 0.6944444444444445,
+      "cnn_population_standard_deviation": 0.01512030705421717,
+      "rf_balanced_accuracy": 0.861111,
+      "cnn_minus_rf": -0.16666655555555543
+    },
+    {
+      "fold": "fold_5",
+      "cnn_mean_balanced_accuracy": 0.7033333333333333,
+      "cnn_population_standard_deviation": 0.004714045207910321,
+      "rf_balanced_accuracy": 0.83,
+      "cnn_minus_rf": -0.1266666666666667
+    }
+  ],
+  "cnn_mean_balanced_accuracy": 0.7008655951549033,
+  "rf_mean_balanced_accuracy": 0.823406,
+  "cnn_minus_rf": -0.12254040484509665,
+  "descriptive_posthoc_comparison_only": true,
+  "statistical_significance_claimed": false,
+  "stronger_model_classification": "CNN NOT JUSTIFIED AT CURRENT DATA SCALE",
+  "phase_2f_recommendation": "USE RANDOM FOREST FOR PHASE 2F"
+}

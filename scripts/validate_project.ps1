@@ -52,6 +52,7 @@ $required = @(
     'research-log/2026-08-29-phase-2d-b.md',
     'research-log/2026-08-29-phase-2e-a.md',
     'research-log/2026-08-29-phase-2eb0.md',
+    'research-log/2026-08-29-phase-2eb.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -72,6 +73,7 @@ $required = @(
     'scripts/render_e001_robustness_figures.py',
     'scripts/freeze_e001_cnn_protocol.py',
     'scripts/run_e001_cnn_geographic_cv.py',
+    'scripts/render_e001_cnn_figures.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -172,7 +174,18 @@ $required = @(
     'outputs/robustness/figures/e001_representation_robustness.svg',
     'outputs/robustness/figures/e001_seed_robustness.svg',
     'outputs/robustness/figures/e001_training_size_learning_curve.svg',
-    'outputs/robustness/figures/e001_score_distributions.svg'
+    'outputs/robustness/figures/e001_score_distributions.svg',
+    'outputs/deep_learning/e001_cnn_protocol.json',
+    'outputs/deep_learning/e001_cnn_fold_results.csv',
+    'outputs/deep_learning/e001_cnn_seed_summary.csv',
+    'outputs/deep_learning/e001_cnn_training_history.csv',
+    'outputs/deep_learning/e001_cnn_group_summary.csv',
+    'outputs/deep_learning/e001_cnn_vs_rf.json',
+    'outputs/deep_learning/e001_cnn_summary.json',
+    'outputs/deep_learning/figures/e001_cnn_vs_rf_by_fold.svg',
+    'outputs/deep_learning/figures/e001_cnn_seed_stability.svg',
+    'outputs/deep_learning/figures/e001_cnn_training_history.svg',
+    'outputs/deep_learning/figures/e001_cnn_confusion_summary.svg'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -382,6 +395,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2E-B0 CNN protocol, fold reuse, privacy, or immutability validation failed.'
 }
 
+$phase2eBCheck = & $pythonExecutable -c 'import csv,json; from pathlib import Path; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); summary=json.loads((root/"outputs/deep_learning/e001_cnn_summary.json").read_text()); comparison=json.loads((root/"outputs/deep_learning/e001_cnn_vs_rf.json").read_text()); runs=list(csv.DictReader((root/"outputs/deep_learning/e001_cnn_fold_results.csv").open(encoding="utf-8"))); seeds=list(csv.DictReader((root/"outputs/deep_learning/e001_cnn_seed_summary.csv").open(encoding="utf-8"))); history=list(csv.DictReader((root/"outputs/deep_learning/e001_cnn_training_history.csv").open(encoding="utf-8"))); groups=list(csv.DictReader((root/"outputs/deep_learning/e001_cnn_group_summary.csv").open(encoding="utf-8"))); assert_coordinate_safe_mapping(summary); assert_coordinate_safe_mapping(comparison); assert summary["status"]=="COMPLETE" and summary["analysis_label"]=="posthoc_stronger_model_geographic_cv" and summary["protocol_sha256"]=="6007a2b62157195c26a05474935d88f1e3ed7b6c6780572f35c1162ab08d39c0" and summary["fold_assignment_sha256"]=="825eb1088a53f764f991bf6bb22f2c9fe6eeb868916a5abab92012eed85d90ab" and summary["no_retuning_declaration"] is True and summary["primary_runs_completed"]==15; assert len(runs)==15 and {(row["fold"],int(row["seed"])) for row in runs}=={(f"fold_{fold}",seed) for fold in range(1,6) for seed in (20260829,20260830,20260831)}; assert len(seeds)==3 and len(history)>0 and len(groups)==23; assert round(summary["fold_mean_balanced_accuracy"]["mean"],6)==0.700866 and round(comparison["rf_mean_balanced_accuracy"],6)==0.823406 and round(comparison["cnn_minus_rf"],6)==-0.122540; assert [round(row["cnn_mean_balanced_accuracy"],6) for row in comparison["folds"]]==[0.756173,0.660377,0.69,0.694444,0.703333]; assert summary["aggregate_confusion_across_15_runs"]=={"tn":532,"fp":251,"fn":217,"tp":566}; assert summary["training_diagnostics"]["early_stopped_runs"]==15 and summary["training_diagnostics"]["class_collapsed_runs"]==0; assert summary["technical_failures"]==[] and summary["secondary_preregistered_conditions"]==summary["secondary_conditions_run"]==[]; assert summary["stronger_model_classification"]=="CNN NOT JUSTIFIED AT CURRENT DATA SCALE" and summary["phase_2f_recommendation"]=="USE RANDOM FOREST FOR PHASE 2F"; assert summary["privacy"]=={"coordinates_written":False,"sample_identifiers_written":False,"sample_predictions_written":False,"checkpoints_private_and_ignored":True,"maps_created":False}; print("Phase 2E-B 15-run CNN evidence valid; no retuning; Random Forest retained")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2E-B CNN results, classification, privacy, or no-retuning validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -402,7 +420,7 @@ $robustnessOutputs = Get-Content -Raw 'outputs/robustness/*.json', 'outputs/robu
 if ($robustnessOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id)"\s*:') {
     throw 'A tracked Phase 2E-A output contains a coordinate or sample identifier.'
 }
-$deepLearningOutputs = Get-Content -Raw 'outputs/deep_learning/*.json'
+$deepLearningOutputs = Get-Content -Raw 'outputs/deep_learning/*.json', 'outputs/deep_learning/*.csv', 'outputs/deep_learning/figures/*.svg'
 if ($deepLearningOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id)"\s*:') {
     throw 'A tracked Phase 2E-B0 output contains a coordinate or sample identifier.'
 }
@@ -427,4 +445,4 @@ if ($LASTEXITCODE -ne 0 -or -not $trainingRunIgnoreCheck) {
     throw 'Private deep-learning training histories must remain ignored by Git.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck."

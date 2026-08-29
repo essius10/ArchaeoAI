@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="520" viewBox="0 0 820 520" role="img" aria-labelledby="title desc">
+<title id="title">E001 compact-CNN aggregate training history</title>
+<desc id="desc">Aggregate coordinate-safe training and internal-validation loss.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text { font-family: Arial, sans-serif; fill: #1a202c; } .axis { stroke: #4a5568; stroke-width: 1.5; } .grid { stroke: #e2e8f0; stroke-width: 1; } .label { font-size: 13px; } .small { font-size: 11px; }</style>
+<text x="410.0" y="29" text-anchor="middle" font-size="19" font-weight="700">E001 compact-CNN aggregate training history</text>
+<line class="grid" x1="88" y1="428.00" x2="748" y2="428.00"/>
+<text class="small" x="76" y="432.00" text-anchor="end">0.0</text>
+<line class="grid" x1="88" y1="354.00" x2="748" y2="354.00"/>
+<text class="small" x="76" y="358.00" text-anchor="end">0.2</text>
+<line class="grid" x1="88" y1="280.00" x2="748" y2="280.00"/>
+<text class="small" x="76" y="284.00" text-anchor="end">0.4</text>
+<line class="grid" x1="88" y1="206.00" x2="748" y2="206.00"/>
+<text class="small" x="76" y="210.00" text-anchor="end">0.6</text>
+<line class="grid" x1="88" y1="132.00" x2="748" y2="132.00"/>
+<text class="small" x="76" y="136.00" text-anchor="end">0.8</text>
+<line class="grid" x1="88" y1="58.00" x2="748" y2="58.00"/>
+<text class="small" x="76" y="62.00" text-anchor="end">1.0</text>
+<line class="axis" x1="88" y1="58" x2="88" y2="428"/>
+<line class="axis" x1="88" y1="428" x2="748" y2="428"/>
+<text class="label" x="22" y="243.0" text-anchor="middle" transform="rotate(-90 22 243.0)">BCE loss</text>
+<polyline points="88.00,171.68 100.45,175.56 112.91,180.17 125.36,184.66 137.81,187.95 150.26,192.13 162.72,195.20 175.17,197.57 187.62,198.93 200.08,201.91 212.53,203.82 224.98,206.05 237.43,209.94 249.89,214.09 262.34,216.86 274.79,215.84 287.25,220.54 299.70,223.44 312.15,229.57 324.60,230.06 337.06,233.45 349.51,234.91 361.96,234.38 374.42,237.16 386.87,241.32 399.32,244.45 411.77,245.42 424.23,247.81 436.68,251.19 449.13,255.63 461.58,257.23 474.04,259.74 486.49,258.27 498.94,257.25 511.40,262.43 523.85,264.61 536.30,267.43 548.75,269.28 561.21,270.58 573.66,270.67 586.11,266.92 598.57,272.87 611.02,276.12 623.47,280.85 635.92,286.52 648.38,271.74 660.83,277.58 673.28,282.24 685.74,281.85 698.19,284.66 710.64,273.22 723.09,277.33 735.55,275.21 748.00,286.68" fill="none" stroke="#2b6cb0" stroke-width="3"/>
+<line x1="318" y1="492" x2="343" y2="492" stroke="#2b6cb0" stroke-width="3"/><text class="small" x="350" y="496">Training</text>
+<polyline points="88.00,172.39 100.45,175.34 112.91,178.72 125.36,181.71 137.81,186.23 150.26,188.68 162.72,190.78 175.17,191.65 187.62,193.00 200.08,192.60 212.53,191.67 224.98,197.21 237.43,191.59 249.89,197.29 262.34,194.81 274.79,200.52 287.25,200.01 299.70,200.04 312.15,200.72 324.60,203.13 337.06,207.67 349.51,204.75 361.96,210.72 374.42,197.13 386.87,201.82 399.32,207.52 411.77,208.92 424.23,210.97 436.68,209.88 449.13,214.97 461.58,215.43 474.04,207.44 486.49,204.21 498.94,208.69 511.40,207.54 523.85,205.96 536.30,202.84 548.75,203.70 561.21,198.41 573.66,205.80 586.11,209.11 598.57,219.34 611.02,201.55 623.47,200.97 635.92,184.87 648.38,201.86 660.83,213.29 673.28,205.63 685.74,200.27 698.19,202.70 710.64,220.25 723.09,185.66 735.55,197.21 748.00,200.06" fill="none" stroke="#c53030" stroke-width="3"/>
+<line x1="478" y1="492" x2="503" y2="492" stroke="#c53030" stroke-width="3"/><text class="small" x="510" y="496">Internal validation</text>
+<text class="label" x="418.0" y="458" text-anchor="middle">Epoch (means include runs still active)</text>
+</svg>

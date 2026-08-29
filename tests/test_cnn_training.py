@@ -1,3 +1,5 @@
+import csv
+import json
 from pathlib import Path
 
 import numpy as np
@@ -11,6 +13,7 @@ from archaeoai.cnn_training import (
     validate_training_contract,
 )
 from archaeoai.deep_learning import CompactTerrainCNN, validate_cnn_protocol
+from archaeoai.terrain.privacy import assert_coordinate_safe_mapping
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -48,3 +51,60 @@ def test_model_state_checksum_is_stable_and_sensitive() -> None:
     changed = {name: value.clone() for name, value in first.items()}
     changed["head.3.bias"][0] += 1
     assert model_state_sha256(changed) != first_hash
+
+
+def test_frozen_cnn_results_contain_all_primary_runs() -> None:
+    path = ROOT / "outputs/deep_learning/e001_cnn_fold_results.csv"
+    with path.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    expected = {
+        (f"fold_{fold}", seed) for fold in range(1, 6) for seed in (20260829, 20260830, 20260831)
+    }
+    assert len(rows) == 15
+    assert {(row["fold"], int(row["seed"])) for row in rows} == expected
+
+
+def test_frozen_cnn_summary_matches_verified_aggregate() -> None:
+    path = ROOT / "outputs/deep_learning/e001_cnn_summary.json"
+    summary = json.loads(path.read_text(encoding="utf-8"))
+    assert_coordinate_safe_mapping(summary)
+    assert summary["status"] == "COMPLETE"
+    assert summary["primary_runs_completed"] == 15
+    assert summary["no_retuning_declaration"] is True
+    assert summary["fold_mean_balanced_accuracy"]["mean"] == pytest.approx(0.7008655951549033)
+    assert summary["aggregate_confusion_across_15_runs"] == {
+        "tn": 532,
+        "fp": 251,
+        "fn": 217,
+        "tp": 566,
+    }
+    assert summary["technical_failures"] == []
+    assert summary["secondary_conditions_run"] == []
+    assert summary["stronger_model_classification"] == "CNN NOT JUSTIFIED AT CURRENT DATA SCALE"
+    assert summary["phase_2f_recommendation"] == "USE RANDOM FOREST FOR PHASE 2F"
+
+
+def test_frozen_cnn_comparison_preserves_protocol_and_fold_hashes() -> None:
+    path = ROOT / "outputs/deep_learning/e001_cnn_vs_rf.json"
+    comparison = json.loads(path.read_text(encoding="utf-8"))
+    assert_coordinate_safe_mapping(comparison)
+    assert comparison["protocol_sha256"] == (
+        "6007a2b62157195c26a05474935d88f1e3ed7b6c6780572f35c1162ab08d39c0"
+    )
+    assert comparison["fold_assignment_sha256"] == (
+        "825eb1088a53f764f991bf6bb22f2c9fe6eeb868916a5abab92012eed85d90ab"
+    )
+    assert comparison["cnn_mean_balanced_accuracy"] == pytest.approx(0.7008655951549033)
+    assert comparison["rf_mean_balanced_accuracy"] == pytest.approx(0.823406)
+    assert comparison["cnn_minus_rf"] == pytest.approx(-0.12254040484509665)
+    assert [row["cnn_mean_balanced_accuracy"] for row in comparison["folds"]] == (
+        pytest.approx(
+            [
+                0.7561728395061729,
+                0.660377358490566,
+                0.69,
+                0.6944444444444445,
+                0.7033333333333333,
+            ]
+        )
+    )
