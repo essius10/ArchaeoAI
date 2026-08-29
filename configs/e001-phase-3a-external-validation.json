@@ -1,0 +1,258 @@
+{
+  "schema_version": "e001-phase-3a-external-validation-v1",
+  "phase": "3A",
+  "status": "READY_FOR_EXTERNAL_DATASET_CONSTRUCTION",
+  "frozen": true,
+  "created_before_external_terrain_acquisition_and_RF_access": true,
+  "source_commit": "d89671e625d4d48bebe9c7f559796ab0383da203",
+  "objective": "independent external geographic validation of the unchanged E001 Random Forest on a newly curated documented bowl-barrow and matched unlabelled-background sample",
+  "primary_config_sha256": "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4",
+  "feasibility_artifact_sha256": "277bc5cf7c6d1d31362de51b40d5d32785786f6eff1c589a0f87fe302c6a46b6",
+  "immutable_artifact_sha256": {
+    "outputs/modelling/e001_primary_baseline_config.json": "035cd8d8c9d78a56f2261de71facfc54e74f4a8e19d61baf4eda387e90b8d385",
+    "outputs/modelling/e001_final_results.csv": "28b7503965ea75143616f5e726890b842030a20be8c283e2e9a7dd3c540e39a6",
+    "outputs/modelling/e001_random_vs_geographic.json": "6d6d8cf9ebca15d7cf28c99e9d05d9b94b5837695aaf29a973c80d708aad9055",
+    "outputs/modelling/e001_final_model_audit.json": "ad1204c002b6eb591b9ccf8cfdc89021ffcc6f8b709b30aae6fefd0ec9e891c2",
+    "outputs/robustness/e001_robustness_summary.json": "6ebf881562458110562e7181824c677acf7ecfa7edc673152e96bf1a7c319591",
+    "outputs/robustness/e001_geographic_fold_manifest.json": "2575232a392925eedcbabe343e599df58a789137bad3b356b3774e9ef9637157",
+    "outputs/deep_learning/e001_cnn_summary.json": "465681bc0b296e856b46b98268c11576cc8fc5dc9198a8601d7ed1afb50df1e5",
+    "outputs/deep_learning/e001_cnn_vs_rf.json": "7cfaa9973bb47bf364778a8070aff9b30b893bec00f7e3d3d8bd29831dd82214",
+    "outputs/deep_learning/e001_cnn_fold_results.csv": "1a0a3efeffb1c65cb10928dfb8b4e658411a652c28854a4d9a9eca586b5f9d5c",
+    "outputs/dataset/e001_modelling_index.csv": "f03df4ab5952746f7d841c7acef12cbcf1cc8e7a233b93b03d7317057b974f72",
+    "outputs/dataset/e001_random_split_manifest.json": "755660bab25be1c33b2ffdc462d82021a62c9378c7e1c2b964ee0086b353d432",
+    "outputs/dataset/e001_geographic_split_manifest.json": "0176c747176747376df74ff427326c64be61a6e0b624244919b800f3e813bc55",
+    "outputs/inference/e001_phase2f_b_summary.json": "ec1d9f52564bdea682776ca9dadd6362e47a37c9444f4c57305fd8193d9946e9",
+    "outputs/external_validation/e001_phase3a_feasibility.json": "277bc5cf7c6d1d31362de51b40d5d32785786f6eff1c589a0f87fe302c6a46b6"
+  },
+  "target_class": {
+    "label": "positive_bowl_barrow",
+    "definition": "one documented Scheduled Monument in England whose official entry and review evidence support a single surviving upstanding bowl-barrow mound",
+    "target_transfer_allowed": false
+  },
+  "external_geography": {
+    "public_coarse_cell": "BNG_25KM_E16_N5",
+    "public_description": "central Salisbury Plain, Wiltshire",
+    "cell_size_m": 25000,
+    "selection_rationale": "largest pre-score feasible public 25 km cell with zero E001 observations after applying label, terrain-metadata, and prior-study separation gates",
+    "minimum_separation_from_prior_data_m": 15000.0,
+    "must_contain_zero_E001_observation_centres": true,
+    "must_not_overlap_any_E001_patch": true,
+    "must_not_overlap_Phase_2F_private_domain": true,
+    "exclude_all_previously_E001_reviewed_list_entries": true,
+    "private_independence_receipt_required": true,
+    "model_scores_used_for_geography_selection": false
+  },
+  "sample_design": {
+    "target_positive_count": 60,
+    "target_background_count": 60,
+    "target_total_observations": 120,
+    "minimum_positive_count": 50,
+    "minimum_background_count": 50,
+    "minimum_total_observations": 100,
+    "class_ratio": "one_to_one",
+    "screening_pool_estimate": 87,
+    "verified_available_positives_at_freeze": 0,
+    "selection_if_more_than_target": "lowest_SHA256_rank_of_selection_seed_and_public_list_entry",
+    "selection_seed": "E001-Phase-3A-external-selection-2026-08-30",
+    "selection_if_50_to_59_accepted": "use_all_accepted_and_one_matched_background_per_positive",
+    "stopping_if_fewer_than_50_accepted": "MORE_DATA_REQUIRED_no_RF_scoring",
+    "performance_used_for_sample_size": false
+  },
+  "positive_curation": {
+    "source": "Historic England National Heritage List for England Scheduled Monuments",
+    "source_url": "https://historicengland.org.uk/listing/the-list/data-downloads",
+    "source_service": "official_NHLE_Scheduled_Monuments_feature_service",
+    "required": [
+      "official_entry_explicitly_supports_bowl_barrow_identity",
+      "one_isolatable_monument",
+      "surviving_upstanding_earthwork_relief",
+      "compact_single_part_designation_geometry_with_credible_centre",
+      "complete_128m_1m_DTM_coverage",
+      "one_resolved_terrain_provenance_signature",
+      "frozen_external_geography_and_separation_gates"
+    ],
+    "excluded": [
+      "non_bowl_or_mixed_monument_type",
+      "multiple_or_compound_monument",
+      "destroyed_levelled_reconstructed_or_cropmark_only",
+      "insufficient_or_ambiguous_full_entry_evidence",
+      "geometry_missing_compound_too_large_or_off_centre",
+      "terrain_coverage_incomplete_or_resolution_above_1m",
+      "terrain_provenance_unresolved",
+      "previously_reviewed_for_E001",
+      "prior_study_separation_failure"
+    ],
+    "private_statuses": [
+      "accepted",
+      "rejected",
+      "uncertain",
+      "terrain_review_needed"
+    ],
+    "questionable_records_added_for_sample_size": false
+  },
+  "background_policy": {
+    "class_label": "unlabelled_background",
+    "archaeology_free_claimed": false,
+    "backgrounds_per_positive": 1,
+    "sampling_annulus_m": [
+      1000,
+      5000
+    ],
+    "positive_exclusion_buffer_m": 500,
+    "known_scheduled_heritage_exclusion_buffer_m": 250,
+    "minimum_background_separation_m": 256,
+    "same_public_coarse_cell_required": true,
+    "same_terrain_provenance_required": true,
+    "same_resolution_required": true,
+    "same_survey_program_and_year_required": true,
+    "landscape_matching_required": true,
+    "modern_feature_screen_required": true,
+    "prior_study_separation_gate_applies_to_backgrounds": true,
+    "deterministic_seed": "E001-Phase-3A-background-2026-08-30",
+    "unknown_archaeology_uncertainty_recorded": true
+  },
+  "terrain": {
+    "source": "Environment Agency LIDAR Composite Digital Terrain Model 1m",
+    "source_url": "https://environment.data.gov.uk/dataset/13787b9a-26a4-4775-8523-806d13af58fc",
+    "license": "Open Government Licence v3.0",
+    "required_CRS": "EPSG:27700",
+    "required_resolution_m": 1.0,
+    "patch_dimensions_m": [
+      128,
+      128
+    ],
+    "patch_dimensions_pixels": [
+      128,
+      128
+    ],
+    "maximum_nodata_fraction": 0.2,
+    "single_provenance_signature_required": true,
+    "raw_and_processed_terrain_private": true
+  },
+  "preprocessing": {
+    "representations_in_order": [
+      "elevation_normalized",
+      "slope_degrees",
+      "hillshade_315_45",
+      "local_relief_r16m"
+    ],
+    "normalized_elevation": "subtract_valid_per_patch_median",
+    "slope": "degrees_at_1m_resolution",
+    "hillshade": {
+      "azimuth_degrees": 315.0,
+      "altitude_degrees": 45.0
+    },
+    "local_relief_radius_m": 16.0,
+    "pooling": {
+      "method": "non_overlapping_mean",
+      "block_shape": [
+        4,
+        4
+      ],
+      "input_shape": [
+        128,
+        128
+      ],
+      "output_shape": [
+        32,
+        32
+      ],
+      "features_per_representation": 1024
+    },
+    "feature_count": 4096,
+    "metadata_features": false,
+    "changes_allowed_after_freeze": false
+  },
+  "model": {
+    "family": "RandomForestClassifier",
+    "parameters": {
+      "n_estimators": 300,
+      "max_depth": 8,
+      "min_samples_leaf": 5,
+      "max_features": "sqrt",
+      "n_jobs": 1,
+      "random_state": 20260829
+    },
+    "training_observations": 522,
+    "model_state_sha256": "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939",
+    "private_model_artifact_sha256": "50f7968069ecaa1e0016f37be6356531ab3f26802c806efb5dc8fb2e295a503f",
+    "retraining_allowed": false,
+    "recalibration_allowed": false,
+    "hyperparameter_changes_allowed": false,
+    "representation_changes_allowed": false
+  },
+  "evaluation": {
+    "primary_metric": "balanced_accuracy",
+    "classification_threshold": 0.5,
+    "secondary_metrics": [
+      "accuracy",
+      "precision",
+      "recall",
+      "f1",
+      "roc_auc",
+      "average_precision",
+      "confusion_matrix"
+    ],
+    "confidence_interval": {
+      "method": "nonparametric_matched_pair_cluster_bootstrap",
+      "unit": "one_positive_and_its_matched_unlabelled_background",
+      "replicates": 10000,
+      "seed": 20260830,
+      "interval": "percentile_2.5_to_97.5",
+      "both_classes_present_in_every_resampled_pair": true
+    },
+    "metric_or_threshold_tuning_allowed": false,
+    "result_interpretation_rule": {
+      "MORE_DATA_REQUIRED": "fewer_than_50_complete_pairs_or_metrics_not_estimable",
+      "EXTERNAL_GENERALIZATION_SUPPORTED": "balanced_accuracy_at_least_0.75_and_lower_95_percent_CI_above_0.5",
+      "EXTERNAL_GENERALIZATION_PARTIALLY_SUPPORTED": "balanced_accuracy_above_0.5_but_supported_rule_not_met",
+      "EXTERNAL_GENERALIZATION_NOT_SUPPORTED": "balanced_accuracy_at_or_below_0.5"
+    }
+  },
+  "freeze_sequence": [
+    "commit_this_phase_3A_protocol",
+    "curate_external_labels_privately_without_model_access",
+    "construct_and_QA_matched_external_pairs",
+    "freeze_private_dataset_manifest_and_coordinate_safe_receipt_in_a_separate_commit",
+    "verify_all_hashes_and_independence_gates",
+    "authorize_one_way_external_RF_scoring_in_a_later_phase"
+  ],
+  "stopping_rules": [
+    "any_frozen_Phase_2D_2E_or_2F_artifact_hash_mismatch",
+    "external_protocol_hash_mismatch",
+    "any_external_record_previously_reviewed_for_E001",
+    "any_external_positive_or_background_outside_the_frozen_cell",
+    "any_external_positive_or_background_within_15km_of_E001_or_Phase_2F",
+    "fewer_than_50_fully_QA_passed_positive_background_pairs",
+    "any_unresolved_label_geometry_terrain_or_provenance_gate_in_the_frozen_dataset",
+    "private_manifest_or_terrain_not_git_ignored",
+    "any_model_threshold_feature_or_hyperparameter_change",
+    "any_RF_access_before_the_external_dataset_manifest_is_frozen",
+    "any_request_to_hide_or_tune_away_a_negative_external_result"
+  ],
+  "privacy": {
+    "exact_locations_private": true,
+    "NGRs_private": true,
+    "positive_geometry_private": true,
+    "raw_LiDAR_private": true,
+    "processed_patches_private": true,
+    "georeferenced_QA_images_private": true,
+    "private_manifests_git_ignored": true,
+    "tracked_outputs_aggregate_only": true,
+    "public_coarse_geography_only": true
+  },
+  "software_versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.2",
+    "scikit_learn": "1.9.0"
+  },
+  "execution_state": {
+    "metadata_feasibility_audit_completed": true,
+    "external_labels_frozen": false,
+    "external_terrain_acquired": false,
+    "frozen_RF_loaded_for_external_data": false,
+    "external_RF_scoring_performed": false,
+    "external_performance_metrics_computed": false
+  },
+  "protocol_sha256": "af4e0a8f0eac93ef999934bd94aa6393d55bb486c061e5dbf9f5d02f47caebcc"
+}

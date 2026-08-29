@@ -44,6 +44,9 @@ outputs/deep_learning/training_runs/
 
 # Generated experiment runs are reproducible artifacts, not source files.
 outputs/E*/
+!outputs/external_validation/
+outputs/external_validation/*
+!outputs/external_validation/e001_phase3a_feasibility.json
 
 # Sensitive label data must not be committed.
 data/private/

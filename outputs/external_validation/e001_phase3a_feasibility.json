@@ -1,0 +1,57 @@
+{
+  "schema_version": "e001-phase-3a-feasibility-v1",
+  "phase": "3A",
+  "status": "METADATA_FEASIBILITY_COMPLETE_NO_EXTERNAL_SCORING",
+  "access_date": "2026-08-30",
+  "source": {
+    "labels": "Historic England National Heritage List for England Scheduled Monuments layer",
+    "labels_url": "https://historicengland.org.uk/listing/the-list/data-downloads",
+    "labels_service": "https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer/6",
+    "labels_public_page_last_updated": "2026-08-19",
+    "terrain": "Environment Agency LIDAR Composite Digital Terrain Model 1m",
+    "terrain_url": "https://environment.data.gov.uk/dataset/13787b9a-26a4-4775-8523-806d13af58fc",
+    "license": "Open Government Licence v3.0"
+  },
+  "external_geography": {
+    "public_coarse_cell": "BNG_25KM_E16_N5",
+    "public_description": "central Salisbury Plain, Wiltshire",
+    "selection_basis": "pre-score label availability, terrain metadata, and geographic separation only",
+    "E001_positive_observations_in_cell": 0,
+    "E001_background_observations_in_cell": 0,
+    "minimum_separation_from_all_522_E001_observations_m": 15000,
+    "minimum_separation_from_Phase_2F_private_domain_m": 15000,
+    "private_overlap_checks_passed": true
+  },
+  "counts": {
+    "previously_unreviewed_probable_title_candidates_in_cell": 96,
+    "eligible_after_frozen_private_separation_checks": 87,
+    "terrain_metadata_queries_completed": 87,
+    "terrain_metadata_query_errors": 0,
+    "complete_1m_DTM_patch_coverage": 87,
+    "single_provenance_signature_pass": 86,
+    "terrain_provenance_review_needed": 1,
+    "verified_external_positive_labels": 0
+  },
+  "sample_estimate": {
+    "target_positive_count": 60,
+    "target_background_count": 60,
+    "minimum_positive_count": 50,
+    "minimum_background_count": 50,
+    "heuristic_basis": "E001 retained 261 of 360 fully reviewed queue records; applying that 72.5 percent planning yield to 87 candidates gives approximately 63, but external availability remains unverified until full curation",
+    "performance_used_for_size_choice": false
+  },
+  "privacy": {
+    "record_level_rows_written": false,
+    "coordinates_written": false,
+    "geometry_written": false,
+    "private_domain_extent_written": false,
+    "aggregate_only": true
+  },
+  "execution_state": {
+    "external_records_curated": false,
+    "external_terrain_downloaded": false,
+    "frozen_RF_loaded_for_external_data": false,
+    "external_RF_scoring_performed": false,
+    "external_performance_metrics_computed": false
+  }
+}

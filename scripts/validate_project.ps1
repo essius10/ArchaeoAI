@@ -19,6 +19,7 @@ $required = @(
     'configs/e001-phase-2d-b-final-protocol.json',
     'configs/e001-phase-2e-a-robustness-protocol.json',
     'configs/e001-phase-2f-a-inference-protocol.json',
+    'configs/e001-phase-3a-external-validation.json',
     'outputs/deep_learning/e001_cnn_protocol.json',
     'data/README.md',
     'data/manifests/example-dataset.toml',
@@ -38,6 +39,7 @@ $required = @(
     'docs/e001-phase-2eb-compact-cnn.md',
     'docs/e001-phase-2f-a-controlled-inference.md',
     'docs/e001-phase-2f-b-controlled-inference.md',
+    'docs/e001-phase-3a-external-validation.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -58,6 +60,7 @@ $required = @(
     'research-log/2026-08-29-phase-2eb.md',
     'research-log/2026-08-29-phase-2f-a.md',
     'research-log/2026-08-30-phase-2f-b.md',
+    'research-log/2026-08-30-phase-3a.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -109,6 +112,7 @@ $required = @(
     'src/archaeoai/deep_learning.py',
     'src/archaeoai/cnn_training.py',
     'src/archaeoai/inference.py',
+    'src/archaeoai/external_validation.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -136,6 +140,7 @@ $required = @(
     'tests/test_deep_learning.py',
     'tests/test_cnn_training.py',
     'tests/test_inference.py',
+    'tests/test_external_validation.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -199,6 +204,7 @@ $required = @(
     'outputs/inference/e001_phase2f_a_readiness.json',
     'outputs/inference/e001_phase2f_b_summary.json',
     'outputs/inference/figures/e001_phase2f_b_score_distribution.svg',
+    'outputs/external_validation/e001_phase3a_feasibility.json',
     'website/index.html',
     'website/styles.css',
     'website/site.js',
@@ -438,6 +444,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2F-B aggregate result, frozen score receipt, privacy, or review boundary validation failed.'
 }
 
+$phase3ACheck = & $pythonExecutable -c 'import hashlib,json; from pathlib import Path; from archaeoai.external_validation import validate_external_protocol; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); protocol=validate_external_protocol(root/"configs/e001-phase-3a-external-validation.json"); feasibility=json.loads((root/"outputs/external_validation/e001_phase3a_feasibility.json").read_text()); assert_coordinate_safe_mapping(protocol); assert_coordinate_safe_mapping(feasibility); assert protocol["protocol_sha256"]=="af4e0a8f0eac93ef999934bd94aa6393d55bb486c061e5dbf9f5d02f47caebcc" and protocol["external_geography"]["public_coarse_cell"]=="BNG_25KM_E16_N5" and protocol["sample_design"]["target_total_observations"]==120 and protocol["sample_design"]["minimum_total_observations"]==100; assert protocol["model"]["model_state_sha256"]=="e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939" and protocol["model"]["retraining_allowed"] is False and protocol["evaluation"]["primary_metric"]=="balanced_accuracy" and protocol["evaluation"]["confidence_interval"]=={"method":"nonparametric_matched_pair_cluster_bootstrap","unit":"one_positive_and_its_matched_unlabelled_background","replicates":10000,"seed":20260830,"interval":"percentile_2.5_to_97.5","both_classes_present_in_every_resampled_pair":True}; assert all(hashlib.sha256((root/path).read_bytes()).hexdigest()==digest for path,digest in protocol["immutable_artifact_sha256"].items()); assert feasibility["counts"]=={"previously_unreviewed_probable_title_candidates_in_cell":96,"eligible_after_frozen_private_separation_checks":87,"terrain_metadata_queries_completed":87,"terrain_metadata_query_errors":0,"complete_1m_DTM_patch_coverage":87,"single_provenance_signature_pass":86,"terrain_provenance_review_needed":1,"verified_external_positive_labels":0}; assert feasibility["privacy"]=={"record_level_rows_written":False,"coordinates_written":False,"geometry_written":False,"private_domain_extent_written":False,"aggregate_only":True}; assert feasibility["execution_state"]["frozen_RF_loaded_for_external_data"] is False and feasibility["execution_state"]["external_RF_scoring_performed"] is False and feasibility["execution_state"]["external_performance_metrics_computed"] is False; print("Phase 3A external-validation protocol valid; 60-pair target frozen; no external RF scoring")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 3A protocol, feasibility, frozen artifacts, privacy, or no-score boundary validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -525,4 +536,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $publicDemoCheck."
