@@ -17,6 +17,7 @@ $required = @(
     'configs/e001.example.toml',
     'configs/e001-phase-2d-a-preregistered.json',
     'configs/e001-phase-2d-b-final-protocol.json',
+    'configs/e001-phase-2e-a-robustness-protocol.json',
     'data/README.md',
     'data/manifests/example-dataset.toml',
     'data/manifests/e001-ea-lidar-dtm.toml',
@@ -30,6 +31,8 @@ $required = @(
     'docs/e001-phase-2d-a-development-selection.md',
     'docs/e001-phase-2d-b-final-protocol.md',
     'docs/e001-phase-2d-baseline-modelling.md',
+    'docs/e001-phase-2e-a-robustness-protocol.md',
+    'docs/e001-phase-2e-robustness.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -45,6 +48,7 @@ $required = @(
     'research-log/2026-08-29-phase-2c.md',
     'research-log/2026-08-29-phase-2d-a.md',
     'research-log/2026-08-29-phase-2d-b.md',
+    'research-log/2026-08-29-phase-2e-a.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -60,6 +64,9 @@ $required = @(
     'scripts/run_e001_development_baselines.py',
     'scripts/run_e001_final_evaluation.py',
     'scripts/render_e001_final_figures.py',
+    'scripts/freeze_e001_robustness_folds.py',
+    'scripts/run_e001_robustness.py',
+    'scripts/render_e001_robustness_figures.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -83,6 +90,7 @@ $required = @(
     'src/archaeoai/model_data.py',
     'src/archaeoai/modelling.py',
     'src/archaeoai/final_evaluation.py',
+    'src/archaeoai/robustness.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -106,6 +114,7 @@ $required = @(
     'tests/test_modelling.py',
     'tests/test_baseline_freeze.py',
     'tests/test_final_evaluation.py',
+    'tests/test_robustness.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -139,7 +148,22 @@ $required = @(
     'outputs/modelling/figures/e001_geographic_confusion_matrix.svg',
     'outputs/modelling/figures/e001_random_confusion_matrix.svg',
     'outputs/modelling/figures/e001_roc_curves.svg',
-    'outputs/modelling/figures/e001_precision_recall_curves.svg'
+    'outputs/modelling/figures/e001_precision_recall_curves.svg',
+    'outputs/robustness/e001_geographic_fold_groups.csv',
+    'outputs/robustness/e001_geographic_fold_manifest.json',
+    'outputs/robustness/e001_geographic_cv.csv',
+    'outputs/robustness/e001_group_performance.csv',
+    'outputs/robustness/e001_representation_ablation.csv',
+    'outputs/robustness/e001_drop_one_representation.csv',
+    'outputs/robustness/e001_seed_sensitivity.csv',
+    'outputs/robustness/e001_training_fraction.csv',
+    'outputs/robustness/e001_permutation_diagnostic.json',
+    'outputs/robustness/e001_robustness_summary.json',
+    'outputs/robustness/figures/e001_geographic_fold_balanced_accuracy.svg',
+    'outputs/robustness/figures/e001_representation_robustness.svg',
+    'outputs/robustness/figures/e001_seed_robustness.svg',
+    'outputs/robustness/figures/e001_training_size_learning_curve.svg',
+    'outputs/robustness/figures/e001_score_distributions.svg'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -154,7 +178,7 @@ if ($readme -notmatch 'geographically (?:disjoint|separated) holdouts?') {
 if (
     $readme -notmatch '0\.871 balanced' -or
     $readme -notmatch 'geographically held-out groups' -or
-    $readme -notmatch 'has not discovered\s+(?:>\s*)?archaeological sites' -or
+    $readme -notmatch 'has not\s+(?:>\s*)?discovered\s+(?:>\s*)?archaeological sites' -or
     $readme -notmatch '261' -or
     $readme -notmatch '12'
 ) {
@@ -336,6 +360,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2D-B final result, uncertainty, audit, protocol, or privacy validation failed.'
 }
 
+$phase2eACheck = & $pythonExecutable -c 'import csv, hashlib, json; from pathlib import Path; from archaeoai.robustness import validate_robustness_protocol; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); protocol=validate_robustness_protocol(root/"configs/e001-phase-2e-a-robustness-protocol.json"); manifest=json.loads((root/"outputs/robustness/e001_geographic_fold_manifest.json").read_text()); result=json.loads((root/"outputs/robustness/e001_robustness_summary.json").read_text()); permutation=json.loads((root/"outputs/robustness/e001_permutation_diagnostic.json").read_text()); cv=list(csv.DictReader((root/"outputs/robustness/e001_geographic_cv.csv").open(encoding="utf-8"))); assert_coordinate_safe_mapping(manifest); assert_coordinate_safe_mapping(result); assert_coordinate_safe_mapping(permutation); assert manifest["assignment_sha256"]==protocol["geographic_folds"]["assignment_sha256"] and manifest["integrity"]=={"geographic_groups_kept_whole":True,"matched_and_overlap_units_kept_whole":True,"cross_fold_terrain_window_overlaps":0,"coordinates_written":False,"model_scores_used":False}; assert result["analysis_label"]=="posthoc_geographic_robustness" and result["posthoc_not_confirmatory"] is True and result["original_result_files_unchanged"] is True and result["no_phase_2d_reselection_or_retuning"] is True; assert len(cv)==5 and [round(float(row["balanced_accuracy"]),6) for row in cv]==[0.796296,0.839623,0.79,0.861111,0.83]; assert round(result["primary_geographic_cv"]["summary"]["mean"],6)==0.823406 and result["robustness_classification"]=="ROBUST" and result["recommendation"]=="GO FOR PHASE 2E-B STRONGER MODELS"; assert permutation["runs"]==100 and permutation["used_for_selection_or_tuning"] is False; assert result["shortcut_audit"]["absolute_elevation_in_features"] is False and result["shortcut_audit"]["per_patch_median_normalization_offset_invariance_tested"] is True and result["shortcut_audit"]["sample_id_path_filename_or_serialization_metadata_in_features"] is False and result["shortcut_audit"]["npz_key_order_compression_path_and_name_invariance_tested"] is True and result["shortcut_audit"]["cross_fold_terrain_window_overlaps"]==result["shortcut_audit"]["matched_and_overlap_units_cross_folds"]==0 and result["shortcut_audit"]["metadata_used_as_features"] is False and result["shortcut_audit"]["all_missing_fractions_zero"] is True; assert result["privacy"]=={"aggregate_only":True,"coordinates_written":False,"sample_identifiers_written":False,"maps_created":False}; assert all(hashlib.sha256((root/relative).read_bytes()).hexdigest()==digest for relative,digest in protocol["original_result_file_sha256"].items()); print("Phase 2E-A post-hoc robustness evidence valid; Phase 2D result immutable")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2E-A folds, robustness results, shortcut audits, or Phase 2D immutability validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -352,6 +381,10 @@ $modellingOutputs = Get-Content -Raw 'outputs/modelling/e001_phase_2d_a_developm
 if ($modellingOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center)"\s*:') {
     throw 'A tracked Phase 2D-A output contains a coordinate-bearing field.'
 }
+$robustnessOutputs = Get-Content -Raw 'outputs/robustness/*.json', 'outputs/robustness/*.csv', 'outputs/robustness/figures/*.svg'
+if ($robustnessOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id)"\s*:') {
+    throw 'A tracked Phase 2E-A output contains a coordinate or sample identifier.'
+}
 $trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
     throw "Sensitive or bulk terrain is tracked: $($trackedSensitive -join ', ')"
@@ -365,4 +398,4 @@ if ($LASTEXITCODE -ne 0 -or -not $privateBackgroundIgnoreCheck) {
     throw 'Private E001 background coordinates and terrain must remain ignored by Git.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck."

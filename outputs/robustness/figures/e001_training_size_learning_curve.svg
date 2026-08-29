@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="520" viewBox="0 0 820 520" role="img" aria-labelledby="title desc">
+<title id="title">E001 post-hoc group-aware training-size sensitivity</title>
+<desc id="desc">Coordinate-safe aggregate E001 post-hoc robustness figure.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text { font-family: Arial, sans-serif; fill: #1a202c; } .axis { stroke: #4a5568; stroke-width: 1.5; } .grid { stroke: #e2e8f0; stroke-width: 1; } .label { font-size: 13px; } .small { font-size: 11px; }</style>
+<text x="410.0" y="29" text-anchor="middle" font-size="19" font-weight="700">E001 post-hoc group-aware training-size sensitivity</text>
+<line class="grid" x1="88" y1="428.00" x2="748" y2="428.00"/>
+<text class="small" x="76" y="432.00" text-anchor="end">0.0</text>
+<line class="grid" x1="88" y1="354.00" x2="748" y2="354.00"/>
+<text class="small" x="76" y="358.00" text-anchor="end">0.2</text>
+<line class="grid" x1="88" y1="280.00" x2="748" y2="280.00"/>
+<text class="small" x="76" y="284.00" text-anchor="end">0.4</text>
+<line class="grid" x1="88" y1="206.00" x2="748" y2="206.00"/>
+<text class="small" x="76" y="210.00" text-anchor="end">0.6</text>
+<line class="grid" x1="88" y1="132.00" x2="748" y2="132.00"/>
+<text class="small" x="76" y="136.00" text-anchor="end">0.8</text>
+<line class="grid" x1="88" y1="58.00" x2="748" y2="58.00"/>
+<text class="small" x="76" y="62.00" text-anchor="end">1.0</text>
+<line class="axis" x1="88" y1="58" x2="88" y2="428"/>
+<line class="axis" x1="88" y1="428" x2="748" y2="428"/>
+<text class="label" x="22" y="243.0" text-anchor="middle" transform="rotate(-90 22 243.0)">Mean geographic-fold balanced accuracy</text>
+<polyline points="88.00,129.69 308.00,118.31 528.00,121.21 748.00,123.34" fill="none" stroke="#2f855a" stroke-width="3"/>
+<circle cx="88.00" cy="129.69" r="6" fill="#2f855a"/>
+<text class="small" x="88.00" y="118.69" text-anchor="middle">0.806</text>
+<text class="small" x="88.00" y="452" text-anchor="middle">25%</text>
+<circle cx="308.00" cy="118.31" r="6" fill="#2f855a"/>
+<text class="small" x="308.00" y="107.31" text-anchor="middle">0.837</text>
+<text class="small" x="308.00" y="452" text-anchor="middle">50%</text>
+<circle cx="528.00" cy="121.21" r="6" fill="#2f855a"/>
+<text class="small" x="528.00" y="110.21" text-anchor="middle">0.829</text>
+<text class="small" x="528.00" y="452" text-anchor="middle">75%</text>
+<circle cx="748.00" cy="123.34" r="6" fill="#2f855a"/>
+<text class="small" x="748.00" y="112.34" text-anchor="middle">0.823</text>
+<text class="small" x="748.00" y="452" text-anchor="middle">100%</text>
+<text class="label" x="418.0" y="490" text-anchor="middle">Related-unit training fraction</text>
+</svg>

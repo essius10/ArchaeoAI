@@ -7,8 +7,10 @@ group-aware random condition and the complete-block geographic condition now con
 examples per class in train/development/final test. All seven overlap components remain intact and
 the two final-test block assignments are hash-guarded. Phase 2D-A selected and froze an all-four
 pooled Random Forest using only geographic development. Phase 2D-B then recorded 0.870968 balanced
-accuracy [0.774194, 0.951613] on the one-way geographic final test. The next gate is a separately
-pre-registered Phase 2E robustness / stronger-model study; Phase 2E has not started.
+accuracy [0.774194, 0.951613] on the one-way geographic final test. Phase 2E-A then classified the
+baseline as ROBUST under a pre-committed five-fold post-hoc protocol (mean 0.823406; fold range
+0.790000–0.861111). The next gate is a separately pre-registered Phase 2E-B stronger-model study;
+Phase 2E-B has not started.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 

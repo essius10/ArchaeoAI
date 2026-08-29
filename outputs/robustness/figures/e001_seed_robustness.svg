@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="520" viewBox="0 0 820 520" role="img" aria-labelledby="title desc">
+<title id="title">E001 post-hoc Random Forest seed sensitivity</title>
+<desc id="desc">Coordinate-safe aggregate E001 post-hoc robustness figure.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text { font-family: Arial, sans-serif; fill: #1a202c; } .axis { stroke: #4a5568; stroke-width: 1.5; } .grid { stroke: #e2e8f0; stroke-width: 1; } .label { font-size: 13px; } .small { font-size: 11px; }</style>
+<text x="410.0" y="29" text-anchor="middle" font-size="19" font-weight="700">E001 post-hoc Random Forest seed sensitivity</text>
+<line class="grid" x1="88" y1="428.00" x2="748" y2="428.00"/>
+<text class="small" x="76" y="432.00" text-anchor="end">0.0</text>
+<line class="grid" x1="88" y1="354.00" x2="748" y2="354.00"/>
+<text class="small" x="76" y="358.00" text-anchor="end">0.2</text>
+<line class="grid" x1="88" y1="280.00" x2="748" y2="280.00"/>
+<text class="small" x="76" y="284.00" text-anchor="end">0.4</text>
+<line class="grid" x1="88" y1="206.00" x2="748" y2="206.00"/>
+<text class="small" x="76" y="210.00" text-anchor="end">0.6</text>
+<line class="grid" x1="88" y1="132.00" x2="748" y2="132.00"/>
+<text class="small" x="76" y="136.00" text-anchor="end">0.8</text>
+<line class="grid" x1="88" y1="58.00" x2="748" y2="58.00"/>
+<text class="small" x="76" y="62.00" text-anchor="end">1.0</text>
+<line class="axis" x1="88" y1="58" x2="88" y2="428"/>
+<line class="axis" x1="88" y1="428" x2="748" y2="428"/>
+<text class="label" x="22" y="243.0" text-anchor="middle" transform="rotate(-90 22 243.0)">Balanced accuracy</text>
+<rect x="119.00" y="123.34" width="70.00" height="304.66" fill="#c05621" opacity="0.86"/>
+<text class="small" x="154.00" y="115.34" text-anchor="middle">0.823</text>
+<text class="small" x="154.00" y="452" text-anchor="middle" transform="rotate(-22 154.00 452)">20260829</text>
+<rect x="251.00" y="120.51" width="70.00" height="307.49" fill="#c05621" opacity="0.86"/>
+<text class="small" x="286.00" y="112.51" text-anchor="middle">0.831</text>
+<text class="small" x="286.00" y="452" text-anchor="middle" transform="rotate(-22 286.00 452)">20260830</text>
+<rect x="383.00" y="116.18" width="70.00" height="311.82" fill="#c05621" opacity="0.86"/>
+<text class="small" x="418.00" y="108.18" text-anchor="middle">0.843</text>
+<text class="small" x="418.00" y="452" text-anchor="middle" transform="rotate(-22 418.00 452)">20260831</text>
+<rect x="515.00" y="121.80" width="70.00" height="306.20" fill="#c05621" opacity="0.86"/>
+<text class="small" x="550.00" y="113.80" text-anchor="middle">0.828</text>
+<text class="small" x="550.00" y="452" text-anchor="middle" transform="rotate(-22 550.00 452)">20260901</text>
+<rect x="647.00" y="121.89" width="70.00" height="306.11" fill="#c05621" opacity="0.86"/>
+<text class="small" x="682.00" y="113.89" text-anchor="middle">0.827</text>
+<text class="small" x="682.00" y="452" text-anchor="middle" transform="rotate(-22 682.00 452)">20260902</text>
+</svg>

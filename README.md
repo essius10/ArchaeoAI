@@ -2,9 +2,9 @@
 
 **LiDAR terrain research, spatial evaluation, and reproducible machine learning for archaeology.**
 
-![Research stage](https://img.shields.io/badge/research-Phase%202D%20baseline%20evaluated-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%202E--A%20robustness%20complete-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-143%20passing-2f855a)
+![Tests](https://img.shields.io/badge/tests-153%20passing-2f855a)
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
 > that apparent skill survive when the model is tested somewhere geographically new?**
@@ -17,8 +17,9 @@ the score reflects genuine geographic generalization rather than spatial or surv
 > [!IMPORTANT]
 > **Active research, not a discovery system.** The frozen baseline reached **0.871 balanced
 > accuracy** on two specific geographically held-out groups (n=62; 95% whole-group bootstrap CI
-> 0.774–0.952). This is a bounded classification result, and ArchaeoAI has not discovered
-> archaeological sites.
+> 0.774–0.952). A separate post-hoc five-fold robustness analysis averaged 0.823 without replacing
+> that confirmatory result. This remains a bounded classification task, and ArchaeoAI has not
+> discovered archaeological sites.
 
 ## Current research status
 
@@ -28,7 +29,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **143 passing** |
+| Automated tests | **153 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
@@ -37,13 +38,15 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Development selection | **0.821 balanced accuracy; n=28** |
 | Random final comparison | **0.823 [0.719, 0.917]; n=62** |
 | Primary geographic final result | **0.871 [0.774, 0.952]; n=62** |
+| Post-hoc geographic robustness | **5-fold mean 0.823; range 0.790–0.861** |
+| Robustness classification | **ROBUST under the frozen Phase 2E-A rule** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
 records, not unquestionable ground truth**. A frozen 40-record queue still awaits review by a
 different human reviewer.
 
-[Read the complete frozen baseline evaluation →](docs/e001-phase-2d-baseline-modelling.md)
+[Read the post-hoc robustness and sensitivity report →](docs/e001-phase-2e-robustness.md)
 
 ## Why this matters
 
@@ -98,7 +101,9 @@ called `unlabelled_background`, never a true archaeological negative.
 | Leakage-resistant split freeze | ✅ Complete | Group-aware random plus two-block geographic test |
 | Baseline infrastructure and selection | ✅ Complete | Dummy, L2 logistic, modest random forest |
 | Random vs geographic evaluation | ✅ Complete | Geographic 0.871 vs random 0.823 balanced accuracy |
-| Results and research interface | 🔬 Report complete | Aggregate figures; no sample predictions or map |
+| Robustness and failure analysis | ✅ Complete | Five geographic folds; ablations, seeds, training size, shortcuts |
+| Stronger-model comparison | ⏳ Not started | Requires a new Phase 2E-B preregistration |
+| Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today
 
@@ -123,6 +128,8 @@ called `unlabelled_background`, never a true archaeological negative.
 - A development-only 15-candidate result matrix and hash-frozen primary Random Forest configuration.
 - A one-way final evaluation with group-bootstrap uncertainty, confusion matrices, ROC/PR curves,
   aggregate error analysis, and a no-retuning audit trail.
+- A score-independent five-fold post-hoc robustness analysis with representation, seed, training-
+  size, permutation, correlation, score-distribution, and serialization/offset diagnostics.
 - Tracked aggregate evidence and a claims register that limits public wording.
 - Windows-compatible environment and repository validation scripts.
 
@@ -131,6 +138,7 @@ called `unlabelled_background`, never a true archaeological negative.
 - Any committed LiDAR, exact coordinate table, georeferenced QA image, or private receipt.
 - A deep-learning system, independent reproduction, or evidence beyond the bounded E001 classes and
   two held-out geographic groups.
+- A hard-background stress dataset with complete model-independent confound annotations.
 - A map of predictions or coordinates for possible unrecorded sites.
 - A formal paper, DOI, archived release, or institutional affiliation.
 
@@ -283,6 +291,8 @@ Neither source provider endorses ArchaeoAI. No supplied map is reproduced here.
 - [E001 Phase 2D-A development selection](docs/e001-phase-2d-a-development-selection.md)
 - [E001 Phase 2D-B frozen protocol](docs/e001-phase-2d-b-final-protocol.md)
 - [E001 complete baseline modelling and final results](docs/e001-phase-2d-baseline-modelling.md)
+- [E001 Phase 2E-A frozen robustness protocol](docs/e001-phase-2e-a-robustness-protocol.md)
+- [E001 Phase 2E-A robustness and failure analysis](docs/e001-phase-2e-robustness.md)
 - [Initial E001 experiment protocol](experiments/E001_geographic_baseline.md)
 - [Research quality bar](docs/project-quality-bar.md)
 - [Claims register](docs/claims-register.md)

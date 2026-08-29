@@ -17,6 +17,7 @@ from archaeoai.robustness import (
     validate_robustness_protocol,
 )
 from archaeoai.terrain.full_dataset import load_processed_archive
+from archaeoai.terrain.privacy import assert_coordinate_safe_mapping
 from archaeoai.terrain.representations import normalize_elevation
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -175,3 +176,44 @@ def test_robustness_protocol_is_hash_frozen_before_scoring() -> None:
     )
     assert protocol["confirmatory_result_remains_phase_2d"] is True
     assert protocol["hard_background_stress"]["performed"] is False
+
+
+def test_robustness_outputs_are_coordinate_safe_posthoc_and_complete() -> None:
+    summary = json.loads(
+        (ROOT / "outputs/robustness/e001_robustness_summary.json").read_text(encoding="utf-8")
+    )
+    assert_coordinate_safe_mapping(summary)
+    assert summary["analysis_label"] == "posthoc_geographic_robustness"
+    assert summary["posthoc_not_confirmatory"] is True
+    assert summary["original_result_files_unchanged"] is True
+    assert summary["no_phase_2d_reselection_or_retuning"] is True
+    assert len(summary["primary_geographic_cv"]["folds"]) == 5
+    assert summary["robustness_classification"] == "ROBUST"
+    assert summary["recommendation"] == "GO FOR PHASE 2E-B STRONGER MODELS"
+    assert summary["privacy"] == {
+        "aggregate_only": True,
+        "coordinates_written": False,
+        "sample_identifiers_written": False,
+        "maps_created": False,
+    }
+
+
+def test_robustness_sensitivity_matrix_and_permutations_are_frozen() -> None:
+    summary = json.loads(
+        (ROOT / "outputs/robustness/e001_robustness_summary.json").read_text(encoding="utf-8")
+    )
+    permutation = json.loads(
+        (ROOT / "outputs/robustness/e001_permutation_diagnostic.json").read_text(encoding="utf-8")
+    )
+    assert set(summary["representation_summaries"]) == set(REPRESENTATION_CONFIGS)
+    assert set(summary["seed_summaries"]) == {str(seed) for seed in MODEL_SEEDS}
+    assert set(summary["training_fraction_summaries"]) == {
+        str(fraction) for fraction in (1.0, 0.75, 0.5, 0.25)
+    }
+    assert permutation["runs"] == 100
+    assert permutation["used_for_selection_or_tuning"] is False
+    assert len(permutation["results"]) == 100
+    assert all(
+        interval["valid_replicates"] == 5000 and interval["undefined_replicates"] == 0
+        for interval in summary["bootstrap_seed_sensitivity"].values()
+    )
