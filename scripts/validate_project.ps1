@@ -40,6 +40,7 @@ $required = @(
     'docs/e001-phase-2f-a-controlled-inference.md',
     'docs/e001-phase-2f-b-controlled-inference.md',
     'docs/e001-phase-3a-external-validation.md',
+    'docs/e001-phase-3b-external-dataset.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -61,6 +62,7 @@ $required = @(
     'research-log/2026-08-29-phase-2f-a.md',
     'research-log/2026-08-30-phase-2f-b.md',
     'research-log/2026-08-30-phase-3a.md',
+    'research-log/2026-08-30-phase-3b.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -205,6 +207,7 @@ $required = @(
     'outputs/inference/e001_phase2f_b_summary.json',
     'outputs/inference/figures/e001_phase2f_b_score_distribution.svg',
     'outputs/external_validation/e001_phase3a_feasibility.json',
+    'outputs/external_validation/e001_phase3b_curation_gate.json',
     'website/index.html',
     'website/styles.css',
     'website/site.js',
@@ -449,6 +452,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 3A protocol, feasibility, frozen artifacts, privacy, or no-score boundary validation failed.'
 }
 
+$phase3BCheck = & $pythonExecutable -c 'import json; from pathlib import Path; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); result=json.loads((root/"outputs/external_validation/e001_phase3b_curation_gate.json").read_text()); assert_coordinate_safe_mapping(result); assert result["status"]=="INSUFFICIENT_EXTERNAL_SAMPLE" and result["protocol_sha256"]=="ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba"; assert result["counts"]=={"probable_records_reviewed":87,"accepted":47,"rejected":36,"uncertain":3,"terrain_review_needed":1,"maximum_possible_after_strict_label_evidence_gate":48,"minimum_required":50}; assert result["decision"]["minimum_sample_gate_passed"] is False and result["decision"]["background_construction_started"] is False and result["decision"]["terrain_rasters_downloaded"] is False and result["decision"]["representations_generated"] is False and result["decision"]["external_dataset_frozen"] is False and result["decision"]["external_dataset_sha256"] is None; assert all(value is False for value in result["execution_state"].values()); assert result["privacy"]=={"record_level_rows_written_to_tracked_output":False,"coordinates_written":False,"geometry_written":False,"private_manifest_git_ignored":True,"aggregate_only":True}; print("Phase 3B curation gate valid; insufficient external sample; no RF scoring")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 3B curation stopping gate, privacy, or no-score boundary validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -536,4 +544,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $publicDemoCheck."

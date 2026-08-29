@@ -1,0 +1,46 @@
+{
+  "schema_version": "e001-phase-3b-curation-gate-v1",
+  "phase": "3B",
+  "status": "INSUFFICIENT_EXTERNAL_SAMPLE",
+  "access_date": "2026-08-30",
+  "protocol_sha256": "ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba",
+  "private_curation_manifest_sha256": "e7c73a5dccfec0e95126b0e0820fdbbb2517daf5bf8100f2dca403aadc2c17b9",
+  "counts": {
+    "probable_records_reviewed": 87,
+    "accepted": 47,
+    "rejected": 36,
+    "uncertain": 3,
+    "terrain_review_needed": 1,
+    "maximum_possible_after_strict_label_evidence_gate": 48,
+    "minimum_required": 50
+  },
+  "quality_gates": {
+    "official_full_entries_complete": 87,
+    "geometry_candidates_reviewed": 48,
+    "metadata_query_errors": 0,
+    "accepted_with_complete_1m_DTM_metadata": 47,
+    "unresolved_terrain_provenance": 1
+  },
+  "decision": {
+    "minimum_sample_gate_passed": false,
+    "background_construction_started": false,
+    "terrain_rasters_downloaded": false,
+    "representations_generated": false,
+    "external_dataset_frozen": false,
+    "external_dataset_sha256": null,
+    "reason": "Only 47 records passed every completed curation gate. The sole terrain-review case could raise the total to at most 48, below the frozen 50-pair minimum."
+  },
+  "execution_state": {
+    "frozen_RF_loaded_for_external_data": false,
+    "external_RF_scoring_performed": false,
+    "external_predictions_generated": false,
+    "external_performance_metrics_computed": false
+  },
+  "privacy": {
+    "record_level_rows_written_to_tracked_output": false,
+    "coordinates_written": false,
+    "geometry_written": false,
+    "private_manifest_git_ignored": true,
+    "aggregate_only": true
+  }
+}

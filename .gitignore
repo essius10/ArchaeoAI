@@ -47,6 +47,7 @@ outputs/E*/
 !outputs/external_validation/
 outputs/external_validation/*
 !outputs/external_validation/e001_phase3a_feasibility.json
+!outputs/external_validation/e001_phase3b_curation_gate.json
 
 # Sensitive label data must not be committed.
 data/private/

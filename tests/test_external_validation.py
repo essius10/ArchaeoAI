@@ -26,6 +26,7 @@ from archaeoai.terrain.privacy import assert_coordinate_safe_mapping
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL_PATH = ROOT / "configs/e001-phase-3a-external-validation.json"
 FEASIBILITY_PATH = ROOT / "outputs/external_validation/e001_phase3a_feasibility.json"
+CURATION_GATE_PATH = ROOT / "outputs/external_validation/e001_phase3b_curation_gate.json"
 
 
 def test_external_protocol_is_hash_frozen_before_model_access() -> None:
@@ -87,6 +88,28 @@ def test_external_feasibility_receipt_is_aggregate_and_pre_score() -> None:
     assert receipt["counts"]["verified_external_positive_labels"] == 0
     assert receipt["execution_state"]["external_RF_scoring_performed"] is False
     assert receipt["execution_state"]["external_performance_metrics_computed"] is False
+
+
+def test_phase3b_stops_before_dataset_or_scoring_when_minimum_is_unmet() -> None:
+    receipt = json.loads(CURATION_GATE_PATH.read_text(encoding="utf-8"))
+    assert_coordinate_safe_mapping(receipt)
+    assert receipt["status"] == "INSUFFICIENT_EXTERNAL_SAMPLE"
+    assert receipt["counts"] == {
+        "probable_records_reviewed": 87,
+        "accepted": 47,
+        "rejected": 36,
+        "uncertain": 3,
+        "terrain_review_needed": 1,
+        "maximum_possible_after_strict_label_evidence_gate": 48,
+        "minimum_required": 50,
+    }
+    assert receipt["decision"]["minimum_sample_gate_passed"] is False
+    assert receipt["decision"]["background_construction_started"] is False
+    assert receipt["decision"]["terrain_rasters_downloaded"] is False
+    assert receipt["decision"]["representations_generated"] is False
+    assert receipt["decision"]["external_dataset_frozen"] is False
+    assert receipt["decision"]["external_dataset_sha256"] is None
+    assert not any(receipt["execution_state"].values())
 
 
 def test_external_spatial_gate_accepts_only_independent_synthetic_point() -> None:
