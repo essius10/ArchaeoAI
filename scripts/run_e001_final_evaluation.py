@@ -9,7 +9,6 @@ import subprocess
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 import numpy as np
 import scipy
@@ -187,7 +186,7 @@ def main() -> int:
     config_path = root / "outputs/modelling/e001_primary_baseline_config.json"
     protocol, config = validate_final_protocol(protocol_path, config_path)
     _assert_pre_unlock_state(root, protocol)
-    unlock_timestamp = datetime.now(ZoneInfo("Asia/Kolkata")).isoformat(timespec="seconds")
+    unlock_timestamp = datetime.now().astimezone().isoformat(timespec="seconds")
     condition_outputs = {}
     diagnostic_payloads = {}
     for condition in ("random", "geographic"):
