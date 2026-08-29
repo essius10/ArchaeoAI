@@ -37,6 +37,7 @@ $required = @(
     'docs/e001-phase-2e-robustness.md',
     'docs/e001-phase-2eb-compact-cnn.md',
     'docs/e001-phase-2f-a-controlled-inference.md',
+    'docs/e001-phase-2f-b-controlled-inference.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -56,6 +57,7 @@ $required = @(
     'research-log/2026-08-29-phase-2eb0.md',
     'research-log/2026-08-29-phase-2eb.md',
     'research-log/2026-08-29-phase-2f-a.md',
+    'research-log/2026-08-30-phase-2f-b.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -79,6 +81,7 @@ $required = @(
     'scripts/render_e001_cnn_figures.py',
     'scripts/freeze_e001_inference_protocol.py',
     'scripts/smoke_e001_inference.py',
+    'scripts/run_e001_private_inference.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -193,7 +196,9 @@ $required = @(
     'outputs/deep_learning/figures/e001_cnn_seed_stability.svg',
     'outputs/deep_learning/figures/e001_cnn_training_history.svg',
     'outputs/deep_learning/figures/e001_cnn_confusion_summary.svg',
-    'outputs/inference/e001_phase2f_a_readiness.json'
+    'outputs/inference/e001_phase2f_a_readiness.json',
+    'outputs/inference/e001_phase2f_b_summary.json',
+    'outputs/inference/figures/e001_phase2f_b_score_distribution.svg'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -418,6 +423,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2F-A synthetic smoke, performance, or privacy validation failed.'
 }
 
+$phase2fBCheck = & $pythonExecutable -c 'import json; from pathlib import Path; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); result=json.loads((root/"outputs/inference/e001_phase2f_b_summary.json").read_text()); assert_coordinate_safe_mapping(result); assert result["status"]=="READY_FOR_BLINDED_HUMAN_MORPHOLOGY_REVIEW" and result["protocol_sha256"]=="fa1f9cd12230df3f7c83c45febd5ec0ba751f371a098600873380bc47c624095" and result["primary_config_sha256"]=="20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4" and result["model_state_sha256"]=="e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939"; assert result["total_windows"]==result["valid_windows"]==5929 and result["rejected_windows"]==result["no_data_windows"]==0 and result["deduplicated_representatives"]==1159; assert result["review_queue_counts"]=={"highest_score":12,"medium_score_diagnostic":25,"random_reference":25} and result["private_score_table_sha256"]=="78434f3518bd8aa5fb83e3dd9f7c3d54288e1f31a5e61618df4541bb40977771" and result["score_table_frozen_before_interpretation"] is True; assert result["pipeline"]["model_retrained_or_tuned"] is False and result["controlled_domain"]["count"]==1 and result["controlled_domain"]["training_or_evaluation_overlap"] is False; assert result["review"]["blinded_packet_status"]=="READY_UNREVIEWED" and result["review"]["blinded_packet_items"]==62 and result["review"]["human_morphology_review_performed"] is False and result["review"]["heritage_record_cross_check_performed"] is False; assert result["interpretation"]["archaeological_probability_claimed"] is False and result["interpretation"]["discovery_claimed"] is False; assert result["privacy"]["aggregate_only"] is True and result["privacy"]["coordinates_committed"] is False; print("Phase 2F-B aggregate evidence valid; private score table frozen; blinded review pending")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2F-B aggregate result, frozen score receipt, privacy, or review boundary validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -442,6 +452,10 @@ $deepLearningOutputs = Get-Content -Raw 'outputs/deep_learning/*.json', 'outputs
 if ($deepLearningOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id)"\s*:') {
     throw 'A tracked Phase 2E-B0 output contains a coordinate or sample identifier.'
 }
+$inferenceOutputs = Get-Content -Raw 'outputs/inference/*.json', 'outputs/inference/figures/*.svg'
+if ($inferenceOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id|private_token)"\s*:') {
+    throw 'A tracked Phase 2F output contains a coordinate or private identifier.'
+}
 $trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' '*.pt' '*.pth' '*.ckpt' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
     throw "Sensitive or bulk terrain is tracked: $($trackedSensitive -join ', ')"
@@ -463,4 +477,4 @@ if ($LASTEXITCODE -ne 0 -or -not $trainingRunIgnoreCheck) {
     throw 'Private deep-learning training histories must remain ignored by Git.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck."

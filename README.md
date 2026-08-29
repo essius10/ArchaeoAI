@@ -4,7 +4,7 @@
 machine learning, and geographic generalization.**
 
 [![CI](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml/badge.svg)](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml)
-![Research stage](https://img.shields.io/badge/research-Phase%202F--A%20ready-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%202F--B%20review%20ready-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
 
 ArchaeoAI tests whether machine learning can recognize the terrain signature of **documented bowl
@@ -18,14 +18,15 @@ evaluation on geographically new groups.
 | Frozen geographic final test | **87.1%** | Specific two-group holdout; n=62; primary confirmatory result |
 | Five-fold geographic RF robustness | **82.3% mean** | Post-hoc robustness across 23 coarse groups |
 | Compact CNN comparison | **70.1% mean** | Worse than the RF on every fold; RF retained |
-| Phase 2F-A | **Ready, no real scan** | Controlled ranking infrastructure; exact locations remain private |
+| Phase 2F-B | **One controlled run complete** | 5,929 private windows; blinded review pending |
 
 > [!IMPORTANT]
 > **Active research, not a discovery system.** The 0.871 balanced accuracy result (87.1%) applies only
 > to the frozen test of two
 > geographically held-out groups—not England as a whole. Model scores are not archaeological
-> probabilities. ArchaeoAI has not discovered archaeological sites, and no real candidate terrain
-> has been scanned.
+> probabilities. ArchaeoAI has not discovered archaeological sites. One bounded private domain has
+> been scored for terrain similarity, but no human morphology review or heritage cross-check has
+> occurred and no candidate location is public.
 
 ![Aggregate random and geographic balanced-accuracy comparison](outputs/modelling/figures/e001_balanced_accuracy_comparison.svg)
 
@@ -61,7 +62,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Post-hoc geographic robustness | **5-fold mean 0.823; range 0.790–0.861** |
 | Robustness classification | **ROBUST under the frozen Phase 2E-A rule** |
 | Post-hoc compact CNN | **5-fold/3-seed mean 0.701; CNN not justified at current scale** |
-| Controlled inference design | **READY_NO_REAL_SCAN; exact locations remain private** |
+| First controlled private inference | **5,929/5,929 valid; 1,159 deduplicated; review pending** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
@@ -73,6 +74,8 @@ different human reviewer.
 [Read the compact-CNN stronger-model comparison →](docs/e001-phase-2eb-compact-cnn.md)
 
 [Read the controlled Random-Forest inference design →](docs/e001-phase-2f-a-controlled-inference.md)
+
+[Read the first controlled private inference report →](docs/e001-phase-2f-b-controlled-inference.md)
 
 ## Why this matters
 
@@ -129,7 +132,7 @@ called `unlabelled_background`, never a true archaeological negative.
 | Random vs geographic evaluation | ✅ Complete | Geographic 0.871 vs random 0.823 balanced accuracy |
 | Robustness and failure analysis | ✅ Complete | Five geographic folds; ablations, seeds, training size, shortcuts |
 | Stronger-model comparison | ✅ Complete | CNN 0.701 vs RF 0.823; retain Random Forest |
-| Controlled inference design | ✅ Frozen | One private 5 km domain; ranking/review only; no real scan |
+| Controlled private inference | ✅ Run complete | One 5 km domain; blinded morphology review pending |
 | Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today
@@ -161,6 +164,8 @@ called `unlabelled_background`, never a true archaeological negative.
   aggregate diagnostics, and a no-retuning record.
 - A hash-bound full-data Random Forest and reusable controlled-inference engine with deterministic
   patching, ranking, deduplication, blinded review queues, and aggregate-only outputs.
+- One bounded private 5 km inference run with 5,929 valid windows, a hash-frozen private score
+  table, and a 62-item blinded morphology-review packet.
 - Tracked aggregate evidence and a claims register that limits public wording.
 - Windows-compatible environment and repository validation scripts.
 
@@ -171,7 +176,8 @@ called `unlabelled_background`, never a true archaeological negative.
   and evaluated coarse geographic groups.
 - A hard-background stress dataset with complete model-independent confound annotations.
 - A map of predictions or coordinates for possible unrecorded sites.
-- A bound real Phase 2F domain, real candidate scan, candidate claim, or public candidate table.
+- A completed human morphology review, heritage-record cross-check, candidate claim, or public
+  candidate table.
 - A formal paper, DOI, archived release, or institutional affiliation.
 
 ## Reproducibility

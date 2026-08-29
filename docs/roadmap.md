@@ -1,6 +1,6 @@
 # Research roadmap — 15 September 2026 to March 2027
 
-## Current gate (29 August 2026)
+## Current gate (30 August 2026)
 
 Phase 2C froze 261 approved positive-terrain and 261 matched unlabelled-background patches. Both the
 group-aware random condition and the complete-block geographic condition now contain 216/14/31
@@ -16,10 +16,12 @@ internal-validation overfitting despite modest seed variation. The stronger-mode
 `CNN NOT JUSTIFIED AT CURRENT DATA SCALE`; the model recommendation for any separately approved
 Phase 2F is `USE RANDOM FOREST FOR PHASE 2F`.
 
-Phase 2F-A now freezes a controlled one-domain ranking design and a full-data Random Forest fit.
-Its status is `READY_NO_REAL_SCAN`: only a coordinate-free synthetic CPU smoke benchmark has run.
-The next gate is private, score-independent binding of one lawful 5 km domain followed by separate
-approval before any real scoring. No candidate terrain or candidate location currently exists.
+Phase 2F-A froze a controlled one-domain ranking design and a full-data Random Forest fit. Phase
+2F-B then bound exactly one private 5 km domain without model scores, processed all 5,929 frozen
+grid windows, and retained 1,159 representatives after deterministic spatial deduplication. The
+private blinded packet contains 12 HIGH, 25 MEDIUM, and 25 RANDOM items. The current gate is
+blinded human morphology review: no review, heritage-record cross-check, candidate claim, second
+domain, or public location exists.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 

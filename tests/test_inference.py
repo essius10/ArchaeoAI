@@ -227,3 +227,42 @@ def test_tracked_readiness_receipt_is_synthetic_aggregate_only() -> None:
         "synthetic_per_patch_scores_written": False,
         "aggregate_only": True,
     }
+
+
+def test_phase_2f_b_aggregate_result_is_frozen_and_coordinate_safe() -> None:
+    result = json.loads(
+        (ROOT / "outputs/inference/e001_phase2f_b_summary.json").read_text(encoding="utf-8")
+    )
+    assert_coordinate_safe_mapping(result)
+    assert result["status"] == "READY_FOR_BLINDED_HUMAN_MORPHOLOGY_REVIEW"
+    assert result["total_windows"] == result["valid_windows"] == 5929
+    assert result["rejected_windows"] == result["no_data_windows"] == 0
+    assert result["deduplicated_representatives"] == 1159
+    assert result["review_queue_counts"] == {
+        "highest_score": 12,
+        "medium_score_diagnostic": 25,
+        "random_reference": 25,
+    }
+    assert result["private_score_table_sha256"] == (
+        "78434f3518bd8aa5fb83e3dd9f7c3d54288e1f31a5e61618df4541bb40977771"
+    )
+    assert result["score_table_frozen_before_interpretation"] is True
+
+
+def test_phase_2f_b_preserves_review_and_claim_boundaries() -> None:
+    result = json.loads(
+        (ROOT / "outputs/inference/e001_phase2f_b_summary.json").read_text(encoding="utf-8")
+    )
+    assert result["pipeline"]["model_retrained_or_tuned"] is False
+    assert result["review"] == {
+        "blinded_packet_status": "READY_UNREVIEWED",
+        "blinded_packet_items": 62,
+        "score_rank_band_location_and_known_heritage_status_hidden": True,
+        "human_morphology_review_performed": False,
+        "heritage_record_cross_check_performed": False,
+    }
+    assert result["interpretation"]["archaeological_probability_claimed"] is False
+    assert result["interpretation"]["discovery_claimed"] is False
+    serialized = json.dumps(result, sort_keys=True).casefold()
+    for forbidden in ("private_token", "sample_id", "easting", "northing", "geojson"):
+        assert forbidden not in serialized

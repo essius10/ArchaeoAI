@@ -1,0 +1,94 @@
+{
+  "semantics": "terrain_similarity_model_score_not_archaeological_probability",
+  "total_windows": 5929,
+  "valid_windows": 5929,
+  "rejected_windows": 0,
+  "no_data_windows": 0,
+  "deduplicated_representatives": 1159,
+  "score_distribution": {
+    "minimum": 0.03774791329995999,
+    "q25": 0.17158083447054037,
+    "median": 0.2581923601613452,
+    "q75": 0.3510670052170053,
+    "maximum": 0.9452698477992595
+  },
+  "review_queue_counts": {
+    "highest_score": 12,
+    "medium_score_diagnostic": 25,
+    "random_reference": 25
+  },
+  "model_state_sha256": "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939",
+  "privacy": {
+    "aggregate_only": true,
+    "exact_locations_written": false,
+    "candidate_identifiers_written": false,
+    "georeferenced_outputs_written": false,
+    "private_artifacts_git_ignored": true,
+    "coordinates_committed": false,
+    "private_review_packet_git_ignored": true
+  },
+  "phase": "2F-B",
+  "status": "READY_FOR_BLINDED_HUMAN_MORPHOLOGY_REVIEW",
+  "starting_head": "8f9e794fb95e0f77ce282ec5b45ecb2cf98e01b3",
+  "protocol_sha256": "fa1f9cd12230df3f7c83c45febd5ec0ba751f371a098600873380bc47c624095",
+  "primary_config_sha256": "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4",
+  "private_score_table_sha256": "78434f3518bd8aa5fb83e3dd9f7c3d54288e1f31a5e61618df4541bb40977771",
+  "score_table_frozen_before_interpretation": true,
+  "score_distribution_extended": {
+    "mean": 0.27854169951250424,
+    "standard_deviation": 0.14181354135093585,
+    "q90": 0.4773787974092615,
+    "q95": 0.5575125003536767,
+    "q99": 0.6951601643481546
+  },
+  "controlled_domain": {
+    "public_alias": "CONTROLLED_DOMAIN_001",
+    "count": 1,
+    "area_km2": 25.0,
+    "private_receipt_present": true,
+    "training_or_evaluation_overlap": false,
+    "terrain_source": "Environment Agency LiDAR Composite DTM 1m",
+    "terrain_crs": "EPSG:27700",
+    "terrain_resolution_m": 1.0
+  },
+  "pipeline": {
+    "patch_dimensions_m": [
+      128,
+      128
+    ],
+    "stride_m": 64,
+    "representations": [
+      "elevation_normalized",
+      "slope_degrees",
+      "hillshade_315_45",
+      "local_relief_r16m"
+    ],
+    "pooling": "non_overlapping_4_by_4_mean",
+    "feature_count": 4096,
+    "model_retrained_or_tuned": false
+  },
+  "runtime": {
+    "total_seconds": 39.84353729999998,
+    "terrain_acquisition_seconds": 27.625300400000015,
+    "model_load_seconds": 0.052347400000030575,
+    "preprocessing_seconds": 9.941161899999997,
+    "scoring_seconds": 0.252326700000026,
+    "valid_patches_per_second_excluding_acquisition": 581.6458165264428,
+    "model_latency_ms_per_patch": 0.042558053634681396,
+    "peak_working_set_bytes": null,
+    "private_model_size_bytes": 1300710,
+    "bottleneck": "terrain_representation_and_pooling"
+  },
+  "review": {
+    "blinded_packet_status": "READY_UNREVIEWED",
+    "blinded_packet_items": 62,
+    "score_rank_band_location_and_known_heritage_status_hidden": true,
+    "human_morphology_review_performed": false,
+    "heritage_record_cross_check_performed": false
+  },
+  "interpretation": {
+    "archaeological_probability_claimed": false,
+    "discovery_claimed": false,
+    "required_statement": "A score of 0.90 does not mean there is a 90% chance archaeology exists."
+  }
+}

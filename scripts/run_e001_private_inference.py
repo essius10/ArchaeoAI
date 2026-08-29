@@ -29,6 +29,7 @@ from archaeoai.inference import (
     generate_patch_grid,
     load_private_model,
     private_scored_window_payload,
+    rank_windows,
     safe_public_summary,
     score_feature_matrix,
     select_review_queues,
@@ -356,6 +357,7 @@ def _write_blinded_packet(
     data: np.ndarray,
     mask: np.ndarray,
     queues: Any,
+    representatives: tuple[PrivateScoredWindow, ...],
 ) -> tuple[int, Path]:
     packet_root = root / PRIVATE_RUN_RELATIVE / "blinded_review_packet"
     images_root = packet_root / "images"
@@ -375,7 +377,7 @@ def _write_blinded_packet(
     hidden_rows = []
     ranked_tokens = {
         item.window.private_token: rank
-        for rank, item in enumerate(deduplicate_ranked(tuple(item for _, item in ordered)), start=1)
+        for rank, item in enumerate(rank_windows(representatives), start=1)
     }
     for index, (band, item) in enumerate(ordered, start=1):
         blind_id = f"REVIEW_{index:03d}"
@@ -451,8 +453,17 @@ def _peak_working_set_bytes() -> int | None:
 
     counters = Counters()
     counters.cb = ctypes.sizeof(counters)
-    process = ctypes.windll.kernel32.GetCurrentProcess()
-    if not ctypes.windll.psapi.GetProcessMemoryInfo(process, ctypes.byref(counters), counters.cb):
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    psapi = ctypes.WinDLL("psapi", use_last_error=True)
+    kernel32.GetCurrentProcess.restype = wintypes.HANDLE
+    psapi.GetProcessMemoryInfo.argtypes = [
+        wintypes.HANDLE,
+        ctypes.POINTER(Counters),
+        wintypes.DWORD,
+    ]
+    psapi.GetProcessMemoryInfo.restype = wintypes.BOOL
+    process = kernel32.GetCurrentProcess()
+    if not psapi.GetProcessMemoryInfo(process, ctypes.byref(counters), counters.cb):
         return None
     return int(counters.PeakWorkingSetSize)
 
@@ -530,7 +541,7 @@ def main() -> int:
 
     representatives = deduplicate_ranked(scored)
     queues = select_review_queues(representatives)
-    packet_count, packet_root = _write_blinded_packet(root, data, mask, queues)
+    packet_count, packet_root = _write_blinded_packet(root, data, mask, queues, representatives)
     score_values = np.asarray([item.model_score for item in scored], dtype=np.float64)
     public = safe_public_summary(
         total_windows=len(windows),
