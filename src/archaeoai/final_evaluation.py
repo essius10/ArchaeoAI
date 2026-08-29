@@ -214,7 +214,7 @@ def load_final_partition(
                 "mean_absolute_local_relief_m": float(
                     np.nanmean(np.abs(representations["local_relief_r16m"]))
                 ),
-                "missing_fraction": float(1.0 - np.mean(mask)),
+                "missing_fraction": float(np.mean(mask)),
             }
         )
     matrix = np.asarray(features, dtype=np.float32)

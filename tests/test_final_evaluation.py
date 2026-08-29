@@ -12,6 +12,7 @@ from archaeoai.final_evaluation import (
     protocol_hash,
     validate_final_protocol,
 )
+from archaeoai.terrain.privacy import assert_coordinate_safe_mapping
 
 
 def _row(sample: str, group: str, label: str) -> FinalIndexRow:
@@ -81,3 +82,49 @@ def test_protocol_hash_rejects_tampering(tmp_path: Path) -> None:
     protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
     with pytest.raises(ValueError, match="hash mismatch"):
         validate_final_protocol(protocol_path, config_path)
+
+
+def test_frozen_final_result_receipt_is_coordinate_safe_and_complete() -> None:
+    root = Path(__file__).resolve().parents[1]
+    result = json.loads(
+        (root / "outputs/modelling/e001_random_vs_geographic.json").read_text(encoding="utf-8")
+    )
+    assert_coordinate_safe_mapping(result)
+
+    assert result["final_test_evaluated"] is True
+    assert result["selection_commit"] == "790ac9f4b99da94e8f9bab2a6aed70b34ac88558"
+    assert result["primary_config_sha256"] == (
+        "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"
+    )
+    assert result["secondary_final_baselines"] == []
+    assert result["no_retuning_declaration"] is True
+    assert result["conditions"]["random"]["counts"] == {
+        "total": 62,
+        "positive_bowl_barrow": 31,
+        "unlabelled_background": 31,
+    }
+    assert result["conditions"]["geographic"]["counts"] == {
+        "total": 62,
+        "positive_bowl_barrow": 31,
+        "unlabelled_background": 31,
+    }
+
+
+def test_final_audit_records_zero_missingness_and_no_sample_outputs() -> None:
+    root = Path(__file__).resolve().parents[1]
+    audit = json.loads(
+        (root / "outputs/modelling/e001_final_model_audit.json").read_text(encoding="utf-8")
+    )
+    assert_coordinate_safe_mapping(audit)
+    assert audit["privacy"] == {
+        "aggregate_only": True,
+        "coordinates_in_output": False,
+        "sample_identifiers_in_output": False,
+        "maps_created": False,
+    }
+    assert all(
+        condition["terrain_summary_by_correctness"][status]["missing_fraction"]
+        == {"mean": 0.0, "median": 0.0}
+        for condition in audit["conditions"].values()
+        for status in ("correct", "error")
+    )
