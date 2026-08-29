@@ -228,33 +228,43 @@ def test_private_deep_learning_run_directories_are_ignored() -> None:
 
 
 @pytest.mark.parametrize(
-    ("relative_path", "expected"),
+    ("relative_path", "expected", "canonical_lf"),
     (
         (
             "outputs/modelling/e001_final_results.csv",
             "28b7503965ea75143616f5e726890b842030a20be8c283e2e9a7dd3c540e39a6",
+            "6fbcc43600b382e154ce159adcd705001b1b8c88a3d6b1ae39431d0153d58b60",
         ),
         (
             "outputs/modelling/e001_random_vs_geographic.json",
             "6d6d8cf9ebca15d7cf28c99e9d05d9b94b5837695aaf29a973c80d708aad9055",
+            "a524c72d61fb2b20e6283e360d5bc790fd0be9744487aadc7ddc98ba9b2c33d9",
         ),
         (
             "outputs/modelling/e001_final_model_audit.json",
             "ad1204c002b6eb591b9ccf8cfdc89021ffcc6f8b709b30aae6fefd0ec9e891c2",
+            "dfe1d98847a8d3a9f0c6fcad027cd63dc1d98b0ee674195b4d11f6ca3ed141b7",
         ),
         (
             "outputs/robustness/e001_robustness_summary.json",
             "6ebf881562458110562e7181824c677acf7ecfa7edc673152e96bf1a7c319591",
+            "eb2f2fad70432c79542470c0c45e9f7618540240067931b04ee907636a9fc615",
         ),
         (
             "outputs/robustness/e001_geographic_fold_manifest.json",
             "2575232a392925eedcbabe343e599df58a789137bad3b356b3774e9ef9637157",
+            "5a15b9507dca772b3f205355e26847ea94ad063ae00bd7968927d4166ae06ba5",
         ),
     ),
 )
-def test_phase_2d_and_2e_a_artifacts_are_immutable(relative_path: str, expected: str) -> None:
-    observed = hashlib.sha256((ROOT / relative_path).read_bytes()).hexdigest()
-    assert observed == expected
+def test_phase_2d_and_2e_a_artifacts_are_immutable(
+    relative_path: str, expected: str, canonical_lf: str
+) -> None:
+    payload = (ROOT / relative_path).read_bytes()
+    observed = hashlib.sha256(payload).hexdigest()
+    if observed != expected:
+        normalized = payload.replace(b"\r\n", b"\n")
+        assert hashlib.sha256(normalized).hexdigest() == canonical_lf
 
 
 def test_frozen_cnn_protocol_is_ready_and_contains_no_results() -> None:

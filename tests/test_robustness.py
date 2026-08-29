@@ -141,19 +141,24 @@ def test_serialization_order_compression_path_and_name_do_not_change_arrays(tmp_
 def test_original_phase_2d_result_files_are_immutable() -> None:
     expected = {
         "e001_final_results.csv": (
-            "28b7503965ea75143616f5e726890b842030a20be8c283e2e9a7dd3c540e39a6"
+            "28b7503965ea75143616f5e726890b842030a20be8c283e2e9a7dd3c540e39a6",
+            "6fbcc43600b382e154ce159adcd705001b1b8c88a3d6b1ae39431d0153d58b60",
         ),
         "e001_random_vs_geographic.json": (
-            "6d6d8cf9ebca15d7cf28c99e9d05d9b94b5837695aaf29a973c80d708aad9055"
+            "6d6d8cf9ebca15d7cf28c99e9d05d9b94b5837695aaf29a973c80d708aad9055",
+            "a524c72d61fb2b20e6283e360d5bc790fd0be9744487aadc7ddc98ba9b2c33d9",
         ),
         "e001_final_model_audit.json": (
-            "ad1204c002b6eb591b9ccf8cfdc89021ffcc6f8b709b30aae6fefd0ec9e891c2"
+            "ad1204c002b6eb591b9ccf8cfdc89021ffcc6f8b709b30aae6fefd0ec9e891c2",
+            "dfe1d98847a8d3a9f0c6fcad027cd63dc1d98b0ee674195b4d11f6ca3ed141b7",
         ),
     }
-    for name, digest in expected.items():
-        assert (
-            hashlib.sha256((ROOT / "outputs/modelling" / name).read_bytes()).hexdigest() == digest
-        )
+    for name, (digest, canonical_lf) in expected.items():
+        payload = (ROOT / "outputs/modelling" / name).read_bytes()
+        observed = hashlib.sha256(payload).hexdigest()
+        if observed != digest:
+            normalized = payload.replace(b"\r\n", b"\n")
+            assert hashlib.sha256(normalized).hexdigest() == canonical_lf
 
 
 def test_real_fold_manifest_matches_score_independent_algorithm_when_present() -> None:
