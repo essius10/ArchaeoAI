@@ -18,6 +18,7 @@ $required = @(
     'configs/e001-phase-2d-a-preregistered.json',
     'configs/e001-phase-2d-b-final-protocol.json',
     'configs/e001-phase-2e-a-robustness-protocol.json',
+    'configs/e001-phase-2f-a-inference-protocol.json',
     'outputs/deep_learning/e001_cnn_protocol.json',
     'data/README.md',
     'data/manifests/example-dataset.toml',
@@ -35,6 +36,7 @@ $required = @(
     'docs/e001-phase-2e-a-robustness-protocol.md',
     'docs/e001-phase-2e-robustness.md',
     'docs/e001-phase-2eb-compact-cnn.md',
+    'docs/e001-phase-2f-a-controlled-inference.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -74,6 +76,7 @@ $required = @(
     'scripts/freeze_e001_cnn_protocol.py',
     'scripts/run_e001_cnn_geographic_cv.py',
     'scripts/render_e001_cnn_figures.py',
+    'scripts/freeze_e001_inference_protocol.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
@@ -100,6 +103,7 @@ $required = @(
     'src/archaeoai/robustness.py',
     'src/archaeoai/deep_learning.py',
     'src/archaeoai/cnn_training.py',
+    'src/archaeoai/inference.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -126,6 +130,7 @@ $required = @(
     'tests/test_robustness.py',
     'tests/test_deep_learning.py',
     'tests/test_cnn_training.py',
+    'tests/test_inference.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -400,6 +405,11 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 2E-B CNN results, classification, privacy, or no-retuning validation failed.'
 }
 
+$phase2fACheck = & $pythonExecutable -c 'import hashlib,json; from pathlib import Path; from archaeoai.inference import validate_inference_protocol; from archaeoai.terrain.privacy import assert_coordinate_safe_mapping; root=Path.cwd(); protocol=validate_inference_protocol(root/"configs/e001-phase-2f-a-inference-protocol.json"); assert_coordinate_safe_mapping(protocol); assert protocol["protocol_sha256"]=="fa1f9cd12230df3f7c83c45febd5ec0ba751f371a098600873380bc47c624095" and protocol["status"]=="READY_NO_REAL_SCAN" and protocol["primary_config_sha256"]=="20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"; assert protocol["model"]["parameters"]=={"n_estimators":300,"max_depth":8,"min_samples_leaf":5,"max_features":"sqrt","n_jobs":1,"random_state":20260829} and protocol["model"]["training_observations"]==522 and protocol["model"]["training_class_counts"]=={"positive_bowl_barrow":261,"unlabelled_background":261} and protocol["model"]["model_state_sha256"]=="e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939" and protocol["model"]["candidate_result_retraining_allowed"] is False; assert protocol["patch_generation"]["patch_dimensions_m"]==[128,128] and protocol["patch_generation"]["stride_m"]==64 and protocol["patch_generation"]["maximum_complete_domain_windows_before_QA"]==5929 and protocol["preprocessing"]["feature_count"]==4096; assert protocol["controlled_domain"]["maximum_domains"]==1 and protocol["controlled_domain"]["domain_binding_status"]=="NOT_YET_BOUND" and protocol["privacy"]["tracked_outputs_aggregate_only"] is True and protocol["privacy"]["tracked_coordinates_NGR_GeoJSON_or_candidate_identifiers"] is False; assert protocol["score_semantics"]["binary_site_decision"] is False and protocol["score_semantics"]["calibration_claimed"] is False; assert protocol["execution_state"]=={"full_E001_RF_fit_completed":True,"new_terrain_loaded":False,"new_terrain_scored":False,"real_candidate_scan_completed":False,"candidate_scores_computed":False,"candidate_locations_created":False,"candidate_locations_exposed":False,"website_or_API_built":False}; assert all(hashlib.sha256((root/path).read_bytes()).hexdigest()==digest for path,digest in protocol["immutable_artifact_sha256"].items()); print("Phase 2F-A controlled-inference protocol valid; full E001 RF fit frozen; no real scan")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 2F-A protocol, frozen RF fit, privacy, or immutable-artifact validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -445,4 +455,4 @@ if ($LASTEXITCODE -ne 0 -or -not $trainingRunIgnoreCheck) {
     throw 'Private deep-learning training histories must remain ignored by Git.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck."

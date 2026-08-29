@@ -1,0 +1,286 @@
+{
+  "schema_version": "e001-phase-2f-a-controlled-inference-v1",
+  "phase": "2F-A",
+  "status": "READY_NO_REAL_SCAN",
+  "frozen": true,
+  "created_before_new_terrain_scoring": true,
+  "source_commit": "696534a6eb7ce42b3023478696087785ca963b4c",
+  "primary_config_sha256": "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4",
+  "immutable_artifact_sha256": {
+    "outputs/modelling/e001_primary_baseline_config.json": "035cd8d8c9d78a56f2261de71facfc54e74f4a8e19d61baf4eda387e90b8d385",
+    "outputs/modelling/e001_final_results.csv": "28b7503965ea75143616f5e726890b842030a20be8c283e2e9a7dd3c540e39a6",
+    "outputs/modelling/e001_random_vs_geographic.json": "6d6d8cf9ebca15d7cf28c99e9d05d9b94b5837695aaf29a973c80d708aad9055",
+    "outputs/modelling/e001_final_model_audit.json": "ad1204c002b6eb591b9ccf8cfdc89021ffcc6f8b709b30aae6fefd0ec9e891c2",
+    "outputs/robustness/e001_robustness_summary.json": "6ebf881562458110562e7181824c677acf7ecfa7edc673152e96bf1a7c319591",
+    "outputs/robustness/e001_geographic_fold_manifest.json": "2575232a392925eedcbabe343e599df58a789137bad3b356b3774e9ef9637157",
+    "outputs/deep_learning/e001_cnn_summary.json": "465681bc0b296e856b46b98268c11576cc8fc5dc9198a8601d7ed1afb50df1e5",
+    "outputs/deep_learning/e001_cnn_vs_rf.json": "7cfaa9973bb47bf364778a8070aff9b30b893bec00f7e3d3d8bd29831dd82214",
+    "outputs/deep_learning/e001_cnn_fold_results.csv": "1a0a3efeffb1c65cb10928dfb8b4e658411a652c28854a4d9a9eca586b5f9d5c",
+    "outputs/dataset/e001_modelling_index.csv": "f03df4ab5952746f7d841c7acef12cbcf1cc8e7a233b93b03d7317057b974f72",
+    "outputs/dataset/e001_random_split_manifest.json": "755660bab25be1c33b2ffdc462d82021a62c9378c7e1c2b964ee0086b353d432",
+    "outputs/dataset/e001_geographic_split_manifest.json": "0176c747176747376df74ff427326c64be61a6e0b624244919b800f3e813bc55"
+  },
+  "objective": "rank unseen terrain patches by similarity to the bounded E001 bowl-barrow class without claiming archaeological probability, detection, or discovery",
+  "controlled_domain": {
+    "public_alias": "CONTROLLED_DOMAIN_001",
+    "maximum_domains": 1,
+    "shape": "one_contiguous_5000m_by_5000m_square",
+    "maximum_area_km2": 25.0,
+    "exact_extent": "private_git_ignored_domain_receipt_required_before_acquisition",
+    "domain_binding_status": "NOT_YET_BOUND",
+    "selection_must_be_score_independent": true,
+    "selection_requirements": [
+      "public_Environment_Agency_1m_DTM_coverage",
+      "EPSG_27700_OSGB36_British_National_Grid",
+      "single_compatible_acquisition_where_practical",
+      "no_overlap_with_any_E001_training_or_evaluation_window",
+      "computationally_bounded",
+      "exact_extent_not_public"
+    ]
+  },
+  "terrain_policy": {
+    "allowed": "public_Environment_Agency_1m_LiDAR_DTM_only",
+    "required_crs": "EPSG:27700",
+    "required_resolution_m": 1.0,
+    "excluded": [
+      "DSM_or_surface_models",
+      "non_public_or_unclearly_licensed_terrain",
+      "incompatible_resolution_or_CRS",
+      "terrain_overlapping_any_E001_modelling_window",
+      "terrain_selected_after_model_score_inspection"
+    ]
+  },
+  "patch_generation": {
+    "patch_dimensions_m": [
+      128,
+      128
+    ],
+    "patch_dimensions_pixels": [
+      128,
+      128
+    ],
+    "stride_m": 64,
+    "stride_pixels": 64,
+    "grid_anchor": "private_domain_upper_left_pixel_grid",
+    "order": "row_major",
+    "manual_pre_score_browsing": false,
+    "maximum_complete_domain_windows_before_QA": 5929,
+    "maximum_effectively_covered_area_km2": 24.920064,
+    "required_counts": [
+      "total_windows",
+      "valid_windows",
+      "rejected_windows",
+      "no_data_windows"
+    ]
+  },
+  "preprocessing": {
+    "terrain_QA": "same_automatic_E001_patch_and_representation_QA",
+    "representations_in_order": [
+      "elevation_normalized",
+      "slope_degrees",
+      "hillshade_315_45",
+      "local_relief_r16m"
+    ],
+    "normalized_elevation": "subtract_valid_per_patch_median",
+    "slope": "degrees_at_1m_resolution",
+    "hillshade": {
+      "azimuth_degrees": 315.0,
+      "altitude_degrees": 45.0
+    },
+    "local_relief_radius_m": 16.0,
+    "pooling": {
+      "method": "non_overlapping_mean",
+      "block_shape": [
+        4,
+        4
+      ],
+      "input_shape": [
+        128,
+        128
+      ],
+      "output_shape": [
+        32,
+        32
+      ],
+      "features_per_representation": 1024
+    },
+    "feature_count": 4096,
+    "training_inference_equivalence_required": true
+  },
+  "model": {
+    "family": "RandomForestClassifier",
+    "parameters": {
+      "n_estimators": 300,
+      "max_depth": 8,
+      "min_samples_leaf": 5,
+      "max_features": "sqrt",
+      "n_jobs": 1,
+      "random_state": 20260829
+    },
+    "standard_scaler": false,
+    "metadata_features": false,
+    "fit_policy": "fit_once_on_all_522_curated_E001_modelling_observations_after_all_Phase_2D_and_Phase_2E_evaluation",
+    "training_observations": 522,
+    "training_class_counts": {
+      "positive_bowl_barrow": 261,
+      "unlabelled_background": 261
+    },
+    "model_state_sha256": "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939",
+    "private_model_artifact_sha256": "50f7968069ecaa1e0016f37be6356531ab3f26802c806efb5dc8fb2e295a503f",
+    "model_artifact": "private_git_ignored",
+    "candidate_result_retraining_allowed": false
+  },
+  "score_semantics": {
+    "preferred_terms": [
+      "model_score",
+      "terrain_similarity_score",
+      "bowl_barrow_class_score",
+      "candidate_ranking_score"
+    ],
+    "forbidden_terms": [
+      "probability_archaeology",
+      "probability_of_a_site",
+      "archaeological_confidence",
+      "discovery_probability"
+    ],
+    "calibration_claimed": false,
+    "required_statement": "A score of 0.90 does not mean there is a 90% chance archaeology exists.",
+    "binary_site_decision": false
+  },
+  "ranking": {
+    "all_valid_windows_scored_before_review": true,
+    "order": "descending_model_score_then_private_token",
+    "highest_score_queue": {
+      "eligible": "at_or_above_99th_percentile_after_deduplication",
+      "maximum": 25
+    },
+    "medium_score_diagnostic_queue": {
+      "eligible_percentile_interval_inclusive": [
+        0.45,
+        0.55
+      ],
+      "selection": "sha256_rank_with_frozen_review_seed",
+      "maximum": 25
+    },
+    "random_reference_queue": {
+      "eligible": "remaining_deduplicated_windows",
+      "selection": "sha256_rank_with_frozen_review_seed",
+      "maximum": 25
+    },
+    "review_sample_seed": 20260829,
+    "threshold_into_site_or_no_site": false
+  },
+  "deduplication": {
+    "method": "deterministic_greedy_non_maximum_suppression",
+    "input_order": "descending_model_score_then_private_token",
+    "suppress_if_centre_distance_less_than_m": 128.0,
+    "suppress_if_window_IOU_greater_than": 0.25,
+    "cluster_representative": "highest_model_score_then_private_token"
+  },
+  "review": {
+    "reviewer_initially_blinded_to_score_and_band": true,
+    "queues": [
+      "highest_score",
+      "medium_score_diagnostic",
+      "random_reference"
+    ],
+    "categories": [
+      "mound-like terrain morphology",
+      "modern/engineered feature",
+      "geomorphic/natural relief",
+      "ambiguous",
+      "insufficient evidence"
+    ],
+    "confirmation_of_archaeology_allowed": false,
+    "known_record_cross_check": "only_after_scores_ranking_and_blinded_review_are_frozen",
+    "database_absence_means_discovery": false,
+    "false_positive_categories": [
+      "modern",
+      "geological_or_geomorphic",
+      "forestry_related",
+      "agricultural",
+      "road_or_track_related",
+      "drainage_or_boundary_related",
+      "otherwise_ambiguous"
+    ]
+  },
+  "privacy": {
+    "exact_domain_extent_private": true,
+    "exact_candidate_locations_private": true,
+    "private_ranked_tables_git_ignored": true,
+    "candidate_rasters_git_ignored": true,
+    "georeferenced_candidate_images_git_ignored": true,
+    "tracked_outputs_aggregate_only": true,
+    "tracked_coordinates_NGR_GeoJSON_or_candidate_identifiers": false
+  },
+  "public_outputs": [
+    "total_window_counts",
+    "aggregate_score_distribution",
+    "aggregate_review_queue_counts",
+    "aggregate_review_category_counts",
+    "coarse_non_identifying_geographic_summary_if_safe",
+    "model_and_pipeline_checksums",
+    "software_versions",
+    "performance_summary"
+  ],
+  "performance_measurement": {
+    "CPU_only_required": true,
+    "record": [
+      "patches_per_second",
+      "peak_CPU_RAM",
+      "private_model_size",
+      "model_load_time",
+      "per_patch_model_latency",
+      "approximate_area_throughput",
+      "terrain_processing_bottleneck"
+    ]
+  },
+  "safe_API": {
+    "allowed_fields": [
+      "model_version",
+      "score_semantics",
+      "aggregate_counts",
+      "aggregate_score_distribution",
+      "pipeline_status"
+    ],
+    "never_expose": [
+      "exact_coordinates",
+      "NGR_or_grid_reference",
+      "private_window_token",
+      "source_filename_or_path",
+      "sample_identifier",
+      "candidate_raster_or_georeferenced_image",
+      "private_ranked_table"
+    ],
+    "website_or_API_built": false
+  },
+  "stopping_criteria": [
+    "any_frozen_artifact_or_model_checksum_mismatch",
+    "private_domain_receipt_missing_or_not_git_ignored",
+    "domain_exceeds_one_5km_by_5km_area",
+    "terrain_CRS_resolution_type_or_license_mismatch",
+    "any_E001_window_overlap",
+    "training_inference_feature_equivalence_failure",
+    "candidate_receipt_or_exact_location_would_be_tracked",
+    "more_than_20_percent_windows_rejected_or_no_data",
+    "fewer_than_100_valid_windows",
+    "any_request_to_retune_from_candidate_results"
+  ],
+  "software_versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.2",
+    "scikit_learn": "1.9.0",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "execution_state": {
+    "full_E001_RF_fit_completed": true,
+    "new_terrain_loaded": false,
+    "new_terrain_scored": false,
+    "real_candidate_scan_completed": false,
+    "candidate_scores_computed": false,
+    "candidate_locations_created": false,
+    "candidate_locations_exposed": false,
+    "website_or_API_built": false
+  },
+  "protocol_sha256": "fa1f9cd12230df3f7c83c45febd5ec0ba751f371a098600873380bc47c624095"
+}
