@@ -43,6 +43,19 @@ def protocol_hash(payload: Mapping[str, Any]) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def artifact_digest_matches(
+    path: str | Path, *, native_sha256: str, repository_sha256: str
+) -> bool:
+    """Accept the frozen native receipt or Git's canonical repository bytes.
+
+    Earlier frozen artifacts contain mixed historical line endings. Git normalizes
+    their tracked bytes on Linux, while the original receipts bind the Windows
+    working-copy bytes. Both explicit digests represent the same immutable file.
+    """
+    observed = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    return observed in {native_sha256, repository_sha256}
+
+
 def validate_external_protocol(path: str | Path) -> dict[str, Any]:
     """Validate the frozen Phase 3A protocol without loading a model or terrain."""
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -60,6 +73,14 @@ def validate_external_protocol(path: str | Path) -> dict[str, Any]:
         raise ValueError("Phase 3A protocol does not bind the frozen Random Forest config")
     if payload.get("model", {}).get("model_state_sha256") != EXPECTED_MODEL_STATE_SHA256:
         raise ValueError("Phase 3A protocol does not bind the frozen Random Forest state")
+    native_artifacts = payload.get("immutable_artifact_sha256", {})
+    repository_artifacts = payload.get("immutable_artifact_repository_sha256", {})
+    if (
+        not isinstance(native_artifacts, dict)
+        or not isinstance(repository_artifacts, dict)
+        or set(native_artifacts) != set(repository_artifacts)
+    ):
+        raise ValueError("Phase 3A immutable artifact digests are incomplete")
     if payload.get("external_geography", {}).get("public_coarse_cell") != EXTERNAL_CELL_ID:
         raise ValueError("Phase 3A protocol does not bind the selected external cell")
     if (

@@ -24,6 +24,22 @@
     "outputs/inference/e001_phase2f_b_summary.json": "ec1d9f52564bdea682776ca9dadd6362e47a37c9444f4c57305fd8193d9946e9",
     "outputs/external_validation/e001_phase3a_feasibility.json": "277bc5cf7c6d1d31362de51b40d5d32785786f6eff1c589a0f87fe302c6a46b6"
   },
+  "immutable_artifact_repository_sha256": {
+    "outputs/modelling/e001_primary_baseline_config.json": "19a31e0107cdd1fb078d7a272d16fc93216f5e5c3c47e9e41d9a958fd2e59ae7",
+    "outputs/modelling/e001_final_results.csv": "6fbcc43600b382e154ce159adcd705001b1b8c88a3d6b1ae39431d0153d58b60",
+    "outputs/modelling/e001_random_vs_geographic.json": "a524c72d61fb2b20e6283e360d5bc790fd0be9744487aadc7ddc98ba9b2c33d9",
+    "outputs/modelling/e001_final_model_audit.json": "dfe1d98847a8d3a9f0c6fcad027cd63dc1d98b0ee674195b4d11f6ca3ed141b7",
+    "outputs/robustness/e001_robustness_summary.json": "eb2f2fad70432c79542470c0c45e9f7618540240067931b04ee907636a9fc615",
+    "outputs/robustness/e001_geographic_fold_manifest.json": "5a15b9507dca772b3f205355e26847ea94ad063ae00bd7968927d4166ae06ba5",
+    "outputs/deep_learning/e001_cnn_summary.json": "6e510a0c9f24bdbd4c6c6de1b15252eedb3f0b422dcb526fd7527cf888e4b934",
+    "outputs/deep_learning/e001_cnn_vs_rf.json": "80b5acd190d0c2e3b2a964ea10d35dadc252fe3c44d0a07d458cbf2ed50e3b3f",
+    "outputs/deep_learning/e001_cnn_fold_results.csv": "42b9479a5f30e7dae7510bcaca66acf57a52bcd15373ed32f9de47976d840dad",
+    "outputs/dataset/e001_modelling_index.csv": "2cf54f0cf2efa2ea9d1c54720d8aaaf3e1cf3379cda1396fdeb2a0d4a50fc332",
+    "outputs/dataset/e001_random_split_manifest.json": "cee1409974f784b909bb0fd1bb87c5535e78efc972b9e74496f6b988f1ce347e",
+    "outputs/dataset/e001_geographic_split_manifest.json": "780780d0acd062ab4275e6248538608b38e96a5401b7deac1adcc03b9be94c9e",
+    "outputs/inference/e001_phase2f_b_summary.json": "76b990cafb09faf14ca7ddd93c6f8ac26c7f22376fdb75b56fac2d728c7cf24a",
+    "outputs/external_validation/e001_phase3a_feasibility.json": "277bc5cf7c6d1d31362de51b40d5d32785786f6eff1c589a0f87fe302c6a46b6"
+  },
   "target_class": {
     "label": "positive_bowl_barrow",
     "definition": "one documented Scheduled Monument in England whose official entry and review evidence support a single surviving upstanding bowl-barrow mound",
@@ -254,5 +270,5 @@
     "external_RF_scoring_performed": false,
     "external_performance_metrics_computed": false
   },
-  "protocol_sha256": "af4e0a8f0eac93ef999934bd94aa6393d55bb486c061e5dbf9f5d02f47caebcc"
+  "protocol_sha256": "ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba"
 }

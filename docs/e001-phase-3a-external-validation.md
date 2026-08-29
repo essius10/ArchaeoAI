@@ -10,7 +10,10 @@ generalization.
 The public protocol is
 [`configs/e001-phase-3a-external-validation.json`](../configs/e001-phase-3a-external-validation.json).
 Its SHA-256 is
-`af4e0a8f0eac93ef999934bd94aa6393d55bb486c061e5dbf9f5d02f47caebcc`.
+`ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba`.
+The protocol records both the original frozen Windows byte receipts and the canonical Git
+repository byte receipts for historical artifacts with mixed line endings. Either exact,
+pre-registered digest is accepted; content normalization is not performed during validation.
 
 ## Research question and claim boundary
 

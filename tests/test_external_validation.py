@@ -1,4 +1,3 @@
-import hashlib
 import json
 from pathlib import Path
 
@@ -12,6 +11,7 @@ from archaeoai.external_validation import (
     EXPECTED_PRIMARY_CONFIG_SHA256,
     EXTERNAL_CELL_ID,
     MINIMUM_EXTERNAL_SEPARATION_M,
+    artifact_digest_matches,
     assert_external_independence,
     classify_external_result,
     coarse_cell_id,
@@ -63,9 +63,16 @@ def test_external_protocol_preserves_frozen_pipeline_and_metrics() -> None:
 
 def test_external_protocol_binds_immutable_prior_artifacts() -> None:
     protocol = validate_external_protocol(PROTOCOL_PATH)
-    for relative, expected in protocol["immutable_artifact_sha256"].items():
-        observed = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-        assert observed == expected
+    native = protocol["immutable_artifact_sha256"]
+    repository = protocol["immutable_artifact_repository_sha256"]
+    assert set(native) == set(repository)
+    assert any(native[path] != repository[path] for path in native)
+    for relative, expected in native.items():
+        assert artifact_digest_matches(
+            ROOT / relative,
+            native_sha256=expected,
+            repository_sha256=repository[relative],
+        )
 
 
 def test_external_feasibility_receipt_is_aggregate_and_pre_score() -> None:
