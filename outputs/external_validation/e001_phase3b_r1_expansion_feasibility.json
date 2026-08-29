@@ -1,0 +1,144 @@
+{
+  "schema_version": "e001-phase-3b-r1-expansion-feasibility-v1",
+  "phase": "3B-R1",
+  "status": "SUPPLEMENTARY_GEOGRAPHY_FEASIBLE",
+  "accessed_at": "2026-08-29T22:34:34.868947+00:00",
+  "sources": {
+    "labels": "https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/National_Heritage_List_for_England_NHLE_v02_VIEW/FeatureServer/6",
+    "terrain_metadata_collection": "LIDAR_Composite_1m_DTM_2022_extents",
+    "terrain_data_downloaded": false
+  },
+  "frozen_rules": {
+    "selection_rule_sha256": "6e5f2992fe453601940792ad4c1f7be373c12724f5849f43926c7ea680459578",
+    "fallback_rule_sha256": "adaba743b3e5877a28f2d88b5f058b5c94fc261b9e97ddaa1f5a2a108b71408b"
+  },
+  "candidate_search": {
+    "independent_candidate_cells_identified": 40,
+    "cells_meeting_preterrain_minimum": 9,
+    "single_cell_threshold": 28,
+    "largest_single_cell_independent_probable_records": 11,
+    "single_cell_rule_passed": false
+  },
+  "candidate_regions": [
+    {
+      "cell_id": "BNG_25KM_E19_N6",
+      "independent_probable_records": 11,
+      "terrain_metadata_queries_completed": 11,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 11,
+      "QA_pass_probable_records": 11,
+      "minimum_boundary_separation_from_first_external_cell_m": 50000
+    },
+    {
+      "cell_id": "BNG_25KM_E19_N5",
+      "independent_probable_records": 10,
+      "terrain_metadata_queries_completed": 10,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 10,
+      "QA_pass_probable_records": 8,
+      "minimum_boundary_separation_from_first_external_cell_m": 50000
+    },
+    {
+      "cell_id": "BNG_25KM_E18_N4",
+      "independent_probable_records": 7,
+      "terrain_metadata_queries_completed": 7,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 7,
+      "QA_pass_probable_records": 7,
+      "minimum_boundary_separation_from_first_external_cell_m": 25000
+    },
+    {
+      "cell_id": "BNG_25KM_E20_N13",
+      "independent_probable_records": 5,
+      "terrain_metadata_queries_completed": 5,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 5,
+      "QA_pass_probable_records": 5,
+      "minimum_boundary_separation_from_first_external_cell_m": 190394
+    },
+    {
+      "cell_id": "BNG_25KM_E21_N11",
+      "independent_probable_records": 5,
+      "terrain_metadata_queries_completed": 5,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 5,
+      "QA_pass_probable_records": 5,
+      "minimum_boundary_separation_from_first_external_cell_m": 160078
+    },
+    {
+      "cell_id": "BNG_25KM_E12_N3",
+      "independent_probable_records": 4,
+      "terrain_metadata_queries_completed": 4,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 4,
+      "QA_pass_probable_records": 4,
+      "minimum_boundary_separation_from_first_external_cell_m": 79056
+    },
+    {
+      "cell_id": "BNG_25KM_E12_N5",
+      "independent_probable_records": 4,
+      "terrain_metadata_queries_completed": 4,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 4,
+      "QA_pass_probable_records": 4,
+      "minimum_boundary_separation_from_first_external_cell_m": 75000
+    },
+    {
+      "cell_id": "BNG_25KM_E18_N7",
+      "independent_probable_records": 4,
+      "terrain_metadata_queries_completed": 4,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 4,
+      "QA_pass_probable_records": 4,
+      "minimum_boundary_separation_from_first_external_cell_m": 35355
+    },
+    {
+      "cell_id": "BNG_25KM_E16_N7",
+      "independent_probable_records": 4,
+      "terrain_metadata_queries_completed": 4,
+      "terrain_metadata_query_errors": 0,
+      "complete_1m_DTM_patch_coverage": 4,
+      "QA_pass_probable_records": 4,
+      "minimum_boundary_separation_from_first_external_cell_m": 25000
+    }
+  ],
+  "selection": {
+    "method": "shortest_prefix_of_ordered_eligible_cells_reaching_combined_minimum",
+    "selected_cells": [
+      "BNG_25KM_E19_N6",
+      "BNG_25KM_E19_N5",
+      "BNG_25KM_E18_N4",
+      "BNG_25KM_E20_N13"
+    ],
+    "selected_cell_count": 4,
+    "aggregate_independent_probable_records": 33,
+    "aggregate_QA_pass_probable_records": 31,
+    "required_QA_pass_probable_records": 28,
+    "performance_used": false
+  },
+  "independence": {
+    "all_selected_records_outside_E001_cells_and_15km_buffer": true,
+    "all_selected_records_outside_Phase2F_private_domain_15km_buffer": true,
+    "all_selected_cells_at_least_25km_from_first_external_cell_boundary": true,
+    "all_prior_reviewed_records_excluded": true
+  },
+  "privacy": {
+    "tracked_record_level_rows": false,
+    "coordinates_written_to_tracked_output": false,
+    "geometry_written_to_tracked_output": false,
+    "private_manifest_git_ignored": true,
+    "private_manifest_sha256": "55464bbecad3440c7eae1084e7a69e89a267775ad7a1086e1244babff6c90b04",
+    "aggregate_only": true
+  },
+  "execution_state": {
+    "supplementary_records_curated": false,
+    "terrain_rasters_downloaded": false,
+    "backgrounds_constructed": false,
+    "external_dataset_frozen": false,
+    "external_RF_loaded": false,
+    "external_RF_scoring_performed": false,
+    "external_predictions_generated": false,
+    "external_performance_metrics_computed": false
+  },
+  "feasibility_receipt_sha256": "adac0ef6dbba62ee4d5c4bc9edbbee65e66e0e0c037b51147849d1db5d557dd5"
+}

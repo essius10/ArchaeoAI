@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -15,12 +17,16 @@ from archaeoai.external_validation import (
     assert_external_independence,
     classify_external_result,
     coarse_cell_id,
+    expansion_amendment_hash,
     expansion_fallback_hash,
+    expansion_feasibility_hash,
     expansion_rule_hash,
     paired_cluster_bootstrap_indices,
     protocol_hash,
     selected_positive_ids,
+    validate_expansion_amendment,
     validate_expansion_fallback_rule,
+    validate_expansion_feasibility,
     validate_expansion_selection_rule,
     validate_external_protocol,
     validate_private_manifest,
@@ -33,6 +39,10 @@ FEASIBILITY_PATH = ROOT / "outputs/external_validation/e001_phase3a_feasibility.
 CURATION_GATE_PATH = ROOT / "outputs/external_validation/e001_phase3b_curation_gate.json"
 EXPANSION_RULE_PATH = ROOT / "configs/e001-phase-3b-r1-selection-rule.json"
 EXPANSION_FALLBACK_PATH = ROOT / "configs/e001-phase-3b-r1-multicell-fallback-rule.json"
+EXPANSION_FEASIBILITY_PATH = (
+    ROOT / "outputs/external_validation/e001_phase3b_r1_expansion_feasibility.json"
+)
+EXPANSION_AMENDMENT_PATH = ROOT / "configs/e001-phase-3b-r1-expansion-amendment.json"
 
 
 def test_external_protocol_is_hash_frozen_before_model_access() -> None:
@@ -146,6 +156,51 @@ def test_phase3b_r1_multicell_fallback_is_frozen_before_terrain_metadata_search(
     assert fallback["deterministic_multicell_rule"]["maximum_cells"] == 5
     assert fallback["deterministic_multicell_rule"]["selected_cells"] is None
     assert not any(fallback["execution_state"].values())
+
+
+def test_phase3b_r1_feasibility_selects_only_the_frozen_metadata_ranked_prefix() -> None:
+    receipt = validate_expansion_feasibility(EXPANSION_FEASIBILITY_PATH)
+    assert expansion_feasibility_hash(receipt) == receipt["feasibility_receipt_sha256"]
+    assert receipt["candidate_search"] == {
+        "independent_candidate_cells_identified": 40,
+        "cells_meeting_preterrain_minimum": 9,
+        "single_cell_threshold": 28,
+        "largest_single_cell_independent_probable_records": 11,
+        "single_cell_rule_passed": False,
+    }
+    assert receipt["selection"]["aggregate_independent_probable_records"] == 33
+    assert receipt["selection"]["aggregate_QA_pass_probable_records"] == 31
+    assert receipt["selection"]["performance_used"] is False
+    assert not any(receipt["execution_state"].values())
+
+
+def test_phase3b_r1_amendment_freezes_multi_region_design_before_scoring() -> None:
+    amendment = validate_expansion_amendment(EXPANSION_AMENDMENT_PATH)
+    assert expansion_amendment_hash(amendment) == amendment["amendment_sha256"]
+    assert amendment["first_region_decisions"] == {
+        "accepted_locked": 47,
+        "rejected_locked": 36,
+        "uncertain_locked": 3,
+        "terrain_review_needed": 1,
+        "reclassification_for_sample_size_prohibited": True,
+    }
+    assert amendment["sample_design"]["target_positive_count"] == 60
+    assert amendment["sample_design"]["minimum_positive_count"] == 50
+    assert amendment["analysis_policy"]["primary_metric"] == "balanced_accuracy"
+    assert amendment["analysis_policy"]["regional_results_are_secondary_descriptive_only"]
+    assert not any(amendment["execution_state"].values())
+
+
+def test_phase3b_r1_selection_script_cannot_overwrite_frozen_receipt() -> None:
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/select_e001_external_expansion.py")],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "refusing to overwrite" in result.stderr
 
 
 def test_external_spatial_gate_accepts_only_independent_synthetic_point() -> None:

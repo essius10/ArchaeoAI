@@ -20,6 +20,9 @@ $required = @(
     'configs/e001-phase-2e-a-robustness-protocol.json',
     'configs/e001-phase-2f-a-inference-protocol.json',
     'configs/e001-phase-3a-external-validation.json',
+    'configs/e001-phase-3b-r1-selection-rule.json',
+    'configs/e001-phase-3b-r1-multicell-fallback-rule.json',
+    'configs/e001-phase-3b-r1-expansion-amendment.json',
     'outputs/deep_learning/e001_cnn_protocol.json',
     'data/README.md',
     'data/manifests/example-dataset.toml',
@@ -41,6 +44,7 @@ $required = @(
     'docs/e001-phase-2f-b-controlled-inference.md',
     'docs/e001-phase-3a-external-validation.md',
     'docs/e001-phase-3b-external-dataset.md',
+    'docs/e001-phase-3b-r1-expansion-amendment.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -63,6 +67,7 @@ $required = @(
     'research-log/2026-08-30-phase-2f-b.md',
     'research-log/2026-08-30-phase-3a.md',
     'research-log/2026-08-30-phase-3b.md',
+    'research-log/2026-08-30-phase-3b-r1.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -88,6 +93,7 @@ $required = @(
     'scripts/smoke_e001_inference.py',
     'scripts/run_e001_private_inference.py',
     'scripts/estimate_e001_terrain_acquisition.py',
+    'scripts/select_e001_external_expansion.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
     'src/archaeoai/paths.py',
@@ -208,6 +214,7 @@ $required = @(
     'outputs/inference/figures/e001_phase2f_b_score_distribution.svg',
     'outputs/external_validation/e001_phase3a_feasibility.json',
     'outputs/external_validation/e001_phase3b_curation_gate.json',
+    'outputs/external_validation/e001_phase3b_r1_expansion_feasibility.json',
     'website/index.html',
     'website/styles.css',
     'website/site.js',
@@ -457,6 +464,15 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Phase 3B curation stopping gate, privacy, or no-score boundary validation failed.'
 }
 
+$phase3BR1Check = & $pythonExecutable -c 'from pathlib import Path; from archaeoai.external_validation import validate_expansion_amendment,validate_expansion_fallback_rule,validate_expansion_feasibility,validate_expansion_selection_rule; root=Path.cwd(); rule=validate_expansion_selection_rule(root/"configs/e001-phase-3b-r1-selection-rule.json"); fallback=validate_expansion_fallback_rule(root/"configs/e001-phase-3b-r1-multicell-fallback-rule.json"); receipt=validate_expansion_feasibility(root/"outputs/external_validation/e001_phase3b_r1_expansion_feasibility.json"); amendment=validate_expansion_amendment(root/"configs/e001-phase-3b-r1-expansion-amendment.json"); assert rule["selection_rule_sha256"]=="6e5f2992fe453601940792ad4c1f7be373c12724f5849f43926c7ea680459578" and fallback["fallback_rule_sha256"]=="adaba743b3e5877a28f2d88b5f058b5c94fc261b9e97ddaa1f5a2a108b71408b" and receipt["feasibility_receipt_sha256"]=="adac0ef6dbba62ee4d5c4bc9edbbee65e66e0e0c037b51147849d1db5d557dd5" and amendment["amendment_sha256"]=="330263472d6b947fa688cbe6a21a52f437fc7c206555a023b7e64900c7bf13f9"; assert receipt["selection"]["aggregate_independent_probable_records"]==33 and receipt["selection"]["aggregate_QA_pass_probable_records"]==31; assert amendment["sample_design"]["target_positive_count"]==60 and amendment["sample_design"]["minimum_positive_count"]==50 and amendment["analysis_policy"]["primary_metric"]=="balanced_accuracy"; assert not any(receipt["execution_state"].values()) and not any(amendment["execution_state"].values()); print("Phase 3B-R1 four-cell expansion frozen; 31 metadata-QA passes; no RF score")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 3B-R1 rules, feasibility, amendment, privacy, or no-score validation failed.'
+}
+$phase3BR1PrivateIgnoreCheck = & git check-ignore 'data/private/e001/external/expansion/private-sentinel.json'
+if ($LASTEXITCODE -ne 0 -or -not $phase3BR1PrivateIgnoreCheck) {
+    throw 'Phase 3B-R1 record-level expansion metadata must remain ignored by Git.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -544,4 +560,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $publicDemoCheck."

@@ -1,0 +1,95 @@
+{
+  "schema_version": "e001-phase-3b-r1-expansion-amendment-v1",
+  "phase": "3B-R1",
+  "status": "READY_FOR_MULTI_REGION_DATASET_CONSTRUCTION_NO_SCORE",
+  "frozen": true,
+  "source_commit_before_amendment": "0d31eab",
+  "phase3a_protocol_sha256": "ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba",
+  "selection_rule_sha256": "6e5f2992fe453601940792ad4c1f7be373c12724f5849f43926c7ea680459578",
+  "fallback_rule_sha256": "adaba743b3e5877a28f2d88b5f058b5c94fc261b9e97ddaa1f5a2a108b71408b",
+  "feasibility_receipt_sha256": "adac0ef6dbba62ee4d5c4bc9edbbee65e66e0e0c037b51147849d1db5d557dd5",
+  "reason_for_amendment": {
+    "first_region_probable_records_reviewed": 87,
+    "first_region_accepted": 47,
+    "first_region_maximum_possible": 48,
+    "minimum_required": 50,
+    "decision": "pre_score_geographic_expansion_required_without_weakening_evidence_gate"
+  },
+  "first_region_decisions": {
+    "accepted_locked": 47,
+    "rejected_locked": 36,
+    "uncertain_locked": 3,
+    "terrain_review_needed": 1,
+    "reclassification_for_sample_size_prohibited": true
+  },
+  "external_geography": {
+    "crs": "EPSG:27700",
+    "cell_size_m": 25000,
+    "first_external_cell": "BNG_25KM_E16_N5",
+    "supplementary_cells": [
+      "BNG_25KM_E19_N6",
+      "BNG_25KM_E19_N5",
+      "BNG_25KM_E18_N4",
+      "BNG_25KM_E20_N13"
+    ],
+    "supplementary_cell_count": 4,
+    "aggregate_independent_probable_records": 33,
+    "aggregate_QA_pass_probable_records": 31,
+    "selection_performance_blind": true,
+    "outside_E001_cells_and_15km_buffer": true,
+    "outside_Phase2F_private_domain_15km_buffer": true,
+    "at_least_25km_from_first_external_cell_boundary": true
+  },
+  "sample_design": {
+    "target_positive_count": 60,
+    "target_background_count": 60,
+    "minimum_positive_count": 50,
+    "minimum_background_count": 50,
+    "class_ratio": "one_to_one",
+    "existing_accepted_records_remain_eligible": 47,
+    "supplementary_planning_count": 15,
+    "probable_title_or_metadata_QA_does_not_equal_accepted_label": true
+  },
+  "analysis_policy": {
+    "primary_population": "all_external_observations_combined",
+    "primary_metric": "balanced_accuracy",
+    "classification_threshold": 0.5,
+    "same_frozen_RF_for_all_observations": true,
+    "separate_models_by_region": false,
+    "regional_descriptive_strata": [
+      "first_external_geography",
+      "combined_supplementary_geography"
+    ],
+    "regional_descriptive_minimum_matched_pairs_per_stratum": 10,
+    "regional_descriptive_requires_both_classes": true,
+    "regional_results_are_secondary_descriptive_only": true,
+    "regional_results_may_tune_or_select_model": false,
+    "regional_results_may_replace_primary_combined_result": false
+  },
+  "scientific_invariants": {
+    "positive_evidence_gate_changed": false,
+    "background_policy_changed": false,
+    "terrain_pipeline_changed": false,
+    "RF_configuration_changed": false,
+    "metrics_changed": false,
+    "privacy_policy_changed": false,
+    "no_score_rule_changed": false,
+    "target_or_minimum_changed": false
+  },
+  "privacy": {
+    "record_level_metadata_private_and_ignored": true,
+    "exact_coordinates_private_and_ignored": true,
+    "tracked_outputs_aggregate_only": true
+  },
+  "execution_state": {
+    "supplementary_records_curated": false,
+    "terrain_rasters_downloaded": false,
+    "backgrounds_constructed": false,
+    "external_dataset_frozen": false,
+    "external_RF_loaded": false,
+    "external_RF_scoring_performed": false,
+    "external_predictions_generated": false,
+    "external_performance_metrics_computed": false
+  },
+  "amendment_sha256": "330263472d6b947fa688cbe6a21a52f437fc7c206555a023b7e64900c7bf13f9"
+}

@@ -17,10 +17,18 @@ from archaeoai.terrain.privacy import assert_coordinate_safe_mapping
 EXPECTED_PROTOCOL_SCHEMA = "e001-phase-3a-external-validation-v1"
 EXPECTED_EXPANSION_RULE_SCHEMA = "e001-phase-3b-r1-selection-rule-v1"
 EXPECTED_EXPANSION_FALLBACK_SCHEMA = "e001-phase-3b-r1-multicell-fallback-rule-v1"
+EXPECTED_EXPANSION_FEASIBILITY_SCHEMA = "e001-phase-3b-r1-expansion-feasibility-v1"
+EXPECTED_EXPANSION_AMENDMENT_SCHEMA = "e001-phase-3b-r1-expansion-amendment-v1"
 EXPECTED_PRIMARY_CONFIG_SHA256 = "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"
 EXPECTED_MODEL_STATE_SHA256 = "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939"
 EXTERNAL_CELL_SIZE_M = 25_000
 EXTERNAL_CELL_ID = "BNG_25KM_E16_N5"
+EXPANSION_CELL_IDS = (
+    "BNG_25KM_E19_N6",
+    "BNG_25KM_E19_N5",
+    "BNG_25KM_E18_N4",
+    "BNG_25KM_E20_N13",
+)
 MINIMUM_EXTERNAL_SEPARATION_M = 15_000.0
 TARGET_POSITIVES = 60
 MINIMUM_POSITIVES = 50
@@ -55,6 +63,20 @@ def expansion_rule_hash(payload: Mapping[str, Any]) -> str:
 def expansion_fallback_hash(payload: Mapping[str, Any]) -> str:
     """Hash a canonical fallback rule without its self-referential receipt."""
     content = {key: value for key, value in payload.items() if key != "fallback_rule_sha256"}
+    encoded = json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def expansion_feasibility_hash(payload: Mapping[str, Any]) -> str:
+    """Hash the coordinate-safe feasibility receipt without its digest field."""
+    content = {key: value for key, value in payload.items() if key != "feasibility_receipt_sha256"}
+    encoded = json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def expansion_amendment_hash(payload: Mapping[str, Any]) -> str:
+    """Hash the canonical expansion amendment without its digest field."""
+    content = {key: value for key, value in payload.items() if key != "amendment_sha256"}
     encoded = json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(encoded).hexdigest()
 
@@ -120,6 +142,64 @@ def validate_expansion_fallback_rule(path: str | Path) -> dict[str, Any]:
         raise ValueError("pre-search Phase 3B-R1 fallback execution state is contaminated")
     if any(payload.get("scientific_invariants", {}).values()):
         raise ValueError("Phase 3B-R1 fallback changed a scientific invariant")
+    return payload
+
+
+def validate_expansion_feasibility(path: str | Path) -> dict[str, Any]:
+    """Validate the aggregate metadata-only selection receipt and no-score boundary."""
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    assert_coordinate_safe_mapping(payload)
+    if payload.get("schema_version") != EXPECTED_EXPANSION_FEASIBILITY_SCHEMA:
+        raise ValueError("unexpected Phase 3B-R1 feasibility schema")
+    if payload.get("status") != "SUPPLEMENTARY_GEOGRAPHY_FEASIBLE":
+        raise ValueError("Phase 3B-R1 supplementary geography is not feasible")
+    if expansion_feasibility_hash(payload) != payload.get("feasibility_receipt_sha256"):
+        raise ValueError("Phase 3B-R1 feasibility-receipt hash mismatch")
+    selection = payload.get("selection", {})
+    if tuple(selection.get("selected_cells", ())) != EXPANSION_CELL_IDS:
+        raise ValueError("Phase 3B-R1 selected geography changed")
+    if selection.get("aggregate_QA_pass_probable_records") != 31:
+        raise ValueError("Phase 3B-R1 QA-pass feasibility count changed")
+    if selection.get("required_QA_pass_probable_records") != 28:
+        raise ValueError("Phase 3B-R1 feasibility threshold changed")
+    if selection.get("performance_used") is not False:
+        raise ValueError("Phase 3B-R1 geography selection used model performance")
+    if any(payload.get("execution_state", {}).values()):
+        raise ValueError("Phase 3B-R1 feasibility receipt crossed the no-score boundary")
+    return payload
+
+
+def validate_expansion_amendment(path: str | Path) -> dict[str, Any]:
+    """Validate the frozen pre-score multi-region external-validation amendment."""
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    assert_coordinate_safe_mapping(payload)
+    if payload.get("schema_version") != EXPECTED_EXPANSION_AMENDMENT_SCHEMA:
+        raise ValueError("unexpected Phase 3B-R1 amendment schema")
+    if payload.get("status") != "READY_FOR_MULTI_REGION_DATASET_CONSTRUCTION_NO_SCORE":
+        raise ValueError("Phase 3B-R1 amendment has an unexpected status")
+    if payload.get("frozen") is not True:
+        raise ValueError("Phase 3B-R1 amendment is not frozen")
+    if expansion_amendment_hash(payload) != payload.get("amendment_sha256"):
+        raise ValueError("Phase 3B-R1 amendment hash mismatch")
+    geography = payload.get("external_geography", {})
+    if tuple(geography.get("supplementary_cells", ())) != EXPANSION_CELL_IDS:
+        raise ValueError("Phase 3B-R1 amendment changed supplementary geography")
+    sample = payload.get("sample_design", {})
+    if sample.get("target_positive_count") != 60 or sample.get("minimum_positive_count") != 50:
+        raise ValueError("Phase 3B-R1 amendment changed the frozen sample design")
+    if payload.get("first_region_decisions", {}).get("accepted_locked") != 47:
+        raise ValueError("Phase 3B-R1 amendment changed first-region accepted decisions")
+    analysis = payload.get("analysis_policy", {})
+    if analysis.get("primary_metric") != "balanced_accuracy":
+        raise ValueError("Phase 3B-R1 amendment changed the primary metric")
+    if analysis.get("primary_population") != "all_external_observations_combined":
+        raise ValueError("Phase 3B-R1 amendment changed the primary analysis population")
+    if analysis.get("regional_results_may_tune_or_select_model") is not False:
+        raise ValueError("Phase 3B-R1 amendment permits regional model tuning")
+    if any(payload.get("scientific_invariants", {}).values()):
+        raise ValueError("Phase 3B-R1 amendment changed a scientific invariant")
+    if any(payload.get("execution_state", {}).values()):
+        raise ValueError("Phase 3B-R1 amendment crossed the no-score boundary")
     return payload
 
 
