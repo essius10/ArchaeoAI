@@ -198,7 +198,17 @@ $required = @(
     'outputs/deep_learning/figures/e001_cnn_confusion_summary.svg',
     'outputs/inference/e001_phase2f_a_readiness.json',
     'outputs/inference/e001_phase2f_b_summary.json',
-    'outputs/inference/figures/e001_phase2f_b_score_distribution.svg'
+    'outputs/inference/figures/e001_phase2f_b_score_distribution.svg',
+    'website/index.html',
+    'website/styles.css',
+    'website/site.js',
+    'website/README.md',
+    'website/assets/favicon.svg',
+    'website/assets/terrain-contours.png',
+    'website/assets/balanced-accuracy-comparison.svg',
+    'website/assets/cnn-vs-rf-by-fold.svg',
+    'website/assets/private-inference-score-distribution.svg',
+    'tests/test_public_demo.py'
 )
 
 $missing = $required | Where-Object { -not (Test-Path $_) }
@@ -477,4 +487,42 @@ if ($LASTEXITCODE -ne 0 -or -not $trainingRunIgnoreCheck) {
     throw 'Private deep-learning training histories must remain ignored by Git.'
 }
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck."
+$publicDemo = Get-Content -Raw 'website/index.html'
+if (
+    $publicDemo -notmatch '87\.1' -or
+    $publicDemo -notmatch '82\.3%' -or
+    $publicDemo -notmatch '70\.1%' -or
+    $publicDemo -notmatch 'No human morphology review has been completed' -or
+    $publicDemo -notmatch 'No heritage cross-check has occurred' -or
+    $publicDemo -notmatch 'Predictions are not discoveries'
+) {
+    throw 'The public demo must preserve verified aggregate results and research boundaries.'
+}
+$publicDemoText = Get-Content -Raw 'website/*.html', 'website/*.css', 'website/*.js', 'website/*.json', 'website/*.xml', 'website/*.md'
+if (
+    $publicDemoText -match '(?i)["''](?:easting|northing|latitude|longitude|geometry|polygon|bbox|bounds|private_token|sample_id)["'']\s*:' -or
+    $publicDemoText -match 'BNG_100KM_E\d+_N\d+'
+) {
+    throw 'The public demo contains a coordinate-bearing or private identifier field.'
+}
+$publicDemoSensitive = @(Get-ChildItem 'website' -Recurse -File | Where-Object {
+    $_.Extension -in @('.tif', '.tiff', '.las', '.laz', '.gpkg', '.shp', '.npy', '.npz', '.pt', '.pth', '.ckpt', '.geojson')
+})
+if ($publicDemoSensitive.Count -ne 0) {
+    throw "The public demo contains sensitive or candidate-level files: $($publicDemoSensitive.FullName -join ', ')"
+}
+$publicFigureCopies = @{
+    'website/assets/balanced-accuracy-comparison.svg' = 'outputs/modelling/figures/e001_balanced_accuracy_comparison.svg'
+    'website/assets/cnn-vs-rf-by-fold.svg' = 'outputs/deep_learning/figures/e001_cnn_vs_rf_by_fold.svg'
+    'website/assets/private-inference-score-distribution.svg' = 'outputs/inference/figures/e001_phase2f_b_score_distribution.svg'
+}
+foreach ($copy in $publicFigureCopies.Keys) {
+    $copyHash = (Get-FileHash -Algorithm SHA256 $copy).Hash
+    $sourceHash = (Get-FileHash -Algorithm SHA256 $publicFigureCopies[$copy]).Hash
+    if ($copyHash -ne $sourceHash) {
+        throw "Public aggregate figure differs from its frozen source: $copy"
+    }
+}
+$publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
+
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $publicDemoCheck."

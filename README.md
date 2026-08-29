@@ -32,6 +32,17 @@ evaluation on geographically new groups.
 
 *Coordinate-safe aggregate evaluation; no sites, maps, or candidate locations are shown.*
 
+## Public research demo
+
+The repository now includes a lightweight, coordinate-safe public research demo in
+[`website/`](website/README.md). It presents the verified E001 evidence, geographic-validation
+rationale, negative CNN result, privacy boundaries, and current review status without publishing
+candidate-level material. It is prepared for a future GitHub Pages or Vercel deployment, but no
+deployment is enabled yet.
+
+Preview it locally from the repository root with `python -m http.server 8000`, then open
+`http://127.0.0.1:8000/website/`.
+
 ## What is ArchaeoAI?
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
@@ -50,7 +61,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **192 passing** |
+| Automated tests | **198 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
