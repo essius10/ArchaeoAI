@@ -62,7 +62,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **237 passing** |
+| Automated tests | **238 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |

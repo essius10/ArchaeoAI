@@ -37,6 +37,23 @@ EXPECTED_FIGURES = {
         "672ff46408ec8aa01abb71fa6d2f34f767cd4f1488a43ed16cf530e33c90fc35"
     ),
 }
+EXPECTED_FIGURE_REPOSITORY_SHA256 = {
+    "outputs/external_validation/figures/e001_phase3c_confusion_matrix.svg": (
+        "79aaa5b8fecd140fa342a5be50b32eae34aafe151765e888ab42b830fa5094e3"
+    ),
+    "outputs/external_validation/figures/e001_phase3c_performance_context.svg": (
+        "55cc0eb50fec416e7395f2977c26806c114d72c58390fff80584f26996b48fac"
+    ),
+    "outputs/external_validation/figures/e001_phase3c_roc_pr_curves.svg": (
+        "59df2b63f60d213783895c240d542b5239551c217a0afb60f7178d02177aa642"
+    ),
+    "outputs/external_validation/figures/e001_phase4a_error_representation_summary.svg": (
+        "2fee7f44f075dc45ead1502497d700fda43599572048dcd36b123722658d2c06"
+    ),
+    "outputs/external_validation/figures/e001_phase4a_score_distributions.svg": (
+        "6f7270d9ce1b4118d28d2f378b2979b44ba97e70fda7b4bc1747aa01656f672a"
+    ),
+}
 
 
 def analysis_sha256(payload: Mapping[str, Any]) -> str:
@@ -130,7 +147,13 @@ def verify_phase4a_figure_files(root: str | Path, payload: Mapping[str, Any]) ->
     )
     for relative, expected in payload["figures"].items():
         figure = base / relative
-        if hashlib.sha256(figure.read_bytes()).hexdigest() != expected:
+        content = figure.read_bytes()
+        native_digest = hashlib.sha256(content).hexdigest()
+        repository_digest = hashlib.sha256(content.replace(b"\r\n", b"\n")).hexdigest()
+        if (
+            native_digest != expected
+            and repository_digest != EXPECTED_FIGURE_REPOSITORY_SHA256[relative]
+        ):
             raise ValueError(f"Phase 4A figure hash mismatch: {relative}")
         text = figure.read_text(encoding="utf-8").lower()
         if any(token in text for token in prohibited):

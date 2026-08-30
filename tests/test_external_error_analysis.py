@@ -10,6 +10,7 @@ import pytest
 from archaeoai.external_error_analysis import (
     EXPECTED_ANALYSIS_SHA256,
     EXPECTED_ERROR_GROUPS,
+    EXPECTED_FIGURE_REPOSITORY_SHA256,
     analysis_sha256,
     validate_external_error_analysis,
     verify_phase3c_unchanged,
@@ -63,6 +64,18 @@ def test_phase4a_public_payload_is_coordinate_safe(result: dict) -> None:
 def test_phase4a_figures_are_hash_bound_and_coordinate_safe(result: dict) -> None:
     verify_phase4a_figure_files(ROOT, result)
     assert len(result["figures"]) == 5
+    assert set(result["figures"]) == set(EXPECTED_FIGURE_REPOSITORY_SHA256)
+
+
+def test_phase4a_figure_hashes_accept_only_frozen_lf_repository_form(
+    result: dict, tmp_path: Path
+) -> None:
+    for relative in result["figures"]:
+        source = ROOT / relative
+        destination = tmp_path / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(source.read_bytes().replace(b"\r\n", b"\n"))
+    verify_phase4a_figure_files(tmp_path, result)
 
 
 def test_phase4a_regional_results_flag_small_strata(result: dict) -> None:
