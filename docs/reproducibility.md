@@ -6,6 +6,9 @@ This guide separates reproducibility of public, coordinate-safe evidence from re
 the private spatial data layer. It does not authorize a new model run, external evaluation, terrain
 download, or public release. The Phase 3C external test is spent.
 
+**Current classification: PARTIALLY REPRODUCIBLE — PRIVATE DATA REQUIRED FOR SPECIFIC STEPS.** See
+the [clean-environment audit](review/CLEAN_ENVIRONMENT_REPRODUCTION.md) for the tested boundary.
+
 ## Environment
 
 The reference runtime is CPython 3.12. Development is supported on CPython `>=3.12,<3.15`.
@@ -25,6 +28,10 @@ GitHub Actions repeats the platform-independent quality checks on Linux with CPy
 package versions used for frozen model phases are recorded in their result artifacts. The local
 Phase 4B verification environment may be newer within the supported range; it does not regenerate
 scientific results.
+
+On Windows, use a short checkout path if environment creation fails with a maximum-path error in a
+dependency's packaged files. A Phase 4C clean install succeeded after moving the temporary clone to
+a short path.
 
 ## Frozen configurations and evidence hierarchy
 

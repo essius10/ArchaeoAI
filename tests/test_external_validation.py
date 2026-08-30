@@ -1,3 +1,4 @@
+import hashlib
 import json
 import subprocess
 import sys
@@ -112,6 +113,32 @@ def test_external_protocol_binds_immutable_prior_artifacts() -> None:
             native_sha256=expected,
             repository_sha256=repository[relative],
         )
+
+
+def test_immutable_artifact_check_accepts_fresh_windows_line_endings(tmp_path: Path) -> None:
+    repository_content = b'{\n  "frozen": true\n}\n'
+    native_content = b'{\r\n  "frozen": true\n}\n'
+    fresh_windows_content = repository_content.replace(b"\n", b"\r\n")
+    artifact = tmp_path / "artifact.json"
+    artifact.write_bytes(fresh_windows_content)
+
+    assert artifact_digest_matches(
+        artifact,
+        native_sha256=hashlib.sha256(native_content).hexdigest(),
+        repository_sha256=hashlib.sha256(repository_content).hexdigest(),
+    )
+
+
+def test_immutable_artifact_check_rejects_content_change(tmp_path: Path) -> None:
+    repository_content = b'{\n  "frozen": true\n}\n'
+    artifact = tmp_path / "artifact.json"
+    artifact.write_bytes(b'{\r\n  "frozen": false\r\n}\r\n')
+
+    assert not artifact_digest_matches(
+        artifact,
+        native_sha256=hashlib.sha256(repository_content).hexdigest(),
+        repository_sha256=hashlib.sha256(repository_content).hexdigest(),
+    )
 
 
 def test_external_feasibility_receipt_is_aggregate_and_pre_score() -> None:

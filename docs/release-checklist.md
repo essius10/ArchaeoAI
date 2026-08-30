@@ -21,7 +21,8 @@ a publication or deployment action.
 - [x] State that no archaeological discovery is claimed.
 - [x] Mark incomplete literature work `CITATION_REVIEW_REQUIRED`.
 - [ ] Complete and document a systematic literature search.
-- [ ] Verify every reference, author list, title, venue, year, page range, and DOI.
+- [x] Verify every reference currently used, including author list, title, venue, year, pagination,
+  DOI where assigned, and citation-to-claim fit.
 - [ ] Obtain manuscript review; do not describe the draft as peer reviewed before that occurs.
 
 ## Data, privacy, and licensing
@@ -41,7 +42,8 @@ a publication or deployment action.
 - [x] Run tests, Ruff, validator, doctor, dependency, frozen-artifact, and figure-hash checks.
 - [x] Maintain Linux CPython 3.12 GitHub Actions.
 - [ ] Produce a dependency lock or archival environment specification.
-- [ ] Perform a clean clone/install/test on Windows and Linux.
+- [x] Perform a clean clone/install/test on Windows (CPython 3.14.7) and retain Linux CPython 3.12
+  CI for the final commit.
 - [ ] Select a semantic version and freeze a release commit.
 - [ ] Prepare release notes and a changelog entry.
 - [ ] Decide whether to archive with Zenodo or another repository; do not mint a DOI prematurely.

@@ -5,8 +5,8 @@
   "manuscript": {
     "path": "docs/manuscript/archaeoai-e001-manuscript.md",
     "title": "Geographic generalization of a terrain-only Random Forest for documented bowl-barrow classification",
-    "repository_sha256": "23c7ef9da8b0d268e1481f30db0f4ce1d09ebd17abb98dae96e4ae91ba5dda93",
-    "word_count": 4627
+    "repository_sha256": "cca268b79e11f091cd1ac5fa4e9b7e19ce6a26d1d8724d79d565eab31070e08f",
+    "word_count": 4894
   },
   "frozen_evidence": {
     "phase3c_result_sha256": "2654932891aa48f4e41ea7cfa8a0f72d5fbbb38a6c2741ce82685fc84edb432b",
@@ -45,5 +45,5 @@
     "private_paths_written": false,
     "sensitive_maps_included": false
   },
-  "evidence_manifest_sha256": "c3cacc7ffc3a860c1aaf2a78f15a9abb2ea93c4a1f57dd0991e4c96dc686a6c7"
+  "evidence_manifest_sha256": "7c9f3c237ce03a33fe7aac91ebd06ce0762f1d93719c28ff077041b90dcc3775"
 }

@@ -9,6 +9,11 @@ explicit.
 
 This document is a project recommendation, not legal advice.
 
+The Phase 4C review on 30 August 2026 rechecked the provider and OGL pages. Historic England's Open
+Data Hub terms require its specified attribution and non-endorsement treatment; the OGL requires
+source acknowledgement and does not grant excluded third-party rights. The Environment Agency's
+official 1 m DTM catalogue record continues to identify OGL reuse and its provider attribution.
+
 ## Material classes in this repository
 
 | Material | Examples | Current treatment |
@@ -67,6 +72,18 @@ copyright holder name and contribution ownership:
 Before finalizing, confirm whether the repository owner wants personal-name or project ownership in
 the notices and resolve the Historic England wording discrepancy recorded above. Until then, the
 README must continue to say that no repository-wide licence has been applied.
+
+## Release blockers
+
+- copyright holder and contribution ownership are not yet recorded;
+- separate licences for original software, prose, and third-party-derived artifacts are not yet
+  implemented;
+- the Historic England ArcGIS item wording and Open Data Hub terms wording have not been reconciled;
+- redistribution rights for any row-level derived dataset need a source-by-source review;
+- a fresh full-history licensing and third-party provenance review is still required.
+
+These ambiguities do not prevent private academic feedback on the coordinate-safe manuscript, but
+they block a repository release or claim that the project is openly licensed.
 
 ## Attribution block for current audit outputs
 

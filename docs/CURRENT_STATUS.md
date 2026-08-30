@@ -19,9 +19,11 @@ alter the confirmatory Phase 3C result. The independent external test is **spent
 reused for model selection, threshold changes, recalibration, or improvement of the currently
 reported model.
 
-The Phase 4B manuscript and reproducibility package is now prepared for review. It is a draft, not
-a publication or release. The next gate is independent manuscript, citation, privacy, licensing,
-and clean-environment reproducibility review before any release decision.
+Phase 4C classifies the coordinate-safe manuscript package as `READY_FOR_EXTERNAL_REVIEW`. This is a
+draft suitable for serious independent feedback, not a publication or release. Citation identities
+and claim fit have been checked, and public evidence has been clean-clone tested. Systematic
+literature review, independent scientific/privacy review, full private-data reproduction, and
+repository licensing remain unresolved before any release decision.
 
 ## Claim boundary
 

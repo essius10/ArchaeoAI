@@ -4,7 +4,7 @@
 machine learning, and geographic generalization.**
 
 [![CI](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml/badge.svg)](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml)
-![Research stage](https://img.shields.io/badge/research-Phase%204A%20analysis%20frozen-2f855a)
+![Research stage](https://img.shields.io/badge/research-ready%20for%20external%20review-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
 
 ArchaeoAI tests whether machine learning can recognize the terrain signature of **documented bowl
@@ -59,7 +59,8 @@ the score reflects genuine geographic generalization rather than spatial or surv
 [Read the concise current research status →](docs/CURRENT_STATUS.md)
 
 [Read the E001 manuscript draft](docs/manuscript/archaeoai-e001-manuscript.md) ·
-[Reproduce the coordinate-safe evidence](docs/reproducibility.md)
+[Reproduce the coordinate-safe evidence](docs/reproducibility.md) ·
+[Use the external reviewer guide](docs/review/REVIEWER_GUIDE.md)
 
 | E001 data gate | Verified status |
 |---|---:|
@@ -67,7 +68,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **245 passing** |
+| Review readiness | **READY_FOR_EXTERNAL_REVIEW; not publication-ready** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |

@@ -20,7 +20,7 @@ from archaeoai.terrain.privacy import assert_coordinate_safe_mapping
 EXPECTED_PHASE3C_RESULT_SHA256 = "2654932891aa48f4e41ea7cfa8a0f72d5fbbb38a6c2741ce82685fc84edb432b"
 EXPECTED_RF_CONFIG_SHA256 = "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"
 EXPECTED_MANUSCRIPT_EVIDENCE_SHA256 = (
-    "c3cacc7ffc3a860c1aaf2a78f15a9abb2ea93c4a1f57dd0991e4c96dc686a6c7"
+    "7c9f3c237ce03a33fe7aac91ebd06ce0762f1d93719c28ff077041b90dcc3775"
 )
 EXPECTED_FIGURE_PATHS = {
     "outputs/deep_learning/figures/e001_cnn_vs_rf_by_fold.svg",

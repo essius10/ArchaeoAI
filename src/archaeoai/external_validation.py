@@ -270,14 +270,18 @@ def validate_expansion_amendment(path: str | Path) -> dict[str, Any]:
 def artifact_digest_matches(
     path: str | Path, *, native_sha256: str, repository_sha256: str
 ) -> bool:
-    """Accept the frozen native receipt or Git's canonical repository bytes.
+    """Accept the frozen native receipt or Git's canonical repository content.
 
     Earlier frozen artifacts contain mixed historical line endings. Git normalizes
-    their tracked bytes on Linux, while the original receipts bind the Windows
-    working-copy bytes. Both explicit digests represent the same immutable file.
+    their tracked bytes on Linux and may expand every line ending in a fresh Windows
+    checkout, while the original receipts bind mixed Windows working-copy bytes.
+    The normalized digest remains an exact content check; it does not canonicalize
+    whitespace or JSON structure beyond CRLF-to-LF conversion.
     """
-    observed = hashlib.sha256(Path(path).read_bytes()).hexdigest()
-    return observed in {native_sha256, repository_sha256}
+    content = Path(path).read_bytes()
+    observed = hashlib.sha256(content).hexdigest()
+    repository_content = hashlib.sha256(content.replace(b"\r\n", b"\n")).hexdigest()
+    return observed == native_sha256 or repository_content == repository_sha256
 
 
 def validate_external_protocol(path: str | Path) -> dict[str, Any]:

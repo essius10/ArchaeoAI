@@ -40,8 +40,9 @@ vegetation, acquisition resolution, and the availability of open institutional d
 analysis.
 
 Automated archaeological mapping is not new. Faster R-CNN workflows have been applied to barrows
-and Celtic fields in Dutch LiDAR [Verschoof-van der Vaart and Lambers 2019], and deep segmentation
-has been used to delineate topographic anomalies in French data [Guyot et al. 2021]. Consequently,
+and Celtic fields in Dutch LiDAR [Verschoof-van der Vaart and Lambers 2019], deep segmentation has
+been used to delineate topographic anomalies in French data [Guyot et al. 2021], and a multi-area
+CNN has been evaluated for broad-scale Maya feature mapping [Character et al. 2024]. Consequently,
 E001 does not claim novelty from applying machine learning to LiDAR or from inventing a new neural
 architecture. Its focus is methodological: transparent data construction, leakage-resistant
 geographic evaluation, comparison of a simple pooled-terrain baseline with one compact CNN, and an
@@ -51,8 +52,10 @@ The central risk is spatial dependence. Nearby patches can share geology, land u
 interpolation history, vegetation-removal artifacts, and even overlapping pixels. A conventional
 random split can place related examples on both sides of an evaluation boundary. The resulting
 metric may describe interpolation within familiar spatial contexts rather than transfer to a new
-area. E001 therefore treats geographic separation as a first-class experimental variable and
-tracks acquisition provenance alongside class labels.
+area. Blocked validation is specifically recommended where spatial dependence could make random
+cross-validation underestimate predictive error [Roberts et al. 2017]. E001 therefore treats
+geographic separation as a first-class experimental variable and tracks acquisition provenance
+alongside class labels.
 
 The project also treats responsible archaeology as part of method quality. Precise monument
 locations and private terrain are withheld from the repository. Public outputs contain aggregate
@@ -183,7 +186,8 @@ A pre-registered development matrix compared DummyClassifier, L2 Logistic Regres
 Random Forest across normalized elevation, slope, hillshade, local relief, and all-four inputs. The
 primary criterion was geographic-development balanced accuracy. Differences below 0.02 were
 treated as effective ties, with preference first for Logistic Regression and then for fewer
-channels. ROC-AUC was secondary only.
+channels. Balanced accuracy gives equal weight to class-specific recall and is useful when class
+frequencies or error behavior differ [Brodersen et al. 2010]. ROC-AUC was secondary only.
 
 The all-four Random Forest achieved 0.821429 development balanced accuracy, compared with 0.785714
 for the next-best candidates. The 0.035715 difference exceeded the tie band, so the Random Forest
@@ -309,7 +313,9 @@ before the model was loaded.
 The Phase 3C authorization bound the already frozen dataset, model state, configuration, and
 prediction-vector receipt. The full private score vector was written and checksummed before metric
 calculation. No observation was removed, replaced, or relabelled after scoring, and no second
-external scoring run occurred.
+external scoring run occurred. The pre-specified percentile interval resampled the 60 matched
+positive/background pairs as intact clusters, preserving dependence within each pair; cluster-level
+resampling is the relevant bootstrap principle for grouped observations [Deen and de Rooij 2020].
 
 **The frozen Random Forest achieved 84.2% balanced accuracy (95% paired-bootstrap CI 77.5–90.0%)
 in a one-time independent external evaluation of 120 observations across five pre-specified
@@ -513,22 +519,39 @@ review and reproducibility work, not post-hoc optimization of the reported model
 
 ## References and citation-review status
 
+- Brodersen, K. H., Ong, C. S., Stephan, K. E., and Buhmann, J. M. (2010). “The Balanced
+  Accuracy and Its Posterior Distribution.” *2010 20th International Conference on Pattern
+  Recognition*, 3121–3124. <https://doi.org/10.1109/ICPR.2010.764>
+- Character, L., Beach, T., Inomata, T., Garrison, T. G., Luzzadder-Beach, S., Baldwin, J. D.,
+  Cambranes, R., Pinzón, F., and Ranchos, J. L. (2024). “Broadscale Deep Learning Model for
+  Archaeological Feature Detection across the Maya Area.” *Journal of Archaeological Science*,
+  169, 106022. <https://doi.org/10.1016/j.jas.2024.106022>
+- Deen, M., and de Rooij, M. (2020). “ClusterBootstrap: An R Package for the Analysis of
+  Hierarchical Data Using Generalized Linear Models with the Cluster Bootstrap.” *Behavior
+  Research Methods*, 52, 572–590. <https://doi.org/10.3758/s13428-019-01252-y>
 - Guyot, A., Lennon, M., Lorho, T., and Hubert-Moy, L. (2021). “Combined Detection and
   Segmentation of Archeological Structures from LiDAR Data Using a Deep Learning Approach.”
   *Journal of Computer Applications in Archaeology*, 4(1), 1–19.
   <https://doi.org/10.5334/jcaa.64>
 - Historic England (2024 update). “Lidar (Light Detection and Ranging).”
   <https://historicengland.org.uk/research/methods/airborne-remote-sensing/lidar/>
+- Roberts, D. R., Bahn, V., Ciuti, S., Boyce, M. S., Elith, J., Guillera-Arroita, G., Hauenstein,
+  S., Lahoz-Monfort, J. J., Schröder, B., Thuiller, W., Warton, D. I., Wintle, B. A., Hartig, F.,
+  and Dormann, C. F. (2017). “Cross-validation Strategies for Data with Temporal, Spatial,
+  Hierarchical, or Phylogenetic Structure.” *Ecography*, 40(8), 913–929.
+  <https://doi.org/10.1111/ecog.02881>
 - Verschoof-van der Vaart, W. B., and Lambers, K. (2019). “Learning to Look at LiDAR: The Use of
   R-CNN in the Automated Detection of Archaeological Objects in LiDAR Data from the Netherlands.”
   *Journal of Computer Applications in Archaeology*, 2(1), 31–40.
   <https://doi.org/10.5334/jcaa.32>
-- Vinci, G., Vanzani, F., Fontana, A., and Campana, S. (2024 online; volume 32 issue 1).
+- Vinci, G., Vanzani, F., Fontana, A., and Campana, S. (2025; first published online 2024).
   “LiDAR Applications in Archaeology: A Systematic Review.” *Archaeological Prospection*, 81–101.
   <https://doi.org/10.1002/arp.1931>
 
-`CITATION_REVIEW_REQUIRED`: the repository’s literature audit is preliminary rather than
-systematic. Before submission, expand the search log, verify full bibliographic metadata and final
-publication year conventions, resolve the previously noted Character et al. (2024) entry, and add
-methodological citations for spatial validation, balanced accuracy, and paired bootstrap methods.
-No unverified citation is used as substantive evidence in this manuscript draft.
+`CITATION_REVIEW_REQUIRED`: Phase 4C verified the identity and claim fit of every reference above
+against publisher, journal, DOI, institutional-repository, or first-party records. The previously
+uncertain Character et al. reference and methodological references for spatial validation,
+balanced accuracy, and cluster bootstrap resampling are now resolved. The literature audit remains
+preliminary rather than systematic; before publication, expand the search log and have an
+independent subject specialist review completeness and citation-to-claim fit. No unverified
+citation is used as substantive evidence in this manuscript draft.
