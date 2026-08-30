@@ -1,0 +1,126 @@
+{
+  "schema_version": "e001-phase-3b-external-dataset-freeze-v1",
+  "phase": "3B multi-region external dataset construction",
+  "status": "READY_UNSCORED",
+  "frozen": true,
+  "protocol_sha256": "ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba",
+  "amendment_sha256": "330263472d6b947fa688cbe6a21a52f437fc7c206555a023b7e64900c7bf13f9",
+  "curation": {
+    "supplementary_records_reviewed": 33,
+    "supplementary_accepted": 29,
+    "supplementary_rejected": 2,
+    "supplementary_uncertain": 0,
+    "supplementary_needs_terrain_review": 2,
+    "combined_accepted": 76,
+    "selection_method": "frozen_SHA256_ranking_without_model_output"
+  },
+  "counts": {
+    "positive_bowl_barrow": 60,
+    "unlabelled_background": 60,
+    "total_observations": 120,
+    "matched_pairs": 60
+  },
+  "region_composition": {
+    "BNG_25KM_E16_N5": {
+      "positive_bowl_barrow": 37,
+      "unlabelled_background": 37
+    },
+    "BNG_25KM_E18_N4": {
+      "positive_bowl_barrow": 5,
+      "unlabelled_background": 5
+    },
+    "BNG_25KM_E19_N5": {
+      "positive_bowl_barrow": 5,
+      "unlabelled_background": 5
+    },
+    "BNG_25KM_E19_N6": {
+      "positive_bowl_barrow": 9,
+      "unlabelled_background": 9
+    },
+    "BNG_25KM_E20_N13": {
+      "positive_bowl_barrow": 4,
+      "unlabelled_background": 4
+    }
+  },
+  "terrain": {
+    "source": "Environment Agency LiDAR Composite DTM 1m",
+    "license": "Open Government Licence v3.0",
+    "crs": "EPSG:27700",
+    "resolution_m": 1.0,
+    "patch_dimensions": [
+      128,
+      128
+    ],
+    "patch_size_m": 128,
+    "raw_QA_passed": 120,
+    "representation_QA_passed": 120,
+    "actions": {
+      "cache_verified": 61,
+      "downloaded": 59
+    },
+    "survey_years": {
+      "2019": 12,
+      "2020": 34,
+      "2021": 74
+    },
+    "survey_programmes": {
+      "National LIDAR Programme": 120
+    },
+    "checksums_complete": true
+  },
+  "representations": {
+    "names": [
+      "elevation_normalized",
+      "slope_degrees",
+      "hillshade_315_45",
+      "local_relief_r16m"
+    ],
+    "complete_observations": 120,
+    "preprocessing_changed": false
+  },
+  "background_policy": {
+    "label_interpretation": "unlabelled terrain, not a known negative",
+    "matching": "same 25 km cell and exact terrain provenance",
+    "sampling_annulus_m": [
+      1000,
+      5000
+    ],
+    "positive_exclusion_m": 500,
+    "known_scheduled_monument_exclusion_m": 250,
+    "background_separation_m": 256,
+    "deterministic_seed": "E001-Phase-3A-background-2026-08-30"
+  },
+  "independence": {
+    "E001_observations_audited": 522,
+    "minimum_E001_separation_m": 15000,
+    "phase2D_phase2E_geography_independent": true,
+    "phase2F_private_domain_minimum_separation_m": 15000,
+    "phase2F_independent": true,
+    "sample_ID_collisions": 0,
+    "centre_collisions": 0,
+    "E001_content_duplicates": 0,
+    "external_content_duplicates": 0,
+    "positive_background_content_duplicates": 0,
+    "internal_terrain_window_overlaps": 5,
+    "internal_overlap_composition": {
+      "positive_positive": 5
+    },
+    "internal_overlap_protocol_status": "permitted_distinct_positives; prior-study and background spacing gates pass"
+  },
+  "privacy": {
+    "private_manifest_ignored": true,
+    "private_manifest_sha256": "7c47a6b18bcf42199f8155fdaff6baa4668bd664b80737a414acec7fcadb2a54",
+    "coordinates_tracked": false,
+    "raw_or_processed_terrain_tracked": false
+  },
+  "dataset_sha256": "17eeb9366e02ce2acddcfaf3324a9558a439a5655139859e6f9fb0707f69057c",
+  "execution_state": {
+    "external_dataset_frozen": true,
+    "external_RF_loaded": false,
+    "predict_called": false,
+    "predict_proba_called": false,
+    "external_RF_scoring_performed": false,
+    "external_performance_metrics_computed": false
+  },
+  "freeze_receipt_sha256": "090d50d7efca5d7ce8ec763641411aa907646e9e110958c506dbb7ce68998fc5"
+}

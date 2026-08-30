@@ -19,6 +19,7 @@ EXPECTED_EXPANSION_RULE_SCHEMA = "e001-phase-3b-r1-selection-rule-v1"
 EXPECTED_EXPANSION_FALLBACK_SCHEMA = "e001-phase-3b-r1-multicell-fallback-rule-v1"
 EXPECTED_EXPANSION_FEASIBILITY_SCHEMA = "e001-phase-3b-r1-expansion-feasibility-v1"
 EXPECTED_EXPANSION_AMENDMENT_SCHEMA = "e001-phase-3b-r1-expansion-amendment-v1"
+EXPECTED_DATASET_FREEZE_SCHEMA = "e001-phase-3b-external-dataset-freeze-v1"
 EXPECTED_PRIMARY_CONFIG_SHA256 = "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"
 EXPECTED_MODEL_STATE_SHA256 = "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939"
 EXTERNAL_CELL_SIZE_M = 25_000
@@ -79,6 +80,69 @@ def expansion_amendment_hash(payload: Mapping[str, Any]) -> str:
     content = {key: value for key, value in payload.items() if key != "amendment_sha256"}
     encoded = json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(encoded).hexdigest()
+
+
+def external_dataset_freeze_hash(payload: Mapping[str, Any]) -> str:
+    """Hash the coordinate-safe Phase 3B receipt without its self digest."""
+    content = {key: value for key, value in payload.items() if key != "freeze_receipt_sha256"}
+    encoded = json.dumps(content, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def validate_external_dataset_freeze(path: str | Path) -> dict[str, Any]:
+    """Validate the READY_UNSCORED external dataset receipt and no-score boundary."""
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    assert_coordinate_safe_mapping(payload)
+    if payload.get("schema_version") != EXPECTED_DATASET_FREEZE_SCHEMA:
+        raise ValueError("unexpected Phase 3B external-dataset freeze schema")
+    if payload.get("status") != "READY_UNSCORED" or payload.get("frozen") is not True:
+        raise ValueError("Phase 3B external dataset is not frozen READY_UNSCORED")
+    if external_dataset_freeze_hash(payload) != payload.get("freeze_receipt_sha256"):
+        raise ValueError("Phase 3B external-dataset freeze hash mismatch")
+    if (
+        payload.get("protocol_sha256")
+        != "ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba"
+    ):
+        raise ValueError("Phase 3B receipt does not bind the frozen Phase 3A protocol")
+    if (
+        payload.get("amendment_sha256")
+        != "330263472d6b947fa688cbe6a21a52f437fc7c206555a023b7e64900c7bf13f9"
+    ):
+        raise ValueError("Phase 3B receipt does not bind the frozen R1 amendment")
+    counts = payload.get("counts", {})
+    if counts != {
+        "positive_bowl_barrow": 60,
+        "unlabelled_background": 60,
+        "total_observations": 120,
+        "matched_pairs": 60,
+    }:
+        raise ValueError("Phase 3B external dataset counts changed")
+    terrain = payload.get("terrain", {})
+    representations = payload.get("representations", {})
+    if terrain.get("raw_QA_passed") != 120 or terrain.get("representation_QA_passed") != 120:
+        raise ValueError("Phase 3B terrain QA is incomplete")
+    if representations.get("complete_observations") != 120:
+        raise ValueError("Phase 3B representations are incomplete")
+    execution = payload.get("execution_state", {})
+    if execution.get("external_dataset_frozen") is not True or any(
+        execution.get(field) is not False
+        for field in (
+            "external_RF_loaded",
+            "predict_called",
+            "predict_proba_called",
+            "external_RF_scoring_performed",
+            "external_performance_metrics_computed",
+        )
+    ):
+        raise ValueError("Phase 3B receipt crossed the no-score boundary")
+    dataset_sha = payload.get("dataset_sha256")
+    if (
+        not isinstance(dataset_sha, str)
+        or len(dataset_sha) != 64
+        or any(character not in "0123456789abcdef" for character in dataset_sha)
+    ):
+        raise ValueError("Phase 3B dataset digest is invalid")
+    return payload
 
 
 def validate_expansion_selection_rule(path: str | Path) -> dict[str, Any]:

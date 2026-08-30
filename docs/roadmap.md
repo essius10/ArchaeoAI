@@ -23,11 +23,13 @@ private blinded packet contains 12 HIGH, 25 MEDIUM, and 25 RANDOM items. The cur
 blinded human morphology review: no review, heritage-record cross-check, candidate claim, second
 domain, or public location exists.
 
-Phase 3A has additionally frozen an independent external geographic-validation design for the
-unchanged Random Forest. A coordinate-safe metadata audit selected one new 25 km Salisbury Plain
-cell with zero E001 observations, a 15 km prior-study exclusion, a target of 60 matched pairs, and
-a minimum of 50. The next research gate is private Phase 3B dataset construction without model
-access; the 87-record screening estimate is not a verified label count or performance result.
+Phase 3A additionally froze an independent external geographic-validation design for the unchanged
+Random Forest. Phase 3B-R1 then authorized four supplementary 25 km cells without changing the
+class, evidence gate, target, model, or privacy policy. Strict multi-region curation produced 76
+combined accepted records, from which the frozen SHA-256 rule selected 60. Phase 3B constructed 60
+matched `unlabelled_background` observations and froze all 120 private terrain inputs as
+`READY_UNSCORED`. The next research gate is the separately controlled Phase 3C one-time external
+evaluation. No external RF prediction or performance metric exists yet.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 

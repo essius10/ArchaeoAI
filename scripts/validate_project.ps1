@@ -215,6 +215,7 @@ $required = @(
     'outputs/external_validation/e001_phase3a_feasibility.json',
     'outputs/external_validation/e001_phase3b_curation_gate.json',
     'outputs/external_validation/e001_phase3b_r1_expansion_feasibility.json',
+    'outputs/external_validation/e001_phase3b_external_dataset_freeze.json',
     'website/index.html',
     'website/styles.css',
     'website/site.js',
@@ -471,6 +472,14 @@ if ($LASTEXITCODE -ne 0) {
 $phase3BR1PrivateIgnoreCheck = & git check-ignore 'data/private/e001/external/expansion/private-sentinel.json'
 if ($LASTEXITCODE -ne 0 -or -not $phase3BR1PrivateIgnoreCheck) {
     throw 'Phase 3B-R1 record-level expansion metadata must remain ignored by Git.'
+}
+$phase3BDatasetCheck = & $pythonExecutable -c 'from pathlib import Path; from archaeoai.external_validation import validate_external_dataset_freeze; root=Path.cwd(); receipt=validate_external_dataset_freeze(root/"outputs/external_validation/e001_phase3b_external_dataset_freeze.json"); assert receipt["counts"]=={"positive_bowl_barrow":60,"unlabelled_background":60,"total_observations":120,"matched_pairs":60}; assert receipt["privacy"]["coordinates_tracked"] is False and receipt["privacy"]["raw_or_processed_terrain_tracked"] is False; assert receipt["independence"]["E001_observations_audited"]==522 and receipt["independence"]["phase2F_independent"] is True; assert receipt["execution_state"]["external_RF_loaded"] is False and receipt["execution_state"]["predict_called"] is False and receipt["execution_state"]["predict_proba_called"] is False and receipt["execution_state"]["external_performance_metrics_computed"] is False; print("Phase 3B external dataset frozen READY_UNSCORED; no RF prediction or metric")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 3B external dataset, privacy, independence, or no-score validation failed.'
+}
+$phase3BPrivateDatasetIgnoreCheck = & git check-ignore 'data/private/e001/external/dataset/private-sentinel.json'
+if ($LASTEXITCODE -ne 0 -or -not $phase3BPrivateDatasetIgnoreCheck) {
+    throw 'Phase 3B external coordinates and terrain must remain ignored by Git.'
 }
 
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1

@@ -21,6 +21,7 @@ from archaeoai.external_validation import (
     expansion_fallback_hash,
     expansion_feasibility_hash,
     expansion_rule_hash,
+    external_dataset_freeze_hash,
     paired_cluster_bootstrap_indices,
     protocol_hash,
     selected_positive_ids,
@@ -28,6 +29,7 @@ from archaeoai.external_validation import (
     validate_expansion_fallback_rule,
     validate_expansion_feasibility,
     validate_expansion_selection_rule,
+    validate_external_dataset_freeze,
     validate_external_protocol,
     validate_private_manifest,
 )
@@ -43,6 +45,7 @@ EXPANSION_FEASIBILITY_PATH = (
     ROOT / "outputs/external_validation/e001_phase3b_r1_expansion_feasibility.json"
 )
 EXPANSION_AMENDMENT_PATH = ROOT / "configs/e001-phase-3b-r1-expansion-amendment.json"
+DATASET_FREEZE_PATH = ROOT / "outputs/external_validation/e001_phase3b_external_dataset_freeze.json"
 
 
 def test_external_protocol_is_hash_frozen_before_model_access() -> None:
@@ -189,6 +192,31 @@ def test_phase3b_r1_amendment_freezes_multi_region_design_before_scoring() -> No
     assert amendment["analysis_policy"]["primary_metric"] == "balanced_accuracy"
     assert amendment["analysis_policy"]["regional_results_are_secondary_descriptive_only"]
     assert not any(amendment["execution_state"].values())
+
+
+def test_phase3b_external_dataset_is_frozen_ready_unscored() -> None:
+    receipt = validate_external_dataset_freeze(DATASET_FREEZE_PATH)
+    assert external_dataset_freeze_hash(receipt) == receipt["freeze_receipt_sha256"]
+    assert receipt["status"] == "READY_UNSCORED"
+    assert receipt["counts"]["matched_pairs"] == 60
+    assert receipt["terrain"]["raw_QA_passed"] == 120
+    assert receipt["representations"]["complete_observations"] == 120
+    assert receipt["privacy"]["coordinates_tracked"] is False
+    assert receipt["privacy"]["raw_or_processed_terrain_tracked"] is False
+    assert receipt["independence"]["internal_terrain_window_overlaps"] == 5
+    assert receipt["independence"]["internal_overlap_composition"] == {"positive_positive": 5}
+    assert receipt["independence"]["E001_content_duplicates"] == 0
+    assert receipt["independence"]["external_content_duplicates"] == 0
+    assert receipt["execution_state"]["external_RF_loaded"] is False
+    assert receipt["execution_state"]["predict_called"] is False
+    assert receipt["execution_state"]["predict_proba_called"] is False
+    assert receipt["execution_state"]["external_performance_metrics_computed"] is False
+
+
+def test_phase3b_construction_source_contains_no_model_scoring_calls() -> None:
+    source = (ROOT / "scripts/construct_e001_external_dataset.py").read_text(encoding="utf-8")
+    prohibited = ("RandomForestClassifier", ".predict(", ".predict_proba(")
+    assert not any(token in source for token in prohibited)
 
 
 def test_phase3b_r1_selection_script_cannot_overwrite_frozen_receipt() -> None:

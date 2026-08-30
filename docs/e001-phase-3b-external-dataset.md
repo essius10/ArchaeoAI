@@ -1,33 +1,70 @@
-# E001 Phase 3B — external dataset construction gate
+# E001 Phase 3B — multi-region external dataset construction
 
 ## Decision
 
-**INSUFFICIENT EXTERNAL SAMPLE.** Phase 3B stopped at the frozen positive-curation gate. It did
-not construct backgrounds, download terrain rasters, generate model inputs, freeze an external
-dataset, load the Random Forest, produce predictions, or calculate performance metrics.
+**READY_UNSCORED.** Phase 3B constructed and froze the independent external dataset without
+loading the Random Forest, generating predictions, or calculating a performance metric. The
+dataset contains 60 strictly curated scheduled single bowl-barrow observations and 60 matched
+`unlabelled_background` observations across the five cells authorized by Phase 3A and Phase
+3B-R1.
 
-The 87 records frozen by Phase 3A were reviewed against their official Historic England full
-entries. Forty-seven passed the complete label, geometry, 1 m coverage, and provenance gates;
-36 were rejected; three remained uncertain; and one required terrain-provenance review. Even if
-that final terrain case passed, only 48 records would be available, below the pre-registered
-minimum of 50 matched pairs.
+This status means the data are technically ready for the separately authorized one-time Phase 3C
+evaluation. It is not an external-validation result and does not support a performance or
+discovery claim.
 
-## Why construction stopped
+## Strict curation and frozen selection
 
-The Phase 3A protocol forbids loosening the inclusion rule, expanding the geography, or loading
-the model to compensate for a small sample. The 50-pair minimum therefore acts as a hard research
-gate rather than a target to be reached through discretionary inclusion.
+The first cell retained its locked 47 accepted records. The 33 supplementary probable-title
+records were reviewed under the same official full-entry, single-monument, upstanding-earthwork,
+geometry, 1 m coverage, and provenance rules: 29 were accepted, two rejected, none remained
+uncertain, and two still required terrain review. The combined accepted pool was therefore 76.
 
-The coordinate-safe aggregate receipt is
-[`outputs/external_validation/e001_phase3b_curation_gate.json`](../outputs/external_validation/e001_phase3b_curation_gate.json).
-The complete record-level review and exact locations remain under the Git-ignored private data
-tree. Its SHA-256 receipt is public, but its contents are not.
+The Phase 3A SHA-256 ranking rule selected exactly 60 positives from that pool. No inclusion rule
+was loosened, no terrain morphology informed selection, and no model output was available.
 
-## Allowed next step
+## Matched backgrounds and terrain
 
-Phase 3C external evaluation is **not authorized**. A future continuation would require a separate,
-pre-score protocol amendment that identifies additional independent geography and preserves the
-same target definition, inclusion rules, model, preprocessing, and privacy boundary. The existing
-47 accepted records must remain untouched by model output during that decision.
+Each positive has one deterministically sampled observation labelled `unlabelled_background`.
+The label means unknown terrain, not archaeology-free terrain or a known negative. Each background
+uses the frozen 1–5 km annulus, remains in its positive's 25 km cell, matches its exact Environment
+Agency survey provenance, and passes the 500 m positive, 250 m known Scheduled Monument, and 256 m
+background-spacing exclusions.
 
-No external RF scoring occurred. No external performance metric was calculated.
+All 120 observations use bounded 128 m × 128 m Environment Agency LiDAR Composite DTM windows in
+EPSG:27700 at 1 m resolution. Technical QA verifies dimensions, transform, resolution, no-data,
+finite values, provenance, and raw/patch/archive checksums. The frozen representations are:
+
+- median-normalized elevation;
+- slope in degrees;
+- fixed 315° azimuth / 45° altitude hillshade; and
+- 16 m local relief.
+
+No visual decision about whether a terrain patch resembles a barrow was made during technical QA.
+
+## Independence and privacy
+
+Private in-memory audits enforce at least 15 km separation from all 522 E001 observations and the
+Phase 2F private inference domain. They also check sample IDs, centres, exact terrain content,
+positive/background pairing, terrain-window overlap, and duplicate content. Exact coordinates,
+row-level labels, raw GeoTIFFs, processed NPZ archives, and the private manifest remain Git-ignored.
+
+Five internal window overlaps remain between distinct accepted positive monuments. They are valid
+under the frozen protocol: Phase 3A's disjoint-window language belongs to the prior-study
+independence boundary and its machine-readable gates prohibit overlap with E001 and Phase 2F. The
+protocol separately fixes 500 m positive-to-background and 256 m background-to-background spacing,
+but specifies no positive-to-positive exclusion. All five pairs have different centres, sample IDs,
+and terrain-content hashes; none is a matched positive/background pair. Removing them after
+construction would alter the performance-blind SHA-256 selection rule.
+
+Only the aggregate coordinate-safe freeze receipt is public:
+[`outputs/external_validation/e001_phase3b_external_dataset_freeze.json`](../outputs/external_validation/e001_phase3b_external_dataset_freeze.json).
+It binds the private manifest checksum and the canonical external-dataset SHA-256.
+
+## Hard scoring boundary
+
+Phase 3B did not import or load the Random Forest and did not call `predict()` or
+`predict_proba()`. It calculated no accuracy, balanced accuracy, precision, recall, F1, ROC-AUC,
+average precision, confusion matrix, or other external performance statistic.
+
+The only permitted next step is the separately controlled Phase 3C one-time evaluation of the
+unchanged frozen model on this frozen dataset.
