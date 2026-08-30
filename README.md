@@ -56,6 +56,8 @@ the score reflects genuine geographic generalization rather than spatial or surv
 
 ## Current status
 
+[Read the concise current research status →](docs/CURRENT_STATUS.md)
+
 | E001 data gate | Verified status |
 |---|---:|
 | Official Historic England entries reviewed | **360** |
