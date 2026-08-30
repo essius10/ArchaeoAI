@@ -31,6 +31,13 @@ once: combined balanced accuracy was 0.841667 with preregistered matched-pair bo
 [0.775, 0.900]. The frozen classification is `EXTERNAL GENERALIZATION SUPPORTED`. The external
 test is now spent; it cannot be used for tuning, and no discovery or England-wide claim follows.
 
+Phase 4A has now frozen a coordinate-safe **POST-HOC / EXPLORATORY** error analysis. The 49 TP,
+52 TN, 8 FP, and 11 FN groups were identified only from the already frozen private score vector.
+Descriptive terrain, region, and provenance patterns produced five future hypotheses without
+retraining, rescoring, relabelling, threshold changes, or causal claims. The Random Forest remains
+the preferred current model. Phase 3 data remain evaluation-only for it; using them in future
+training would create a new model generation requiring new independent evaluation data.
+
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
 | Month | Learning and research focus | Engineering/experiment deliverable | Evidence / gate |

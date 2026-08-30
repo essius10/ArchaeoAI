@@ -45,6 +45,9 @@ $required = @(
     'docs/e001-phase-3a-external-validation.md',
     'docs/e001-phase-3b-external-dataset.md',
     'docs/e001-phase-3b-r1-expansion-amendment.md',
+    'docs/e001-phase-3c-external-evaluation.md',
+    'docs/e001-phase-4a-external-error-analysis.md',
+    'docs/e001-technical-results.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
     'docs/licensing-and-attribution.md',
@@ -68,6 +71,8 @@ $required = @(
     'research-log/2026-08-30-phase-3a.md',
     'research-log/2026-08-30-phase-3b.md',
     'research-log/2026-08-30-phase-3b-r1.md',
+    'research-log/2026-08-30-phase-3c-external-evaluation.md',
+    'research-log/2026-08-30-phase-4a-external-error-analysis.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -94,6 +99,7 @@ $required = @(
     'scripts/run_e001_private_inference.py',
     'scripts/estimate_e001_terrain_acquisition.py',
     'scripts/select_e001_external_expansion.py',
+    'scripts/analyze_e001_external_errors.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
     'src/archaeoai/paths.py',
@@ -121,6 +127,8 @@ $required = @(
     'src/archaeoai/cnn_training.py',
     'src/archaeoai/inference.py',
     'src/archaeoai/external_validation.py',
+    'src/archaeoai/external_evaluation.py',
+    'src/archaeoai/external_error_analysis.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -149,6 +157,7 @@ $required = @(
     'tests/test_cnn_training.py',
     'tests/test_inference.py',
     'tests/test_external_validation.py',
+    'tests/test_external_error_analysis.py',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -217,6 +226,12 @@ $required = @(
     'outputs/external_validation/e001_phase3b_r1_expansion_feasibility.json',
     'outputs/external_validation/e001_phase3b_external_dataset_freeze.json',
     'outputs/external_validation/e001_phase3c_external_evaluation.json',
+    'outputs/external_validation/e001_phase4a_error_analysis.json',
+    'outputs/external_validation/figures/e001_phase3c_confusion_matrix.svg',
+    'outputs/external_validation/figures/e001_phase3c_performance_context.svg',
+    'outputs/external_validation/figures/e001_phase3c_roc_pr_curves.svg',
+    'outputs/external_validation/figures/e001_phase4a_error_representation_summary.svg',
+    'outputs/external_validation/figures/e001_phase4a_score_distributions.svg',
     'website/index.html',
     'website/styles.css',
     'website/site.js',
@@ -490,6 +505,14 @@ $phase3CPrivateIgnoreCheck = & git check-ignore 'data/private/e001/external/eval
 if ($LASTEXITCODE -ne 0 -or -not $phase3CPrivateIgnoreCheck) {
     throw 'Phase 3C authorization and prediction rows must remain ignored by Git.'
 }
+$phase4ACheck = & $pythonExecutable -c 'from pathlib import Path; from archaeoai.external_error_analysis import validate_external_error_analysis,verify_phase3c_unchanged,verify_phase4a_figure_files; root=Path.cwd(); result=validate_external_error_analysis(root/"outputs/external_validation/e001_phase4a_error_analysis.json"); verify_phase3c_unchanged(root,result); verify_phase4a_figure_files(root,result); assert result["error_groups"]=={"FN":11,"FP":8,"TN":52,"TP":49} and result["analysis_label"]=="POST-HOC / EXPLORATORY" and result["external_test_spent"] is True; assert result["scientific_status"]["retraining_performed"] is False and result["scientific_status"]["rescoring_performed"] is False and result["scientific_status"]["threshold_changed"] is False; print("Phase 4A post-hoc aggregate and figures valid; Phase 3C unchanged and spent")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 4A aggregate, figure, privacy, or spent-test validation failed.'
+}
+$phase4APrivateIgnoreCheck = & git check-ignore 'data/private/e001/external/error_analysis/panels/private-sentinel.png'
+if ($LASTEXITCODE -ne 0 -or -not $phase4APrivateIgnoreCheck) {
+    throw 'Phase 4A private terrain panels must remain ignored by Git.'
+}
 
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
@@ -522,6 +545,10 @@ if ($inferenceOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|ge
 $externalEvaluationOutput = Get-Content -Raw 'outputs/external_validation/e001_phase3c_external_evaluation.json'
 if ($externalEvaluationOutput -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id|pair_id)"\s*:') {
     throw 'The tracked Phase 3C output contains a coordinate or private identifier.'
+}
+$externalErrorOutputs = Get-Content -Raw 'outputs/external_validation/e001_phase4a_error_analysis.json', 'outputs/external_validation/figures/*.svg'
+if ($externalErrorOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id|pair_id|heritage_id)"\s*:') {
+    throw 'A tracked Phase 4A output contains a coordinate or private identifier.'
 }
 $trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' '*.pt' '*.pth' '*.ckpt' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
@@ -582,4 +609,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $publicDemoCheck."

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
+<title id="title">Post-hoc terrain variability by error group</title>
+<desc id="desc">Exploratory group medians of per-patch representation standard deviation, standardized only for display.</desc>
+<rect width="100%" height="100%" fill="#fbfaf7"/>
+<text x="490.0" y="34" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#17324d">Post-hoc terrain variability by error group</text>
+<line x1="80" y1="285" x2="930" y2="285" stroke="#17324d"/>
+<text x="35" y="290" font-family="Arial" font-size="12">0</text>
+<rect x="115" y="285.0" width="25" height="48.8" fill="#2a9d8f"/>
+<rect x="149" y="285.0" width="25" height="16.6" fill="#457b9d"/>
+<rect x="183" y="285.0" width="25" height="35.1" fill="#e9c46a"/>
+<rect x="217" y="285.0" width="25" height="36.6" fill="#e76f51"/>
+<text x="166" y="450" text-anchor="middle" font-family="Arial" font-size="14">Elevation</text>
+<rect x="320" y="285.0" width="25" height="25.5" fill="#2a9d8f"/>
+<rect x="354" y="285.0" width="25" height="34.4" fill="#457b9d"/>
+<rect x="388" y="253.3" width="25" height="31.7" fill="#e9c46a"/>
+<rect x="422" y="285.0" width="25" height="111.1" fill="#e76f51"/>
+<text x="371" y="450" text-anchor="middle" font-family="Arial" font-size="14">Slope</text>
+<rect x="525" y="285.0" width="25" height="23.0" fill="#2a9d8f"/>
+<rect x="559" y="285.0" width="25" height="42.7" fill="#457b9d"/>
+<rect x="593" y="264.6" width="25" height="20.4" fill="#e9c46a"/>
+<rect x="627" y="285.0" width="25" height="85.4" fill="#e76f51"/>
+<text x="576" y="450" text-anchor="middle" font-family="Arial" font-size="14">Hillshade</text>
+<rect x="730" y="285.0" width="25" height="37.3" fill="#2a9d8f"/>
+<rect x="764" y="285.0" width="25" height="47.3" fill="#457b9d"/>
+<rect x="798" y="285.0" width="25" height="12.2" fill="#e9c46a"/>
+<rect x="832" y="285.0" width="25" height="93.5" fill="#e76f51"/>
+<text x="781" y="450" text-anchor="middle" font-family="Arial" font-size="14">Local relief</text>
+<rect x="235" y="68" width="18" height="18" fill="#2a9d8f"/>
+<text x="262" y="82" font-family="Arial" font-size="13">TP</text>
+<rect x="370" y="68" width="18" height="18" fill="#457b9d"/>
+<text x="397" y="82" font-family="Arial" font-size="13">TN</text>
+<rect x="505" y="68" width="18" height="18" fill="#e9c46a"/>
+<text x="532" y="82" font-family="Arial" font-size="13">FP</text>
+<rect x="640" y="68" width="18" height="18" fill="#e76f51"/>
+<text x="667" y="82" font-family="Arial" font-size="13">FN</text>
+<text x="28" y="285" text-anchor="middle" font-family="Arial" font-size="12" transform="rotate(-90 28 285)">Standardized group median</text>
+<text x="490" y="505" text-anchor="middle" font-family="Arial" font-size="12" fill="#52606d">POST-HOC / EXPLORATORY · descriptive terrain summaries only · not model attribution</text>
+</svg>

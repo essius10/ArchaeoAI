@@ -51,6 +51,9 @@ outputs/external_validation/*
 !outputs/external_validation/e001_phase3b_r1_expansion_feasibility.json
 !outputs/external_validation/e001_phase3b_external_dataset_freeze.json
 !outputs/external_validation/e001_phase3c_external_evaluation.json
+!outputs/external_validation/e001_phase4a_error_analysis.json
+!outputs/external_validation/figures/
+!outputs/external_validation/figures/*.svg
 
 # Sensitive label data must not be committed.
 data/private/

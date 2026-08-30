@@ -4,7 +4,7 @@
 machine learning, and geographic generalization.**
 
 [![CI](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml/badge.svg)](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml)
-![Research stage](https://img.shields.io/badge/research-Phase%203A%20protocol%20frozen-2f855a)
+![Research stage](https://img.shields.io/badge/research-Phase%204A%20analysis%20frozen-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
 
 ArchaeoAI tests whether machine learning can recognize the terrain signature of **documented bowl
@@ -18,6 +18,7 @@ evaluation on geographically new groups.
 | Frozen geographic final test | **87.1%** | Specific two-group holdout; n=62; primary confirmatory result |
 | Five-fold geographic RF robustness | **82.3% mean** | Post-hoc robustness across 23 coarse groups |
 | Compact CNN comparison | **70.1% mean** | Worse than the RF on every fold; RF retained |
+| Independent external test | **84.2% [77.5–90.0%]** | n=120 across five pre-specified 25 km cells; test spent |
 | Phase 2F-B | **One controlled run complete** | 5,929 private windows; blinded review pending |
 
 > [!IMPORTANT]
@@ -61,7 +62,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **211 passing** |
+| Automated tests | **237 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
@@ -75,6 +76,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Post-hoc compact CNN | **5-fold/3-seed mean 0.701; CNN not justified at current scale** |
 | First controlled private inference | **5,929/5,929 valid; 1,159 deduplicated; review pending** |
 | Independent external evaluation | **0.842 [0.775, 0.900]; n=120; frozen test spent** |
+| External error analysis | **Post-hoc/exploratory complete; RF retained** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
@@ -149,6 +151,9 @@ called `unlabelled_background`, never a true archaeological negative.
 | Robustness and failure analysis | ✅ Complete | Five geographic folds; ablations, seeds, training size, shortcuts |
 | Stronger-model comparison | ✅ Complete | CNN 0.701 vs RF 0.823; retain Random Forest |
 | Controlled private inference | ✅ Run complete | One 5 km domain; blinded morphology review pending |
+| Independent external validation | ✅ Complete | [84.2% balanced accuracy; test spent](docs/e001-phase-3c-external-evaluation.md) |
+| External error analysis | ✅ Complete | [Post-hoc/exploratory only](docs/e001-phase-4a-external-error-analysis.md) |
+| Technical consolidation | ✅ Complete | [E001 technical results](docs/e001-technical-results.md) |
 | Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today

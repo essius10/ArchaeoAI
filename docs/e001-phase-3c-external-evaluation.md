@@ -64,3 +64,7 @@ The coordinate-safe aggregate result is
 [`outputs/external_validation/e001_phase3c_external_evaluation.json`](../outputs/external_validation/e001_phase3c_external_evaluation.json).
 Private prediction rows, coordinates, manifests, rasters, and processed terrain remain ignored by
 Git.
+
+The subsequent [Phase 4A analysis](e001-phase-4a-external-error-analysis.md) is explicitly post-hoc
+and exploratory. It does not alter this confirmatory result, reuse the spent test for selection, or
+change the frozen model.
