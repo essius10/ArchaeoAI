@@ -47,6 +47,11 @@ $required = @(
     'docs/e001-phase-3b-r1-expansion-amendment.md',
     'docs/e001-phase-3c-external-evaluation.md',
     'docs/e001-phase-4a-external-error-analysis.md',
+    'docs/manuscript/archaeoai-e001-manuscript.md',
+    'docs/reproducibility.md',
+    'docs/release-checklist.md',
+    'docs/release-plan.md',
+    'docs/citation-audit.md',
     'docs/e001-technical-results.md',
     'docs/research-charter.md',
     'docs/literature-novelty-audit.md',
@@ -73,6 +78,7 @@ $required = @(
     'research-log/2026-08-30-phase-3b-r1.md',
     'research-log/2026-08-30-phase-3c-external-evaluation.md',
     'research-log/2026-08-30-phase-4a-external-error-analysis.md',
+    'research-log/2026-08-30-phase-4b-manuscript-package.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -100,6 +106,7 @@ $required = @(
     'scripts/estimate_e001_terrain_acquisition.py',
     'scripts/select_e001_external_expansion.py',
     'scripts/analyze_e001_external_errors.py',
+    'scripts/freeze_e001_manuscript_evidence.py',
     'src/archaeoai/__init__.py',
     'src/archaeoai/config.py',
     'src/archaeoai/paths.py',
@@ -129,6 +136,7 @@ $required = @(
     'src/archaeoai/external_validation.py',
     'src/archaeoai/external_evaluation.py',
     'src/archaeoai/external_error_analysis.py',
+    'src/archaeoai/manuscript.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -158,6 +166,8 @@ $required = @(
     'tests/test_inference.py',
     'tests/test_external_validation.py',
     'tests/test_external_error_analysis.py',
+    'tests/test_manuscript_package.py',
+    'outputs/manuscript/e001_manuscript_evidence.json',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
     'outputs/feasibility/bowl_barrow_manual_sample.csv',
@@ -514,6 +524,11 @@ if ($LASTEXITCODE -ne 0 -or -not $phase4APrivateIgnoreCheck) {
     throw 'Phase 4A private terrain panels must remain ignored by Git.'
 }
 
+$phase4BCheck = & $pythonExecutable -c 'from pathlib import Path; from archaeoai.manuscript import EXPECTED_MANUSCRIPT_EVIDENCE_SHA256,validate_manuscript_evidence; root=Path.cwd(); result=validate_manuscript_evidence(root/"outputs/manuscript/e001_manuscript_evidence.json",root=root); assert result["evidence_manifest_sha256"]==EXPECTED_MANUSCRIPT_EVIDENCE_SHA256 and result["status"]=="READY_FOR_REVIEW" and result["scientific_boundary"]["phase3c_external_test_spent"] is True and result["scientific_boundary"]["phase4a_label"]=="POST-HOC / EXPLORATORY" and result["scientific_boundary"]["new_model_training_performed"] is False and result["scientific_boundary"]["confirmatory_result_changed"] is False and result["scientific_boundary"]["public_release_executed"] is False; print("Phase 4B manuscript evidence and scientific boundaries valid; no release executed")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 4B manuscript evidence, frozen hashes, or scientific-boundary validation failed.'
+}
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -549,6 +564,10 @@ if ($externalEvaluationOutput -match '(?i)"(?:easting|northing|ngr|latitude|long
 $externalErrorOutputs = Get-Content -Raw 'outputs/external_validation/e001_phase4a_error_analysis.json', 'outputs/external_validation/figures/*.svg'
 if ($externalErrorOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id|pair_id|heritage_id)"\s*:') {
     throw 'A tracked Phase 4A output contains a coordinate or private identifier.'
+}
+$manuscriptEvidence = Get-Content -Raw 'outputs/manuscript/e001_manuscript_evidence.json'
+if ($manuscriptEvidence -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id|pair_id|heritage_id)"\s*:') {
+    throw 'The tracked Phase 4B manuscript evidence contains a coordinate or private identifier.'
 }
 $trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' '*.pt' '*.pth' '*.ckpt' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
@@ -609,4 +628,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $publicDemoCheck."

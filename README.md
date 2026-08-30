@@ -58,13 +58,16 @@ the score reflects genuine geographic generalization rather than spatial or surv
 
 [Read the concise current research status →](docs/CURRENT_STATUS.md)
 
+[Read the E001 manuscript draft](docs/manuscript/archaeoai-e001-manuscript.md) ·
+[Reproduce the coordinate-safe evidence](docs/reproducibility.md)
+
 | E001 data gate | Verified status |
 |---|---:|
 | Official Historic England entries reviewed | **360** |
 | Records accepted through all Phase 2A.5 gates | **261** |
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
-| Automated tests | **238 passing** |
+| Automated tests | **245 passing** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
@@ -155,6 +158,7 @@ called `unlabelled_background`, never a true archaeological negative.
 | Controlled private inference | ✅ Run complete | One 5 km domain; blinded morphology review pending |
 | Independent external validation | ✅ Complete | [84.2% balanced accuracy; test spent](docs/e001-phase-3c-external-evaluation.md) |
 | External error analysis | ✅ Complete | [Post-hoc/exploratory only](docs/e001-phase-4a-external-error-analysis.md) |
+| Manuscript and reproducibility package | ✅ Ready for review | [Draft manuscript](docs/manuscript/archaeoai-e001-manuscript.md); no release executed |
 | Technical consolidation | ✅ Complete | [E001 technical results](docs/e001-technical-results.md) |
 | Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
@@ -201,7 +205,8 @@ called `unlabelled_background`, never a true archaeological negative.
 - A map of predictions or coordinates for possible unrecorded sites.
 - A completed human morphology review, heritage-record cross-check, candidate claim, or public
   candidate table.
-- A formal paper, DOI, archived release, or institutional affiliation.
+- A peer-reviewed paper, DOI, archived release, or institutional affiliation. The Phase 4B
+  manuscript is a review draft only.
 
 ## Reproducibility
 
@@ -343,6 +348,10 @@ Neither source provider endorses ArchaeoAI. No supplied map is reproduced here.
 <details>
 <summary><strong>Research documentation</strong></summary>
 
+- [E001 manuscript draft](docs/manuscript/archaeoai-e001-manuscript.md)
+- [Reproducibility guide](docs/reproducibility.md)
+- [Citation audit](docs/citation-audit.md)
+- [Future release checklist](docs/release-checklist.md)
 - [Research charter](docs/research-charter.md)
 - [Literature and novelty audit](docs/literature-novelty-audit.md)
 - [Dataset decision record](docs/dataset-decision-record.md)

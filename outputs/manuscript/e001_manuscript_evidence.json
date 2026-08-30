@@ -1,0 +1,49 @@
+{
+  "schema_version": "e001-phase-4b-manuscript-evidence-v1",
+  "phase": "4B manuscript and reproducibility package",
+  "status": "READY_FOR_REVIEW",
+  "manuscript": {
+    "path": "docs/manuscript/archaeoai-e001-manuscript.md",
+    "title": "Geographic generalization of a terrain-only Random Forest for documented bowl-barrow classification",
+    "repository_sha256": "23c7ef9da8b0d268e1481f30db0f4ce1d09ebd17abb98dae96e4ae91ba5dda93",
+    "word_count": 4627
+  },
+  "frozen_evidence": {
+    "phase3c_result_sha256": "2654932891aa48f4e41ea7cfa8a0f72d5fbbb38a6c2741ce82685fc84edb432b",
+    "external_dataset_sha256": "17eeb9366e02ce2acddcfaf3324a9558a439a5655139859e6f9fb0707f69057c",
+    "prediction_vector_sha256": "bd4a14794132b57f19b8345f70f2f1259f5d385a06ee2328d02bcab9d8b91ca7",
+    "phase4a_analysis_sha256": "209559c7759c6641d6ac7afeb47bd9a64f3f9581c6a3f9b5d8a5e024825a7276",
+    "model_state_sha256": "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939",
+    "rf_config_sha256": "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4"
+  },
+  "figures": {
+    "outputs/deep_learning/figures/e001_cnn_vs_rf_by_fold.svg": "4e8041603b544da52629d86d0079424505860e7331d1fc9c5203cfe19ebf22ce",
+    "outputs/external_validation/figures/e001_phase3c_confusion_matrix.svg": "79aaa5b8fecd140fa342a5be50b32eae34aafe151765e888ab42b830fa5094e3",
+    "outputs/external_validation/figures/e001_phase3c_performance_context.svg": "55cc0eb50fec416e7395f2977c26806c114d72c58390fff80584f26996b48fac",
+    "outputs/external_validation/figures/e001_phase3c_roc_pr_curves.svg": "59df2b63f60d213783895c240d542b5239551c217a0afb60f7178d02177aa642",
+    "outputs/external_validation/figures/e001_phase4a_error_representation_summary.svg": "2fee7f44f075dc45ead1502497d700fda43599572048dcd36b123722658d2c06",
+    "outputs/external_validation/figures/e001_phase4a_score_distributions.svg": "6f7270d9ce1b4118d28d2f378b2979b44ba97e70fda7b4bc1747aa01656f672a",
+    "outputs/modelling/figures/e001_balanced_accuracy_comparison.svg": "c3947af722cbcf3ec690b0e6a9c99ded18d2eed869e9b2db9a90c0daeb08900d"
+  },
+  "citation_audit": {
+    "status": "CITATION_REVIEW_REQUIRED",
+    "unverified_reference_used_as_substantive_evidence": false,
+    "peer_review_claimed_for_this_manuscript": false,
+    "institutional_affiliation_claimed": false
+  },
+  "scientific_boundary": {
+    "phase3c_external_test_spent": true,
+    "phase4a_label": "POST-HOC / EXPLORATORY",
+    "new_model_training_performed": false,
+    "confirmatory_result_changed": false,
+    "public_release_executed": false
+  },
+  "privacy": {
+    "aggregate_only": true,
+    "coordinates_written": false,
+    "sample_identifiers_written": false,
+    "private_paths_written": false,
+    "sensitive_maps_included": false
+  },
+  "evidence_manifest_sha256": "c3cacc7ffc3a860c1aaf2a78f15a9abb2ea93c4a1f57dd0991e4c96dc686a6c7"
+}

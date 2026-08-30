@@ -38,6 +38,11 @@ retraining, rescoring, relabelling, threshold changes, or causal claims. The Ran
 the preferred current model. Phase 3 data remain evaluation-only for it; using them in future
 training would create a new model generation requiring new independent evaluation data.
 
+Phase 4B has prepared a coordinate-safe manuscript and reproducibility package for review. Its
+evidence manifest binds the manuscript and publication figures to the frozen Phase 3C, Phase 4A,
+dataset, prediction, model, and configuration hashes. No preprint, DOI, release, or deployment has
+occurred. The next gate is independent citation, privacy, licensing, and reproducibility review.
+
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
 | Month | Learning and research focus | Engineering/experiment deliverable | Evidence / gate |

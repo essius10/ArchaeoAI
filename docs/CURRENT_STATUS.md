@@ -19,8 +19,9 @@ alter the confirmatory Phase 3C result. The independent external test is **spent
 reused for model selection, threshold changes, recalibration, or improvement of the currently
 reported model.
 
-The next planned phase is **Phase 4B: manuscript and reproducibility package**. No Phase 4B work
-has started in this status update.
+The Phase 4B manuscript and reproducibility package is now prepared for review. It is a draft, not
+a publication or release. The next gate is independent manuscript, citation, privacy, licensing,
+and clean-environment reproducibility review before any release decision.
 
 ## Claim boundary
 
