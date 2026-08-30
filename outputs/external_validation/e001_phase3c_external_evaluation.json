@@ -1,0 +1,130 @@
+{
+  "schema_version": "e001-phase-3c-external-evaluation-v1",
+  "phase": "3C one-time independent external model evaluation",
+  "status": "EXTERNAL_EVALUATION_COMPLETE",
+  "external_test_spent": true,
+  "frozen": true,
+  "starting_git_head": "fb26bfa053cf84006fdd9db969aba82c270fa09b",
+  "dataset_sha256": "17eeb9366e02ce2acddcfaf3324a9558a439a5655139859e6f9fb0707f69057c",
+  "input_dataset_state": "READY_UNSCORED",
+  "protocol_sha256": "ebc3d112c7b101881798d1f62c740a6634275c7834d7c7f53b330fe0f5dd84ba",
+  "amendment_sha256": "330263472d6b947fa688cbe6a21a52f437fc7c206555a023b7e64900c7bf13f9",
+  "rf_config_sha256": "20cd377c17373eeeb5403c84119084287f193d93b42c8004d99c823e01a157e4",
+  "model_state_sha256": "e3b0c072f437e889f09a2a2cf5a37f19b2f483eb5188e102b132a89ee76d1939",
+  "model_artifact_sha256": "50f7968069ecaa1e0016f37be6356531ab3f26802c806efb5dc8fb2e295a503f",
+  "prediction_vector_sha256": "bd4a14794132b57f19b8345f70f2f1259f5d385a06ee2328d02bcab9d8b91ca7",
+  "authorization_receipt_sha256": "7ece535dc88810028538082f393c9e89a502dffffb2a3990d2d014725a17dd54",
+  "one_time_run_identifier": "phase3c-2c8ce0de9492c1333e98",
+  "evaluation_timestamp_utc": "2026-08-30T11:19:20.529040Z",
+  "counts": {
+    "positive_bowl_barrow": 60,
+    "unlabelled_background": 60,
+    "total_observations": 120,
+    "matched_pairs": 60
+  },
+  "pipeline": {
+    "representations": [
+      "elevation_normalized",
+      "slope_degrees",
+      "hillshade_315_45",
+      "local_relief_r16m"
+    ],
+    "pooling": "non_overlapping_4_by_4_mean",
+    "feature_count": 4096,
+    "classification_threshold": 0.5,
+    "model_retrained": false,
+    "model_retuned": false,
+    "external_observations_removed_or_replaced_after_scoring": false,
+    "second_external_scoring_run": false
+  },
+  "primary": {
+    "population": "all_120_external_observations_combined",
+    "metric": "balanced_accuracy",
+    "metrics": {
+      "balanced_accuracy": 0.8416666666666667,
+      "accuracy": 0.8416666666666667,
+      "precision": 0.8596491228070176,
+      "recall": 0.8166666666666667,
+      "f1": 0.8376068376068376,
+      "roc_auc": 0.9277777777777777,
+      "average_precision": 0.9420580993805703,
+      "confusion_matrix": {
+        "tn": 52,
+        "fp": 8,
+        "fn": 11,
+        "tp": 49
+      },
+      "positive_recall": 0.8166666666666667,
+      "unlabelled_background_recall": 0.8666666666666667
+    },
+    "confidence_interval": {
+      "metric": "balanced_accuracy",
+      "method": "nonparametric_matched_pair_cluster_bootstrap",
+      "replicates": 10000,
+      "seed": 20260830,
+      "lower_95": 0.775,
+      "upper_95": 0.9
+    },
+    "outcome_classification": "EXTERNAL_GENERALIZATION_SUPPORTED"
+  },
+  "regional_descriptive_results": {
+    "first_external_geography": {
+      "matched_pairs": 37,
+      "observations": 74,
+      "descriptive_only": true,
+      "metrics": {
+        "balanced_accuracy": 0.8243243243243243,
+        "accuracy": 0.8243243243243243,
+        "precision": 0.875,
+        "recall": 0.7567567567567568,
+        "f1": 0.8115942028985508,
+        "roc_auc": 0.918918918918919,
+        "average_precision": 0.9357932119522523,
+        "confusion_matrix": {
+          "tn": 33,
+          "fp": 4,
+          "fn": 9,
+          "tp": 28
+        },
+        "positive_recall": 0.7567567567567568,
+        "unlabelled_background_recall": 0.8918918918918919
+      }
+    },
+    "combined_supplementary_geography": {
+      "matched_pairs": 23,
+      "observations": 46,
+      "descriptive_only": true,
+      "metrics": {
+        "balanced_accuracy": 0.8695652173913043,
+        "accuracy": 0.8695652173913043,
+        "precision": 0.84,
+        "recall": 0.9130434782608695,
+        "f1": 0.875,
+        "roc_auc": 0.948960302457467,
+        "average_precision": 0.9592233897927798,
+        "confusion_matrix": {
+          "tn": 19,
+          "fp": 4,
+          "fn": 2,
+          "tp": 21
+        },
+        "positive_recall": 0.9130434782608695,
+        "unlabelled_background_recall": 0.8260869565217391
+      }
+    }
+  },
+  "interpretation": {
+    "task": "terrain-pattern classification of documented bowl-barrow terrain versus matched unlabelled background",
+    "unlabelled_background_is_confirmed_archaeology_free": false,
+    "discovery_claimed": false,
+    "regional_results_confirmatory": false
+  },
+  "privacy": {
+    "aggregate_only": true,
+    "coordinates_written": false,
+    "sample_identifiers_written": false,
+    "private_prediction_rows_tracked": false,
+    "raw_or_processed_terrain_tracked": false
+  },
+  "result_sha256": "2654932891aa48f4e41ea7cfa8a0f72d5fbbb38a6c2741ce82685fc84edb432b"
+}

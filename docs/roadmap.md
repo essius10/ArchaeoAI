@@ -24,12 +24,12 @@ blinded human morphology review: no review, heritage-record cross-check, candida
 domain, or public location exists.
 
 Phase 3A additionally froze an independent external geographic-validation design for the unchanged
-Random Forest. Phase 3B-R1 then authorized four supplementary 25 km cells without changing the
-class, evidence gate, target, model, or privacy policy. Strict multi-region curation produced 76
-combined accepted records, from which the frozen SHA-256 rule selected 60. Phase 3B constructed 60
-matched `unlabelled_background` observations and froze all 120 private terrain inputs as
-`READY_UNSCORED`. The next research gate is the separately controlled Phase 3C one-time external
-evaluation. No external RF prediction or performance metric exists yet.
+Random Forest. Phase 3B-R1 authorized four supplementary 25 km cells without changing the class,
+evidence gate, target, model, or privacy policy. Phase 3B then froze 60 documented bowl-barrow and
+60 matched `unlabelled_background` observations. Phase 3C evaluated the unchanged model exactly
+once: combined balanced accuracy was 0.841667 with preregistered matched-pair bootstrap 95% CI
+[0.775, 0.900]. The frozen classification is `EXTERNAL GENERALIZATION SUPPORTED`. The external
+test is now spent; it cannot be used for tuning, and no discovery or England-wide claim follows.
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 

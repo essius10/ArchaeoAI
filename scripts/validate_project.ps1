@@ -216,6 +216,7 @@ $required = @(
     'outputs/external_validation/e001_phase3b_curation_gate.json',
     'outputs/external_validation/e001_phase3b_r1_expansion_feasibility.json',
     'outputs/external_validation/e001_phase3b_external_dataset_freeze.json',
+    'outputs/external_validation/e001_phase3c_external_evaluation.json',
     'website/index.html',
     'website/styles.css',
     'website/site.js',
@@ -481,6 +482,14 @@ $phase3BPrivateDatasetIgnoreCheck = & git check-ignore 'data/private/e001/extern
 if ($LASTEXITCODE -ne 0 -or -not $phase3BPrivateDatasetIgnoreCheck) {
     throw 'Phase 3B external coordinates and terrain must remain ignored by Git.'
 }
+$phase3CCheck = & $pythonExecutable -c 'from pathlib import Path; from archaeoai.external_evaluation import validate_external_evaluation_result; root=Path.cwd(); result=validate_external_evaluation_result(root/"outputs/external_validation/e001_phase3c_external_evaluation.json"); metrics=result["primary"]["metrics"]; assert result["status"]=="EXTERNAL_EVALUATION_COMPLETE" and result["external_test_spent"] is True; assert result["counts"]=={"positive_bowl_barrow":60,"unlabelled_background":60,"total_observations":120,"matched_pairs":60}; assert metrics["balanced_accuracy"]==0.8416666666666667 and result["primary"]["confidence_interval"]=={"metric":"balanced_accuracy","method":"nonparametric_matched_pair_cluster_bootstrap","replicates":10000,"seed":20260830,"lower_95":0.775,"upper_95":0.9}; assert metrics["confusion_matrix"]=={"tn":52,"fp":8,"fn":11,"tp":49} and result["primary"]["outcome_classification"]=="EXTERNAL_GENERALIZATION_SUPPORTED"; assert result["pipeline"]["model_retrained"] is False and result["pipeline"]["model_retuned"] is False and result["pipeline"]["second_external_scoring_run"] is False; print("Phase 3C one-time external evaluation frozen; test spent; no retuning")'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 3C result, metric, outcome, privacy, or spent-test validation failed.'
+}
+$phase3CPrivateIgnoreCheck = & git check-ignore 'data/private/e001/external/evaluation/private-sentinel.json'
+if ($LASTEXITCODE -ne 0 -or -not $phase3CPrivateIgnoreCheck) {
+    throw 'Phase 3C authorization and prediction rows must remain ignored by Git.'
+}
 
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
@@ -509,6 +518,10 @@ if ($deepLearningOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude
 $inferenceOutputs = Get-Content -Raw 'outputs/inference/*.json', 'outputs/inference/figures/*.svg'
 if ($inferenceOutputs -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id|private_token)"\s*:') {
     throw 'A tracked Phase 2F output contains a coordinate or private identifier.'
+}
+$externalEvaluationOutput = Get-Content -Raw 'outputs/external_validation/e001_phase3c_external_evaluation.json'
+if ($externalEvaluationOutput -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id|pair_id)"\s*:') {
+    throw 'The tracked Phase 3C output contains a coordinate or private identifier.'
 }
 $trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' '*.pt' '*.pth' '*.ckpt' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
@@ -569,4 +582,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $publicDemoCheck."

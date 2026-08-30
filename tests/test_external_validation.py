@@ -6,6 +6,19 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from archaeoai.external_evaluation import (
+    EXPECTED_AUTHORIZATION_SHA256,
+    EXPECTED_DATASET_SHA256,
+    EXPECTED_MODEL_ARTIFACT_SHA256,
+    EXPECTED_PREDICTION_VECTOR_SHA256,
+    canonical_sha256,
+    reproduce_from_private_predictions,
+    result_sha256,
+    validate_external_evaluation_result,
+)
+from archaeoai.external_evaluation import (
+    EXPECTED_MODEL_STATE_SHA256 as EXPECTED_EXTERNAL_MODEL_STATE_SHA256,
+)
 from archaeoai.external_validation import (
     BOOTSTRAP_REPLICATES,
     BOOTSTRAP_SEED,
@@ -46,6 +59,12 @@ EXPANSION_FEASIBILITY_PATH = (
 )
 EXPANSION_AMENDMENT_PATH = ROOT / "configs/e001-phase-3b-r1-expansion-amendment.json"
 DATASET_FREEZE_PATH = ROOT / "outputs/external_validation/e001_phase3b_external_dataset_freeze.json"
+EXTERNAL_RESULT_PATH = ROOT / "outputs/external_validation/e001_phase3c_external_evaluation.json"
+PRIVATE_PREDICTIONS_PATH = ROOT / "data/private/e001/external/evaluation/prediction_vector.json"
+PRIVATE_AUTHORIZATION_PATH = (
+    ROOT / "data/private/e001/external/evaluation/authorization_receipt.json"
+)
+PRIVATE_COMPLETION_PATH = ROOT / "data/private/e001/external/evaluation/completion_receipt.json"
 
 
 def test_external_protocol_is_hash_frozen_before_model_access() -> None:
@@ -217,6 +236,102 @@ def test_phase3b_construction_source_contains_no_model_scoring_calls() -> None:
     source = (ROOT / "scripts/construct_e001_external_dataset.py").read_text(encoding="utf-8")
     prohibited = ("RandomForestClassifier", ".predict(", ".predict_proba(")
     assert not any(token in source for token in prohibited)
+
+
+def test_phase3c_external_result_is_frozen_and_test_is_spent() -> None:
+    result = validate_external_evaluation_result(EXTERNAL_RESULT_PATH)
+    assert result_sha256(result) == result["result_sha256"]
+    assert result["status"] == "EXTERNAL_EVALUATION_COMPLETE"
+    assert result["external_test_spent"] is True
+    assert result["dataset_sha256"] == EXPECTED_DATASET_SHA256
+    assert result["model_state_sha256"] == EXPECTED_EXTERNAL_MODEL_STATE_SHA256
+    assert result["model_artifact_sha256"] == EXPECTED_MODEL_ARTIFACT_SHA256
+    assert result["prediction_vector_sha256"] == EXPECTED_PREDICTION_VECTOR_SHA256
+    assert result["authorization_receipt_sha256"] == EXPECTED_AUTHORIZATION_SHA256
+    assert result["counts"] == {
+        "positive_bowl_barrow": 60,
+        "unlabelled_background": 60,
+        "total_observations": 120,
+        "matched_pairs": 60,
+    }
+    assert result["pipeline"]["feature_count"] == 4096
+
+
+def test_phase3c_exact_preregistered_metrics_and_outcome_are_immutable() -> None:
+    result = validate_external_evaluation_result(EXTERNAL_RESULT_PATH)
+    metrics = result["primary"]["metrics"]
+    assert metrics["balanced_accuracy"] == 0.8416666666666667
+    assert metrics["accuracy"] == 0.8416666666666667
+    assert metrics["precision"] == 0.8596491228070176
+    assert metrics["recall"] == 0.8166666666666667
+    assert metrics["f1"] == 0.8376068376068376
+    assert metrics["roc_auc"] == 0.9277777777777777
+    assert metrics["average_precision"] == 0.9420580993805703
+    assert metrics["confusion_matrix"] == {"tn": 52, "fp": 8, "fn": 11, "tp": 49}
+    assert result["primary"]["confidence_interval"] == {
+        "metric": "balanced_accuracy",
+        "method": "nonparametric_matched_pair_cluster_bootstrap",
+        "replicates": 10_000,
+        "seed": 20260830,
+        "lower_95": 0.775,
+        "upper_95": 0.9,
+    }
+    assert result["primary"]["outcome_classification"] == ("EXTERNAL_GENERALIZATION_SUPPORTED")
+
+
+def test_phase3c_scoring_entry_point_refuses_a_second_run() -> None:
+    completed = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/run_e001_external_evaluation.py")],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode != 0
+    assert "external test is spent" in completed.stderr
+
+
+def test_phase3c_private_predictions_reproduce_public_result_when_available() -> None:
+    if not PRIVATE_PREDICTIONS_PATH.is_file():
+        pytest.skip("private Phase 3C prediction vector is intentionally absent from this checkout")
+    reproduce_from_private_predictions(PRIVATE_PREDICTIONS_PATH, EXTERNAL_RESULT_PATH)
+
+
+def test_phase3c_private_one_time_receipts_are_complete_when_available() -> None:
+    if not PRIVATE_AUTHORIZATION_PATH.is_file() or not PRIVATE_COMPLETION_PATH.is_file():
+        pytest.skip("private Phase 3C receipts are intentionally absent from this checkout")
+    authorization = json.loads(PRIVATE_AUTHORIZATION_PATH.read_text(encoding="utf-8"))
+    completion = json.loads(PRIVATE_COMPLETION_PATH.read_text(encoding="utf-8"))
+    assert canonical_sha256(authorization, omit="authorization_receipt_sha256") == (
+        EXPECTED_AUTHORIZATION_SHA256
+    )
+    assert authorization["status"] == "AUTHORIZED_NOT_SCORED"
+    assert completion["status"] == "EXTERNAL_EVALUATION_COMPLETE"
+    assert completion["external_test_spent"] is True
+    assert completion["scoring_runs_completed"] == 1
+    assert completion["prediction_vector_sha256"] == EXPECTED_PREDICTION_VECTOR_SHA256
+    assert (
+        canonical_sha256(completion, omit="completion_receipt_sha256")
+        == (completion["completion_receipt_sha256"])
+    )
+
+
+def test_phase3c_public_result_is_coordinate_safe_and_private_rows_are_untracked() -> None:
+    result = validate_external_evaluation_result(EXTERNAL_RESULT_PATH)
+    assert_coordinate_safe_mapping(result)
+    tracked = subprocess.run(
+        ["git", "ls-files", "data/private/**", "*.tif", "*.tiff", "*.npz", "*.npy"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert tracked.stdout.strip() == ""
+    assert result["privacy"]["coordinates_written"] is False
+    assert result["privacy"]["sample_identifiers_written"] is False
+    assert result["pipeline"]["model_retrained"] is False
+    assert result["pipeline"]["model_retuned"] is False
+    assert result["pipeline"]["second_external_scoring_run"] is False
 
 
 def test_phase3b_r1_selection_script_cannot_overwrite_frozen_receipt() -> None:

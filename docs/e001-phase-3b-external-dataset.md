@@ -66,5 +66,6 @@ Phase 3B did not import or load the Random Forest and did not call `predict()` o
 `predict_proba()`. It calculated no accuracy, balanced accuracy, precision, recall, F1, ROC-AUC,
 average precision, confusion matrix, or other external performance statistic.
 
-The only permitted next step is the separately controlled Phase 3C one-time evaluation of the
-unchanged frozen model on this frozen dataset.
+Phase 3C subsequently performed the separately controlled one-time evaluation. The immutable Phase
+3B receipt remains the pre-score dataset record; the result and spent-test state are documented in
+[`e001-phase-3c-external-evaluation.md`](e001-phase-3c-external-evaluation.md).

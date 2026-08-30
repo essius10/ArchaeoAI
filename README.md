@@ -74,7 +74,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Robustness classification | **ROBUST under the frozen Phase 2E-A rule** |
 | Post-hoc compact CNN | **5-fold/3-seed mean 0.701; CNN not justified at current scale** |
 | First controlled private inference | **5,929/5,929 valid; 1,159 deduplicated; review pending** |
-| Independent external-validation design | **Frozen; no external model scoring performed** |
+| Independent external evaluation | **0.842 [0.775, 0.900]; n=120; frozen test spent** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
@@ -90,6 +90,8 @@ different human reviewer.
 [Read the first controlled private inference report →](docs/e001-phase-2f-b-controlled-inference.md)
 
 [Read the independent external geographic-validation protocol →](docs/e001-phase-3a-external-validation.md)
+
+[Read the one-time independent external evaluation →](docs/e001-phase-3c-external-evaluation.md)
 
 ## Why this matters
 
