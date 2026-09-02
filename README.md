@@ -225,6 +225,18 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m ruff format --check .
 ```
 
+On Linux or macOS, use the data-free cross-platform environment check:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+python scripts/doctor.py
+python -m pytest
+python -m ruff check .
+python -m ruff format --check .
+```
+
 Runtime dependencies are NumPy, Rasterio, PyProj, scikit-learn, and PyTorch. The development extra
 adds pytest and Ruff. CPython 3.14.7 is verified locally; CPython 3.12 remains the reference runtime
 but has not been reproduced on this machine because it is not installed.

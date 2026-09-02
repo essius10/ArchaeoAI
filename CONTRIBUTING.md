@@ -31,6 +31,8 @@ approved and scoped.
 
 The reference runtime is CPython 3.12; supported development versions are `>=3.12,<3.15`.
 
+### Windows (PowerShell)
+
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
@@ -40,6 +42,23 @@ python -m venv .venv
 .\scripts\doctor.ps1
 .\scripts\validate_project.ps1
 ```
+
+### Linux and macOS
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+python scripts/doctor.py
+python -m pytest
+python -m ruff check .
+python -m ruff format --check .
+```
+
+`scripts/doctor.py` is a data-free cross-platform check for the supported Python runtime, required
+packages, EPSG:27700, GDAL/PROJ, PyTorch, Git, and dependency consistency. Use `--json` when a
+machine-readable report is useful. The full `validate_project.ps1` evidence audit remains Windows
+PowerShell-specific.
 
 The hosted CI runs installation, pytest, Ruff lint, and Ruff formatting on Python 3.12 without
 private terrain, coordinates, CUDA, or a GPU. The doctor and full project validator are additional

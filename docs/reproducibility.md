@@ -13,6 +13,8 @@ the [clean-environment audit](review/CLEAN_ENVIRONMENT_REPRODUCTION.md) for the 
 
 The reference runtime is CPython 3.12. Development is supported on CPython `>=3.12,<3.15`.
 
+### Windows (PowerShell)
+
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
@@ -23,6 +25,23 @@ python -m venv .venv
 .\scripts\validate_project.ps1
 .\.venv\Scripts\python.exe -m pip check
 ```
+
+### Linux and macOS
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+python scripts/doctor.py
+python -m pytest
+python -m ruff check .
+python -m ruff format --check .
+python -m pip check
+```
+
+The Python doctor is coordinate-free and does not read private terrain, model files, or local
+research caches. Pass `--json` for a machine-readable report. The PowerShell project validator is a
+separate, deeper audit of frozen evidence and remains Windows-specific.
 
 GitHub Actions repeats the platform-independent quality checks on Linux with CPython 3.12. Exact
 package versions used for frozen model phases are recorded in their result artifacts. The local
