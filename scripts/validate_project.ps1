@@ -80,8 +80,10 @@ $required = @(
     'research-log/2026-08-30-phase-4a-external-error-analysis.md',
     'research-log/2026-08-30-phase-4b-manuscript-package.md',
     'research-log/2026-09-05-phase-4d-rq1-audit.md',
+    'research-log/2026-09-05-phase-5a-inference-architecture.md',
     'docs/review/PHASE_4D_RQ1_AUDIT.md',
     'docs/review/FEEDBACK_REGISTER.md',
+    'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -136,6 +138,8 @@ $required = @(
     'src/archaeoai/deep_learning.py',
     'src/archaeoai/cnn_training.py',
     'src/archaeoai/inference.py',
+    'src/archaeoai/inference_system/__init__.py',
+    'src/archaeoai/inference_system/contracts.py',
     'src/archaeoai/external_validation.py',
     'src/archaeoai/external_evaluation.py',
     'src/archaeoai/external_error_analysis.py',
@@ -167,6 +171,8 @@ $required = @(
     'tests/test_deep_learning.py',
     'tests/test_cnn_training.py',
     'tests/test_inference.py',
+    'tests/test_inference_contracts.py',
+    'tests/test_phase5a_inference_architecture.py',
     'tests/test_external_validation.py',
     'tests/test_external_error_analysis.py',
     'tests/test_manuscript_package.py',
@@ -577,6 +583,26 @@ if (
 }
 $phase4DCheck = 'Phase 4D provisional RQ1 answer and feedback boundaries valid'
 
+$phase5AFiles = @(
+    'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
+    'docs/CURRENT_STATUS.md',
+    'docs/roadmap.md',
+    'research-log/2026-09-05-phase-5a-inference-architecture.md'
+)
+$phase5AText = (Get-Content -Raw $phase5AFiles) -join "`n"
+if (
+    $phase5AText -notmatch 'INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE' -or
+    $phase5AText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
+    $phase5AText -notmatch 'AI_OUTPUT' -or
+    $phase5AText -notmatch 'CONFIRMED_ARCHAEOLOGICAL_SITE' -or
+    $phase5AText -notmatch 'No CLI or API is added in Phase 5A' -or
+    $phase5AText -notmatch 'does not train, tune, score' -or
+    $phase5AText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'
+) {
+    throw 'Phase 5A classification, evidence, execution, or coordinate-safety boundary failed.'
+}
+$phase5ACheck = 'Phase 5A architecture and non-execution boundaries valid'
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -617,7 +643,7 @@ $manuscriptEvidence = Get-Content -Raw 'outputs/manuscript/e001_manuscript_evide
 if ($manuscriptEvidence -match '(?i)"(?:easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center|sample_id|pair_id|heritage_id)"\s*:') {
     throw 'The tracked Phase 4B manuscript evidence contains a coordinate or private identifier.'
 }
-$trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' '*.pt' '*.pth' '*.ckpt' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
+$trackedSensitive = @(& git ls-files -- '*.tif' '*.tiff' '*.las' '*.laz' '*.gpkg' '*.shp' '*.npy' '*.npz' '*.pkl' '*.pickle' '*.joblib' '*.onnx' '*.pt' '*.pth' '*.ckpt' 'data/private/**' 'data/raw/**' 'data/interim/**' 'data/processed/**')
 if ($LASTEXITCODE -ne 0 -or $trackedSensitive.Count -ne 0) {
     throw "Sensitive or bulk terrain is tracked: $($trackedSensitive -join ', ')"
 }
@@ -676,4 +702,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $publicDemoCheck."

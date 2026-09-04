@@ -137,6 +137,15 @@ media, and exact inference domains.
 Successful public checks do not prove that private files are publishable. Release review must
 inspect the tracked Git tree, not merely the working directory.
 
+## Phase 5A inference contracts
+
+Phase 5A adds data-free input metadata, evidence-level, public-result, and model-artifact checksum
+contracts. These can be verified in a public clone and do not deserialize a model or score terrain.
+The repository is classified `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE` because the approved
+full-fit Random Forest is private and absent from Git. Its absence is a hard stop: the future
+interface must not retrain, substitute, or fabricate an artifact. See the
+[Phase 5 architecture](architecture/PHASE_5_INFERENCE_ARCHITECTURE.md).
+
 ## Known reproducibility limitations
 
 - no independent researcher has completed a clean full-data rerun;

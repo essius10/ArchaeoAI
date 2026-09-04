@@ -61,7 +61,8 @@ the score reflects genuine geographic generalization rather than spatial or surv
 [Read the E001 manuscript draft](docs/manuscript/archaeoai-e001-manuscript.md) ·
 [Reproduce the coordinate-safe evidence](docs/reproducibility.md) ·
 [Use the external reviewer guide](docs/review/REVIEWER_GUIDE.md) ·
-[Review the bounded RQ1 audit](docs/review/PHASE_4D_RQ1_AUDIT.md)
+[Review the bounded RQ1 audit](docs/review/PHASE_4D_RQ1_AUDIT.md) ·
+[Inspect the Phase 5 inference architecture](docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md)
 
 | E001 data gate | Verified status |
 |---|---:|
@@ -85,6 +86,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | First controlled private inference | **5,929/5,929 valid; 1,159 deduplicated; review pending** |
 | Independent external evaluation | **0.842 [0.775, 0.900]; n=120; frozen test spent** |
 | External error analysis | **Post-hoc/exploratory complete; RF retained** |
+| Phase 5 inference readiness | **Code ready; approved model artifact private/unavailable in public clones** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
@@ -163,6 +165,7 @@ called `unlabelled_background`, never a true archaeological negative.
 | External error analysis | ✅ Complete | [Post-hoc/exploratory only](docs/e001-phase-4a-external-error-analysis.md) |
 | Manuscript and reproducibility package | ✅ Ready for review | [Draft manuscript](docs/manuscript/archaeoai-e001-manuscript.md); no release executed |
 | Technical consolidation | ✅ Complete | [E001 technical results](docs/e001-technical-results.md) |
+| Inference-system architecture | ✅ Phase 5A complete | Contracts and safety boundaries only; no model executed |
 | Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today
@@ -194,6 +197,8 @@ called `unlabelled_background`, never a true archaeological negative.
   aggregate diagnostics, and a no-retuning record.
 - A hash-bound full-data Random Forest and reusable controlled-inference engine with deterministic
   patching, ranking, deduplication, blinded review queues, and aggregate-only outputs.
+- A Phase 5A fail-closed input contract, evidence ladder, safe result envelope, private-model
+  availability guard, and reviewed architecture for possible later inference work.
 - One bounded private 5 km inference run with 5,929 valid windows, a hash-frozen private score
   table, and a 62-item blinded morphology-review packet.
 - Tracked aggregate evidence and a claims register that limits public wording.
@@ -210,6 +215,8 @@ called `unlabelled_background`, never a true archaeological negative.
   candidate table.
 - A peer-reviewed paper, DOI, archived release, or institutional affiliation. The Phase 4B
   manuscript is a review draft only.
+- A public model artifact, supported inference CLI/API, terrain upload service, or authorization to
+  run the Phase 5 contracts on real user terrain.
 
 ## Reproducibility
 
@@ -302,6 +309,7 @@ coordinates in tracked outputs. The Phase 2A.5 input and recreation policy is do
 configs/                 Example experiment configuration
 data/manifests/          Tracked provenance metadata, never bulk spatial data
 docs/                    Research decisions, audits, methods, and claim limits
+docs/architecture/       Future-system designs and explicit engineering boundaries
 experiments/             Pre-specified E001 scientific protocol
 outputs/feasibility/     Reviewed, coordinate-safe label-gate evidence
 outputs/terrain/         Coordinate-safe pilot and workload evidence
@@ -365,6 +373,7 @@ Neither source provider endorses ArchaeoAI. No supplied map is reproduced here.
 
 - [E001 manuscript draft](docs/manuscript/archaeoai-e001-manuscript.md)
 - [Reproducibility guide](docs/reproducibility.md)
+- [Phase 5 inference-system architecture](docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md)
 - [Citation audit](docs/citation-audit.md)
 - [Future release checklist](docs/release-checklist.md)
 - [Research charter](docs/research-charter.md)
