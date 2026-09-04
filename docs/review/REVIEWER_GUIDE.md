@@ -23,6 +23,22 @@ unlabelled background—not archaeological-discovery accuracy or England-wide pe
 - **Not claimed:** discovery, field validation, calibrated archaeological probability,
   archaeology-free backgrounds, universal transfer, institutional endorsement, or peer review.
 
+Please keep five evidence states distinct when commenting on candidate-related material:
+
+1. **AI/model output** is a score, prediction, ranking, or AI-assisted draft—not archaeological
+   evidence by itself.
+2. **A hypothesis or candidate interpretation** is a testable proposition, not a finding.
+3. **A human-vetted observation** records review under a stated procedure but does not imply
+   archaeological expertise or confirmation.
+4. **An archaeologist-validated interpretation** records a suitably qualified expert assessment;
+   it is still not necessarily confirmed archaeology.
+5. **Confirmed archaeological evidence** requires appropriate corroboration and cannot be inferred
+   from model rank alone.
+
+No new model-ranked candidate in ArchaeoAI currently reaches levels 3–5. The Phase 2F blinded
+morphology review has not occurred. See the [Phase 4D RQ1 audit](PHASE_4D_RQ1_AUDIT.md) and
+[feedback register](FEEDBACK_REGISTER.md) for the controlling terminology and review trail.
+
 Please begin with the [manuscript](../manuscript/archaeoai-e001-manuscript.md), then consult the
 [reproducibility guide](../reproducibility.md), [citation audit](../citation-audit.md), and
 [claims register](../claims-register.md). Precise locations and location-linked terrain are
