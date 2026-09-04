@@ -60,7 +60,8 @@ the score reflects genuine geographic generalization rather than spatial or surv
 
 [Read the E001 manuscript draft](docs/manuscript/archaeoai-e001-manuscript.md) ·
 [Reproduce the coordinate-safe evidence](docs/reproducibility.md) ·
-[Use the external reviewer guide](docs/review/REVIEWER_GUIDE.md)
+[Use the external reviewer guide](docs/review/REVIEWER_GUIDE.md) ·
+[Review the bounded RQ1 audit](docs/review/PHASE_4D_RQ1_AUDIT.md)
 
 | E001 data gate | Verified status |
 |---|---:|
@@ -69,6 +70,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Occupied coarse geographic groups | **23** |
 | Frozen nonadjacent final-test groups | **2** |
 | Review readiness | **READY_FOR_EXTERNAL_REVIEW; not publication-ready** |
+| RQ001 status | **PROVISIONALLY ANSWERED PENDING REVIEW** |
 | Real terrain pilot | **5/5 patches passed QA** |
 | Full positive terrain dataset | **261/261 acquired and QA-passed** |
 | Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
