@@ -25,14 +25,14 @@ unlabelled background—not archaeological-discovery accuracy or England-wide pe
 
 Please keep five evidence states distinct when commenting on candidate-related material:
 
-1. **AI/model output** is a score, prediction, ranking, or AI-assisted draft—not archaeological
+- **AI/model output** is a score, prediction, ranking, or AI-assisted draft—not archaeological
    evidence by itself.
-2. **A hypothesis or candidate interpretation** is a testable proposition, not a finding.
-3. **A human-vetted observation** records review under a stated procedure but does not imply
+- **A hypothesis or candidate interpretation** is a testable proposition, not a finding.
+- **A human-vetted observation** records review under a stated procedure but does not imply
    archaeological expertise or confirmation.
-4. **An archaeologist-validated interpretation** records a suitably qualified expert assessment;
+- **An archaeologist-validated interpretation** records a suitably qualified expert assessment;
    it is still not necessarily confirmed archaeology.
-5. **Confirmed archaeological evidence** requires appropriate corroboration and cannot be inferred
+- **Confirmed archaeological evidence** requires appropriate corroboration and cannot be inferred
    from model rank alone.
 
 No new model-ranked candidate in ArchaeoAI currently reaches levels 3–5. The Phase 2F blinded
