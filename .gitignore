@@ -35,6 +35,9 @@ data/processed/
 *.npz
 *.h5
 *.hdf5
+*.pkl
+*.pickle
+*.joblib
 *.pt
 *.pth
 *.ckpt
