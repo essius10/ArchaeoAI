@@ -25,6 +25,16 @@ and claim fit have been checked, and public evidence has been clean-clone tested
 literature review, independent scientific/privacy review, full private-data reproduction, and
 repository licensing remain unresolved before any release decision.
 
+Phase 4D has audited RQ001 against the frozen evidence and classifies it
+`RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`. Within E001, representation choice affected the small
+geographic-development comparison, while the selected Random Forest's random final balanced
+accuracy (82.3%) did not overstate its geographic final balanced accuracy (87.1%). The unchanged
+model's 84.2% independent external result supports only the bounded transfer claim stated above.
+The classification remains provisional pending systematic literature work, independent
+scientific/privacy and label-reliability review, and authorized private-data reproduction. See the
+[Phase 4D RQ1 audit](review/PHASE_4D_RQ1_AUDIT.md) and
+[feedback register](review/FEEDBACK_REGISTER.md).
+
 ## Claim boundary
 
 These results concern terrain classification within the frozen E001 and external-validation

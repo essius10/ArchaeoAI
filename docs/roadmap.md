@@ -46,6 +46,13 @@ public package, audited claims/privacy/licensing, and prepared a reviewer packet
 `READY_FOR_EXTERNAL_REVIEW`, not publication-ready. Independent subject review, systematic
 literature search, private-data reproduction, and licensing resolution remain gates.
 
+Phase 4D has now connected every part of RQ001 to the frozen evidence and records
+`RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`. No scientific result changed. The next work is external
+human work rather than another model phase: systematic-search execution and specialist gap review,
+independent scientific/privacy review, the private 40-record reliability review, and an authorized
+owner-independent private-data reproduction. Licensing and any release path remain owner decisions
+requiring separate review and approval.
+
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
 | Month | Learning and research focus | Engineering/experiment deliverable | Evidence / gate |

@@ -39,3 +39,25 @@ feature-detection work; none of its reported performance is compared directly wi
 No professor involvement, institutional affiliation, endorsement, publication, or peer-review
 status is claimed for ArchaeoAI. Citation metadata is ready for external review, while literature
 completeness remains a transparent publication blocker.
+
+## Phase 4D systematic-search plan
+
+Status: `PROTOCOL_DRAFTED_NOT_EXECUTED`
+
+Phase 4D advances—but does not complete—the literature blocker by defining the minimum audit trail
+for a future systematic search. Before execution, the owner and an archaeology/remote-sensing
+reviewer should approve the scope.
+
+| Element | Required record |
+|---|---|
+| Sources | At minimum Scopus or Web of Science, a broad scholarly index, and relevant archaeology/remote-sensing bibliographies; record access constraints |
+| Search | Exact query strings covering archaeological LiDAR/DTM, earthworks or barrows, terrain representations, machine learning, and spatial/geographic validation |
+| Timing | Database, search date, coverage date where exposed, and exporter/version |
+| Eligibility | Language, publication type, archaeological target, terrain-data type, modelling relevance, and geographic-validation criteria fixed before screening |
+| Screening | Raw hit count, deduplication rule, title/abstract decision, full-text decision, exclusion reason, and reviewer identity |
+| Extraction | Dataset, geography, label source, terrain product/resolution, representation, model, split strategy, metric, uncertainty, and stated limitation |
+| Gap check | Backward/forward citation search plus an independent specialist request for omitted work |
+| Output | Coordinate-safe search log and updated novelty matrix; no claim of systematic completeness until every field is populated |
+
+No database search or screening was performed during Phase 4D. The existing verified references
+remain a targeted foundation, not a systematic review.

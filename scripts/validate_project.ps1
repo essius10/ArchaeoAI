@@ -79,6 +79,9 @@ $required = @(
     'research-log/2026-08-30-phase-3c-external-evaluation.md',
     'research-log/2026-08-30-phase-4a-external-error-analysis.md',
     'research-log/2026-08-30-phase-4b-manuscript-package.md',
+    'research-log/2026-09-05-phase-4d-rq1-audit.md',
+    'docs/review/PHASE_4D_RQ1_AUDIT.md',
+    'docs/review/FEEDBACK_REGISTER.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
     'scripts/audit_nhle_bowl_barrows.py',
@@ -552,6 +555,28 @@ if (
 }
 $phase4CCheck = 'Phase 4C reviewer packet and readiness boundaries valid'
 
+$phase4DFiles = @(
+    'docs/review/PHASE_4D_RQ1_AUDIT.md',
+    'docs/review/FEEDBACK_REGISTER.md',
+    'research-log/2026-09-05-phase-4d-rq1-audit.md'
+)
+foreach ($phase4DFile in $phase4DFiles) {
+    if (-not (Test-Path -LiteralPath $phase4DFile -PathType Leaf)) {
+        throw "Required Phase 4D review artifact missing: $phase4DFile"
+    }
+}
+$phase4DText = (Get-Content -Raw $phase4DFiles) -join "`n"
+if (
+    $phase4DText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
+    $phase4DText -notmatch '84\.2%, 95% matched-pair bootstrap CI 77\.5–90\.0%, n=120' -or
+    $phase4DText -notmatch 'external test is spent' -or
+    $phase4DText -notmatch 'no new evidence or discovery is claimed' -or
+    $phase4DText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'
+) {
+    throw 'Phase 4D RQ1 status, headline, spent-test, claim, or coordinate-safety boundary failed.'
+}
+$phase4DCheck = 'Phase 4D provisional RQ1 answer and feedback boundaries valid'
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -651,4 +676,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $publicDemoCheck."
