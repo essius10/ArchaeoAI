@@ -594,7 +594,7 @@ if (
     $phase5AText -notmatch 'INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE' -or
     $phase5AText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
     $phase5AText -notmatch 'AI_OUTPUT' -or
-    $phase5AText -notmatch 'CONFIRMED_ARCHAEOLOGICAL_SITE' -or
+    $phase5AText -notmatch 'CONFIRMED_ARCHAEOLOGICAL_EVIDENCE' -or
     $phase5AText -notmatch 'No CLI or API is added in Phase 5A' -or
     $phase5AText -notmatch 'does not train, tune, score' -or
     $phase5AText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'

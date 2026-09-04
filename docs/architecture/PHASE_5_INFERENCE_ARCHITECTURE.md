@@ -147,9 +147,9 @@ The machine-readable evidence levels are:
 
 1. `AI_OUTPUT`
 2. `AI_HYPOTHESIS`
-3. `HUMAN_REVIEWED_TERRAIN_FEATURE`
-4. `ARCHAEOLOGIST_REVIEWED_FEATURE`
-5. `CONFIRMED_ARCHAEOLOGICAL_SITE`
+3. `HUMAN_VETTED_OBSERVATION`
+4. `ARCHAEOLOGIST_VALIDATED_INTERPRETATION`
+5. `CONFIRMED_ARCHAEOLOGICAL_EVIDENCE`
 
 An automatic inference path may emit only levels 1–2. It cannot infer, copy, promote, or imply a
 human, archaeologist, or confirmation status. Higher levels require separately authenticated,

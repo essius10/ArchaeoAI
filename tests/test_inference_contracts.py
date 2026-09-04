@@ -47,18 +47,18 @@ def test_evidence_ladder_is_explicit_and_complete() -> None:
     assert [level.value for level in EvidenceLevel] == [
         "AI_OUTPUT",
         "AI_HYPOTHESIS",
-        "HUMAN_REVIEWED_TERRAIN_FEATURE",
-        "ARCHAEOLOGIST_REVIEWED_FEATURE",
-        "CONFIRMED_ARCHAEOLOGICAL_SITE",
+        "HUMAN_VETTED_OBSERVATION",
+        "ARCHAEOLOGIST_VALIDATED_INTERPRETATION",
+        "CONFIRMED_ARCHAEOLOGICAL_EVIDENCE",
     ]
 
 
 @pytest.mark.parametrize(
     "level",
     [
-        EvidenceLevel.HUMAN_REVIEWED_TERRAIN_FEATURE,
-        EvidenceLevel.ARCHAEOLOGIST_REVIEWED_FEATURE,
-        EvidenceLevel.CONFIRMED_ARCHAEOLOGICAL_SITE,
+        EvidenceLevel.HUMAN_VETTED_OBSERVATION,
+        EvidenceLevel.ARCHAEOLOGIST_VALIDATED_INTERPRETATION,
+        EvidenceLevel.CONFIRMED_ARCHAEOLOGICAL_EVIDENCE,
     ],
 )
 def test_automatic_inference_cannot_emit_reviewed_or_confirmed_evidence(
