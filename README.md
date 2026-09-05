@@ -88,6 +88,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | External error analysis | **Post-hoc/exploratory complete; RF retained** |
 | Phase 5 inference readiness | **Code ready; approved model artifact private/unavailable in public clones** |
 | Offline single-patch CLI | **Phase 5C complete; synthetic validation only; inference disabled** |
+| Bounded batch feature orchestration | **Phase 5D complete; synthetic validation only; no model execution** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
@@ -169,6 +170,7 @@ called `unlabelled_background`, never a true archaeological negative.
 | Inference-system architecture | ✅ Phase 5A complete | Contracts and safety boundaries only; no model executed |
 | Single-patch inference core | ✅ Phase 5B complete | Bit-exact synthetic feature equivalence; no private model executed |
 | Offline single-patch CLI | ✅ Phase 5C complete | Inspect/features available; model execution not authorized |
+| Bounded batch feature orchestration | ✅ Phase 5D complete | 64-item hard cap; no retention or model execution |
 | Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today
@@ -206,6 +208,8 @@ called `unlabelled_background`, never a true archaeological negative.
   bit-exact equivalence on coordinate-free synthetic terrain using an inert test double only.
 - A Phase 5C offline CLI that validates one canonical GeoTIFF and reports the safe 4,096-feature
   contract without exposing feature values, paths, coordinates, arbitrary tags, or model scores.
+- A Phase 5D `batch-features` command with strict JSON admission, deterministic item ordering,
+  resource and duplicate limits, per-item validation, aggregate reporting, and no input retention.
 - One bounded private 5 km inference run with 5,929 valid windows, a hash-frozen private score
   table, and a 62-item blinded morphology-review packet.
 - Tracked aggregate evidence and a claims register that limits public wording.
@@ -245,6 +249,28 @@ strict coordinate-free QA summary. `features` computes the exact Phase 5B path b
 shape, dtype, and channel order—never the 4,096 values. `infer` is a fail-closed boundary: without
 the approved private artifact it exits with code 3, and Phase 5C never authorizes model execution
 even if artifact integrity can be verified. No score is fabricated.
+
+## Bounded batch feature preparation
+
+Phase 5D extends the offline engineering boundary to a small local collection without enabling
+model inference. A strict JSON manifest may contain at most 64 items. Each opaque ID must match
+`item-0001` style, and each terrain reference must be a relative POSIX path beneath the manifest's
+directory. Absolute paths, traversal, symbolic links, duplicate IDs, duplicate references, and
+byte-identical files are rejected before terrain processing.
+
+```powershell
+python -m archaeoai batch-features synthetic_batch.json
+python -m archaeoai batch-features synthetic_batch.json --json
+```
+
+The manifest schema is demonstrated in
+[`configs/phase5d-batch.example.json`](configs/phase5d-batch.example.json). Each file remains subject
+to the Phase 5C canonical GeoTIFF contract. Processing is sequential in ascending opaque item-ID
+order. Controlled invalid rasters are explicitly counted while other admitted items continue; an
+admission or unexpected operational failure stops the batch. The CLI copies no input, creates no
+temporary file or cache, discards each feature vector after use, and reports no path, coordinate,
+raster metadata, raw feature, model score, or timing value. The approved model remains unavailable
+and unexecuted.
 
 ## Reproducibility
 

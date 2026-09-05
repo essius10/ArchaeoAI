@@ -23,6 +23,7 @@ $required = @(
     'configs/e001-phase-3b-r1-selection-rule.json',
     'configs/e001-phase-3b-r1-multicell-fallback-rule.json',
     'configs/e001-phase-3b-r1-expansion-amendment.json',
+    'configs/phase5d-batch.example.json',
     'outputs/deep_learning/e001_cnn_protocol.json',
     'data/README.md',
     'data/manifests/example-dataset.toml',
@@ -82,6 +83,7 @@ $required = @(
     'research-log/2026-09-05-phase-4d-rq1-audit.md',
     'research-log/2026-09-05-phase-5a-inference-architecture.md',
     'research-log/2026-09-05-phase-5c-offline-cli.md',
+    'research-log/2026-09-05-phase-5d-bounded-batch.md',
     'docs/review/PHASE_4D_RQ1_AUDIT.md',
     'docs/review/FEEDBACK_REGISTER.md',
     'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
@@ -143,6 +145,8 @@ $required = @(
     'src/archaeoai/inference.py',
     'src/archaeoai/inference_system/__init__.py',
     'src/archaeoai/inference_system/contracts.py',
+    'src/archaeoai/inference_system/geotiff.py',
+    'src/archaeoai/inference_system/batch.py',
     'src/archaeoai/external_validation.py',
     'src/archaeoai/external_evaluation.py',
     'src/archaeoai/external_error_analysis.py',
@@ -177,6 +181,7 @@ $required = @(
     'tests/test_inference_contracts.py',
     'tests/test_phase5a_inference_architecture.py',
     'tests/test_phase5c_offline_cli.py',
+    'tests/test_phase5d_bounded_batch.py',
     'tests/test_external_validation.py',
     'tests/test_external_error_analysis.py',
     'tests/test_manuscript_package.py',
@@ -645,6 +650,44 @@ if (
 }
 $phase5CCheck = 'Phase 5C offline synthetic CLI and fail-closed model boundaries valid'
 
+$phase5DFiles = @(
+    'README.md',
+    'SECURITY.md',
+    'configs/phase5d-batch.example.json',
+    'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
+    'docs/CURRENT_STATUS.md',
+    'docs/reproducibility.md',
+    'docs/roadmap.md',
+    'research-log/2026-09-05-phase-5d-bounded-batch.md',
+    'src/archaeoai/cli.py',
+    'src/archaeoai/inference_system/batch.py'
+)
+$phase5DText = (Get-Content -Raw $phase5DFiles) -join "`n"
+if (
+    $phase5DText -notmatch 'Phase 5D' -or
+    $phase5DText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
+    $phase5DText -notmatch 'NO_INPUT_RETENTION' -or
+    $phase5DText -notmatch 'batch-features' -or
+    $phase5DText -notmatch 'MAX_BATCH_ITEMS = 64' -or
+    $phase5DText -notmatch 'MAX_SINGLE_FILE_BYTES = 2 \* 1024 \* 1024' -or
+    $phase5DText -notmatch 'MAX_CUMULATIVE_INPUT_BYTES = 16 \* 1024 \* 1024' -or
+    $phase5DText -notmatch 'no archaeological discovery claim' -or
+    $phase5DText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'
+) {
+    throw 'Phase 5D status, resource, retention, scientific, or coordinate-safety boundary failed.'
+}
+$phase5DSource = Get-Content -Raw 'src/archaeoai/inference_system/batch.py'
+if (
+    $phase5DSource -match '(?i)predict_proba|pickle\.loads|\.fit\(|urlopen|requests\.|TemporaryDirectory|NamedTemporaryFile|ThreadPool|ProcessPool|concurrent\.futures' -or
+    $phase5DSource -notmatch 'BATCH_PUBLIC_FIELDS' -or
+    $phase5DSource -notmatch 'BATCH_ITEM_PUBLIC_FIELDS' -or
+    $phase5DSource -notmatch 'sorted\(admitted, key=lambda item: item\.item_id\)' -or
+    $phase5DSource -notmatch 'load_canonical_geotiff'
+) {
+    throw 'Phase 5D deterministic, no-model, no-retention, or allowlist boundary failed.'
+}
+$phase5DCheck = 'Phase 5D bounded synthetic batch, deterministic ordering, and no-retention boundaries valid'
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -744,4 +787,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $phase5DCheck; $publicDemoCheck."

@@ -6,7 +6,9 @@ Phase 5A translated the completed E001 research pipeline into a conservative arc
 possible future terrain-inference interface. Phase 5B adds the smallest reusable single-patch
 feature and model-adapter boundary, tested only with coordinate-free synthetic terrain and an inert
 test double. Phase 5C adds an offline GeoTIFF inspection and feature-contract CLI, tested only with
-temporary mathematical terrain. None of these phases loads or executes the approved private model, scores real terrain,
+temporary mathematical terrain. Phase 5D adds bounded sequential orchestration of those same
+feature operations over a strict local manifest. None of these phases loads or executes the
+approved private model, scores real terrain,
 trains or tunes anything, reuses the spent external test, publishes a service, changes a scientific
 result, or claims an archaeological discovery.
 
@@ -48,9 +50,10 @@ hashes, tests, and one bounded execution provide direct evidence of the pipeline
 Reusable package components are in `archaeoai.terrain`, `archaeoai.model_data`,
 `archaeoai.inference`, and `archaeoai.inference_system`. The Phase 2F freeze/smoke/run scripts,
 controlled-domain binding, output generation, and research receipts are experiment-specific. Phase
-5C installs the `archaeoai` offline console command for one local patch. There is no model-backed
-public inference, web API, upload handler, authentication layer, retention policy implementation,
-or public model distribution mechanism.
+5C installs the `archaeoai` offline console command for one local patch, and Phase 5D adds bounded
+feature preparation over a strict local manifest. There is no model-backed public inference, web
+API, upload handler, authentication layer, retained-input store, or public model distribution
+mechanism.
 
 Inference can run without retraining only in an authorized environment that already has the exact
 private artifact. `load_private_model` checks its artifact and learned-state hashes before scoring.
@@ -105,6 +108,13 @@ Phase 5C adds only file-to-contract plumbing. Rasterio reads one explicitly supp
 the existing Phase 5B adapter creates the feature vector, and a strict reporting allowlist discards
 paths, transforms, bounds, coordinates, tags, feature values, and arbitrary metadata. The CLI never
 deserializes or invokes a model.
+
+Phase 5D reuses that exact reader and transform rather than the Phase 2F experiment runner. Phase
+2F's domain acquisition, window generation, ranking, spatial deduplication, candidate receipts,
+review queues, and private model loader remain research-specific and outside the reusable batch
+path. The new orchestration layer adds only strict manifest admission, stable ordering, resource and
+duplicate controls, per-item feature preparation, bounded operational statuses, aggregate output,
+and no-retention behavior.
 
 ## 6. Input contract
 
@@ -269,6 +279,41 @@ does not crop, select bands, resize, resample, reproject, fill, or repair inputs
 outputs use fixed labels rather than filenames and never expose paths, coordinates, bounds,
 transforms, arbitrary tags, feature values, model locations, or scores.
 
+Phase 5D adds `archaeoai batch-features MANIFEST.json [--json]` for deterministic feature
+preparation only. The manifest is strict JSON with exactly `schema_version` and `items`. Each item
+has exactly an opaque `item_id` matching `item-[0-9]{4}` and one relative POSIX `terrain` reference.
+References must resolve beneath the manifest directory. Absolute paths, traversal, backslashes,
+drive/URL syntax, symbolic links, directories, unsupported extensions, duplicate JSON keys,
+unknown fields, duplicate IDs, duplicate resolved references, and byte-identical files fail
+admission. Filesystem enumeration never determines processing order; admitted items are sorted by
+opaque ID.
+
+Hard v1 limits are 64 items, 64 KiB per manifest, 2 MiB per GeoTIFF, and 16 MiB cumulative input.
+A 128 × 128 `float32` raster contains 65,536 raw value bytes; these limits leave substantial room
+for legitimate GeoTIFF structure and metadata while bounding malicious or accidental expansion.
+At 64 items, raw arrays total 4 MiB and feature vectors total 1 MiB, but the implementation retains
+only one patch/vector at a time plus at most 64 small status records. A wall-clock cutoff is omitted
+because local filesystem and raster timing is platform-dependent; deterministic count/byte bounds
+and sequential execution are the enforceable Phase 5D controls.
+
+Manifest admission is atomic. A schema, path, duplicate, or resource failure rejects the whole job
+before terrain transformation. After admission, each file's size and SHA-256 are rechecked to detect
+changes. Canonical input failures are recorded under the opaque item ID and other admitted items
+continue; they are never silently skipped. An unexpected internal failure stops the batch and emits
+only the fixed operational error. The command reports an exit code of 0 only when every item is
+valid and 2 when the manifest is rejected or any admitted raster is invalid.
+
+Human output is aggregate only. JSON adds a bounded `item_results` list containing only opaque ID,
+controlled status, feature-preparation state, model-execution state, and controlled error code.
+Neither mode contains paths, coordinates, bounds, transforms, arbitrary tags, feature values,
+scores, timings, model internals, or private model locations. Every item records model execution as
+`NOT_PERFORMED`; there is no batch model option or CLI-accessible test double.
+
+The retention policy is `NO_INPUT_RETENTION`. Inputs are read in place, feature vectors are
+discarded after validation returns, and no input copy, temporary directory,
+cache, debug dump, archive, output file, or telemetry record is created. The same remains true after
+controlled invalid input and unexpected exceptions, so cleanup is deterministic by construction.
+
 Exit behavior is deterministic:
 
 | Code | Meaning |
@@ -315,8 +360,8 @@ Before Phase 5 may score real user terrain, tests must cover:
 |---|---|---|
 | 5A | Architecture, inventory, contracts, and boundary tests | **Complete; no inference executed** |
 | 5B | Single-patch preprocessing/model adapter on synthetic data only | **Complete; exact equivalence and fail-closed tests pass** |
-| 5C | Offline local single-patch CLI | **Complete and ready for review; synthetic validation only; model execution disabled** |
-| 5D | Bounded private batch orchestration, still non-public | Resource, cleanup, retention, abuse, and aggregate-reporting tests pass |
+| 5C | Offline local single-patch CLI | **Complete and merged; synthetic validation only; model execution disabled** |
+| 5D | Bounded private batch feature orchestration, still non-public | **Complete and ready for review; synthetic validation only; no retention or model execution** |
 | 5E | Independent security, privacy, archaeological-workflow, and licensing review | Named findings resolved or documented; owner explicitly approves next step |
 | 5F | Optional public interface or deployment decision | Separate deployment authorization; may legitimately end in `NO-GO` |
 
@@ -331,12 +376,12 @@ known negatives. The result concerns learned terrain similarity for a narrowly c
 study; it is not England-wide archaeological detection, calibrated site probability, field advice,
 or evidence of discovery.
 
-Phase 5A, Phase 5B, and Phase 5C do not train, tune, score real terrain, benchmark a real model, acquire
+Phase 5A, Phase 5B, Phase 5C, and Phase 5D do not train, tune, score real terrain, benchmark a real model, acquire
 terrain, rerun research, review candidates, cross-check heritage records, expose private material,
 build a website feature, publish a release, or deploy an API. Phase 5B's inert test-double score has
-zero scientific meaning; Phase 5C exposes no score. Independent scientific/privacy review, label-reliability review,
+zero scientific meaning; Phase 5C and Phase 5D expose no score. Independent scientific/privacy review, label-reliability review,
 systematic literature work, authorized private-data reproduction, licensing decisions, artifact
 distribution, and operational security review remain external blockers.
 
-Phase 5A does not train, tune, score, or execute a model; Phase 5B and Phase 5C do not change that
-scientific boundary.
+Phase 5A does not train, tune, score, or execute a model; Phase 5B, Phase 5C, and Phase 5D do not
+change that scientific boundary.

@@ -206,6 +206,41 @@ Expected failures use controlled messages without tracebacks or private values. 
 load, deserialize, or execute the approved private Random Forest and did not create scientific
 evidence or an archaeological discovery claim.
 
+## Phase 5D bounded batch feature preparation
+
+Phase 5D adds deterministic sequential orchestration without a model path:
+
+```powershell
+python -m archaeoai batch-features synthetic_batch.json
+python -m archaeoai batch-features synthetic_batch.json --json
+```
+
+The JSON manifest must contain exactly `schema_version` and `items`; each item must contain exactly
+an opaque `item_id` in `item-0001` form and a relative POSIX `terrain` path beneath the manifest
+directory. See `configs/phase5d-batch.example.json`. Duplicate JSON keys, unknown or nested fields,
+absolute/escaping paths, symbolic links, duplicate IDs, duplicate resolved paths, and byte-identical
+files are rejected before preprocessing. Items are sorted by ID rather than manifest or filesystem
+order.
+
+Admission limits are 64 items, a 64 KiB manifest, 2 MiB per GeoTIFF, and 16 MiB cumulative input.
+Every admitted file is size/hash checked again immediately before the existing Phase 5C loader and
+Phase 5B feature path run. A canonical-input failure receives a controlled opaque item result while
+the other admitted items continue. Admission and unexpected operational failures stop the job; no
+failure is silently skipped or repaired.
+
+The default human result is aggregate only. JSON contains the same aggregate plus a bounded list of
+opaque IDs and controlled operational states. Neither includes paths, coordinates, bounds,
+transforms, arbitrary raster tags, raw features, scores, timings, or model information. The command
+has no model, worker, output, retention, cache, or test-double option. Model execution is always
+`NOT_PERFORMED`.
+
+The retention policy is `NO_INPUT_RETENTION`: inputs are read in place, only one feature vector is
+held at a time, and no copy, temporary directory, cache, output file, archive, telemetry event, or
+debug dump is created. Synthetic tests verify unchanged temporary test directories after success,
+manifest failure, invalid input, and an injected unexpected exception. Five mathematical surfaces
+match direct Phase 5B features bit for bit with `numpy.array_equal`. This is orchestration evidence,
+not model or archaeological evidence.
+
 ## Known reproducibility limitations
 
 - no independent researcher has completed a clean full-data rerun;

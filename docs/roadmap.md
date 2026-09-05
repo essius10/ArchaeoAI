@@ -60,7 +60,10 @@ website feature, release, or new scientific result was created. Phase 5B has now
 single-patch feature equivalence on six synthetic surfaces and tested a minimal inert model adapter.
 Phase 5C adds an offline CLI for strict GeoTIFF inspection and feature-contract reporting, validated
 only with temporary synthetic rasters. Its `infer` boundary fails closed and never loads,
-deserializes, or executes the private RF. Every Phase 4D boundary remains unchanged.
+deserializes, or executes the private RF. Phase 5D adds strict 64-item batch feature orchestration:
+relative manifest-contained paths, duplicate and byte limits, sequential ordering, bounded item
+statuses, aggregate reporting, and no input retention. It was also validated only with temporary
+synthetic rasters and executes no model. Every Phase 4D boundary remains unchanged.
 
 ## Phase 5 engineering sequence
 
@@ -69,7 +72,7 @@ deserializes, or executes the private RF. Every Phase 4D boundary remains unchan
 | 5A | Inventory, architecture, safe input/result/evidence contracts | **Complete; no inference executed** |
 | 5B | Frozen preprocessing/model adapter with synthetic inputs only | **Complete; bit-exact synthetic equivalence** |
 | 5C | Offline local single-patch CLI | **Complete; synthetic validation only; inference disabled** |
-| 5D | Bounded private batch orchestration | Not started; resource/retention/abuse review required |
+| 5D | Bounded private batch feature orchestration | **Complete; synthetic validation only; no model execution or retention** |
 | 5E | Independent security, privacy, archaeological-workflow, and licensing review | External work required |
 | 5F | Optional public-interface decision | Not authorized; may end in `NO-GO` |
 

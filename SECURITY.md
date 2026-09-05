@@ -37,6 +37,15 @@ rendering. Free-form strings, paths, URLs, nested containers, and custom objects
 serialization. Private request metadata must never be traversed, logged, or copied into a public
 result.
 
+Phase 5D adds only bounded local batch feature preparation. Manifests accept a fixed schema,
+opaque IDs, and relative POSIX terrain references contained beneath the manifest directory.
+Symbolic links, traversal, absolute paths, duplicate IDs/references/content, oversized inputs, and
+extra metadata fail closed. Batch output uses fixed aggregate fields and bounded opaque item
+statuses; it excludes paths, coordinates, raster tags, feature values, timings, and model details.
+The implementation reads admitted inputs in place, creates no temporary copies or hidden cache,
+and performs no model execution. Reports involving a bypass of these controls should be handled as
+private security reports.
+
 The Phase 5A final review found and corrected a pre-deployment defect in the original free-form
 warning/limitation fields. No real private data passed through that contract and no model-backed
 public interface existed. A report showing a way around the corrected allowlist should be treated

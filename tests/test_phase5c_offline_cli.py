@@ -426,7 +426,7 @@ def test_phase5c_packaging_and_documentation_preserve_bounded_status() -> None:
         "README.md": "Phase 5C complete",
         "docs/CURRENT_STATUS.md": "Phase 5C has completed",
         "docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md": (
-            "Complete and ready for review; synthetic validation only; model execution disabled"
+            "Complete and merged; synthetic validation only; model execution disabled"
         ),
         "docs/roadmap.md": "Complete; synthetic validation only; inference disabled",
         "docs/reproducibility.md": "Phase 5C offline single-patch CLI",

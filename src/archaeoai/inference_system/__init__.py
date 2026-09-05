@@ -4,6 +4,23 @@ This package does not load or execute a model. The Phase 2F research engine rema
 separate until a later, explicitly approved implementation phase.
 """
 
+from archaeoai.inference_system.batch import (
+    BATCH_MANIFEST_SCHEMA_VERSION,
+    BATCH_RESULT_SCHEMA_VERSION,
+    MAX_BATCH_ITEMS,
+    MAX_CUMULATIVE_INPUT_BYTES,
+    MAX_MANIFEST_BYTES,
+    MAX_SINGLE_FILE_BYTES,
+    BatchItemResult,
+    BatchManifest,
+    BatchManifestError,
+    BatchManifestErrorCode,
+    BatchManifestItem,
+    BatchProcessingError,
+    BatchRunResult,
+    load_batch_manifest,
+    run_feature_batch,
+)
 from archaeoai.inference_system.contracts import (
     E001_TERRAIN_INPUT,
     AutomaticInferenceResult,
@@ -16,6 +33,12 @@ from archaeoai.inference_system.contracts import (
     TerrainInputMetadata,
     WarningCode,
     verify_model_artifact_checksum,
+)
+from archaeoai.inference_system.geotiff import (
+    CanonicalGeoTIFF,
+    GeoTIFFErrorCode,
+    GeoTIFFValidationError,
+    load_canonical_geotiff,
 )
 from archaeoai.inference_system.single_patch import (
     APPROVED_MODEL_ARTIFACT_SHA256,
@@ -40,7 +63,19 @@ __all__ = [
     "APPROVED_MODEL_RELATIVE_PATH",
     "ApprovedModelArtifactReference",
     "AutomaticInferenceResult",
+    "BATCH_MANIFEST_SCHEMA_VERSION",
+    "BATCH_RESULT_SCHEMA_VERSION",
+    "BatchItemResult",
+    "BatchManifest",
+    "BatchManifestError",
+    "BatchManifestErrorCode",
+    "BatchManifestItem",
+    "BatchProcessingError",
+    "BatchRunResult",
+    "CanonicalGeoTIFF",
     "EvidenceLevel",
+    "GeoTIFFErrorCode",
+    "GeoTIFFValidationError",
     "LimitationCode",
     "ModelArtifactIntegrityError",
     "ModelArtifactUnavailableError",
@@ -48,6 +83,10 @@ __all__ = [
     "ModelIdentifier",
     "ModelAdapterOutputError",
     "ModelAdapterUnavailableError",
+    "MAX_BATCH_ITEMS",
+    "MAX_CUMULATIVE_INPUT_BYTES",
+    "MAX_MANIFEST_BYTES",
+    "MAX_SINGLE_FILE_BYTES",
     "SinglePatchFeatures",
     "SinglePatchModelAdapter",
     "SinglePatchValidationError",
@@ -56,6 +95,9 @@ __all__ = [
     "TerrainPatch",
     "WarningCode",
     "verify_model_artifact_checksum",
+    "load_batch_manifest",
+    "load_canonical_geotiff",
+    "run_feature_batch",
     "run_approved_single_patch_inference",
     "score_single_patch_model_adapter",
     "transform_single_patch",

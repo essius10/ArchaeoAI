@@ -59,6 +59,16 @@ as a fail-closed production boundary, but Phase 5C does not authorize model load
 deserialization, or execution and emits no score. No real terrain, spent-test data, scientific
 result, website feature, API, deployment, or release was created.
 
+Phase 5D has completed bounded, sequential batch feature orchestration using the same Phase 5C
+GeoTIFF reader and Phase 5B feature path. Its strict JSON manifest admits at most 64 relative,
+directory-contained, non-symlink terrain references with opaque `item-0001`-style IDs. Per-file and
+cumulative byte limits, duplicate-ID/reference/content checks, stable item ordering, explicit
+per-item validation outcomes, and input-integrity rechecks are enforced before or during processing.
+The normal report is aggregate with bounded opaque item statuses. Inputs are read in place, no
+temporary files or caches are created, and features are discarded after each item. Validation used
+only generated mathematical GeoTIFFs. No approved model was loaded or executed, no score was
+created, and no scientific or privacy boundary changed.
+
 ## Claim boundary
 
 These results concern terrain classification within the frozen E001 and external-validation
