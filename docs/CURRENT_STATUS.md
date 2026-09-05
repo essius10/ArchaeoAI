@@ -35,6 +35,14 @@ scientific/privacy and label-reliability review, and authorized private-data rep
 [Phase 4D RQ1 audit](review/PHASE_4D_RQ1_AUDIT.md) and
 [feedback register](review/FEEDBACK_REGISTER.md).
 
+Phase 5A has completed a contract-only inference architecture audit. The repository is classified
+`INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`: tested research inference code exists, and the
+approved artifact is available only in authorized private storage, not in the public Git history.
+The new contracts fail closed on invalid terrain metadata or a missing/changed model and prevent an
+automatic result from claiming human review or archaeological confirmation. No model was loaded or
+executed, no terrain was scored, and no CLI, API, website feature, deployment, or release was
+created. See the [Phase 5 architecture](architecture/PHASE_5_INFERENCE_ARCHITECTURE.md).
+
 ## Claim boundary
 
 These results concern terrain classification within the frozen E001 and external-validation

@@ -48,10 +48,27 @@ literature search, private-data reproduction, and licensing resolution remain ga
 
 Phase 4D has now connected every part of RQ001 to the frozen evidence and records
 `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`. No scientific result changed. The next work is external
-human work rather than another model phase: systematic-search execution and specialist gap review,
-independent scientific/privacy review, the private 40-record reliability review, and an authorized
-owner-independent private-data reproduction. Licensing and any release path remain owner decisions
-requiring separate review and approval.
+human work rather than another scientific model phase: systematic-search execution and specialist
+gap review, independent scientific/privacy review, the private 40-record reliability review, and an
+authorized owner-independent private-data reproduction. Licensing and any release path remain
+owner decisions requiring separate review and approval.
+
+Phase 5A has separately completed an engineering-only inference architecture and contract gate.
+The repository is `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`: the approved RF artifact is
+private and absent from public clones. No model was run and no real terrain, API, CLI, deployment,
+website feature, release, or new scientific result was created. Phase 5B, if separately approved,
+is limited to a single-patch adapter using synthetic data and must preserve every Phase 4D boundary.
+
+## Phase 5 engineering sequence
+
+| Phase | Scope | Status / gate |
+|---|---|---|
+| 5A | Inventory, architecture, safe input/result/evidence contracts | **Complete; no inference executed** |
+| 5B | Frozen preprocessing/model adapter with synthetic inputs only | Not started; separate approval required |
+| 5C | Offline local CLI in an authorized private environment | Not started; artifact and privacy gates required |
+| 5D | Bounded private batch orchestration | Not started; resource/retention/abuse review required |
+| 5E | Independent security, privacy, archaeological-workflow, and licensing review | External work required |
+| 5F | Optional public-interface decision | Not authorized; may end in `NO-GO` |
 
 Target commitment: 6–8 hours/week during school terms. Increase only during breaks after evidence justifies it.
 
