@@ -449,8 +449,10 @@ def test_static_portal_contains_required_navigation_and_safe_language(client: Te
     assert "Import authorized terrain" in html
     assert "Live terrain ingestion is not enabled" in html
     assert "HUMAN_VETTED_OBSERVATION" in html
+    assert "result-dialog" in html
     assert "window.print()" in javascript
     assert "escapeHtml" in javascript
+    assert "data-inspect-result" in javascript
     assert "@media print" in stylesheet
     assert "@media (max-width:" in stylesheet
 

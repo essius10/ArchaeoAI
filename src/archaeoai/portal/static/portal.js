@@ -149,7 +149,7 @@ function resultCard(result) {
     <div class="score-row"><strong>${Number(result.score).toFixed(3)}</strong><span>demonstration score</span></div>
     <p><strong>${escapeHtml(humanize(result.evidence_level))}</strong><br>${escapeHtml(humanize(result.review_state))}</p>
     <p class="result-warning">Terrain-similarity hypothesis only. Not archaeology.</p>
-    <button class="secondary-action full" data-review-result="${escapeHtml(result.id)}" ${["REVIEWED","ESCALATED"].includes(result.review_state) ? "disabled" : ""}>${result.review_state === "IN_REVIEW" ? "Continue review" : result.review_state === "UNREVIEWED" ? "Review observation" : "Review recorded"}</button></div>
+    <div class="result-actions"><button class="quiet-action" data-inspect-result="${escapeHtml(result.id)}">Inspect result</button><button class="secondary-action" data-review-result="${escapeHtml(result.id)}" ${["REVIEWED","ESCALATED"].includes(result.review_state) ? "disabled" : ""}>${result.review_state === "IN_REVIEW" ? "Continue review" : result.review_state === "UNREVIEWED" ? "Review observation" : "Review recorded"}</button></div></div>
   </article>`;
 }
 
@@ -199,7 +199,7 @@ function timeline(items, evidence = false) {
 
 function settingsTab() {
   const p = state.project;
-  return `<div class="two-column"><section class="panel"><p class="eyebrow">Retention</p><h2>Local project storage</h2><p>Change the declared retention policy for this demonstration record.</p><div class="inline-form"><select id="retention-policy">${["SESSION_ONLY","SEVEN_DAYS","THIRTY_DAYS"].map((x) => `<option value="${x}" ${p.retention_policy === x ? "selected" : ""}>${humanize(x)}</option>`).join("")}</select><button class="secondary-action" data-save-retention>Save</button></div></section><section class="panel danger-panel"><p class="eyebrow">Project deletion</p><h2>Delete local record</h2><p>Cascade-delete this project and all associated workflow records.</p><button class="danger-action" data-delete-project="${escapeHtml(p.id)}">Delete project</button></section></div>`;
+  return `<div class="two-column"><section class="panel"><p class="eyebrow">Retention</p><h2>Local project storage</h2><p>Change the declared retention policy for this demonstration record.</p><div class="inline-form"><select id="retention-policy">${["SESSION_ONLY","SEVEN_DAYS","THIRTY_DAYS"].map((x) => `<option value="${x}" ${p.retention_policy === x ? "selected" : ""}>${humanize(x)}</option>`).join("")}</select><button class="secondary-action" data-save-retention>Save</button></div><dl class="detail-grid"><div><dt>Demo member</dt><dd>${escapeHtml(p.owner)}</dd></div><div><dt>Role</dt><dd>Demo reviewer</dd></div><div><dt>Processing</dt><dd>${escapeHtml(humanize(p.status))}</dd></div><div><dt>Export</dt><dd>Browser print only</dd></div></dl></section><section class="panel danger-panel"><p class="eyebrow">Project deletion</p><h2>Delete local record</h2><p>Cascade-delete this project and all associated workflow records.</p><button class="danger-action" data-delete-project="${escapeHtml(p.id)}">Delete project</button></section></div>`;
 }
 
 function projectView() {
@@ -285,6 +285,11 @@ document.addEventListener("click", async (event) => {
       if (result.review_state === "UNREVIEWED") await api(`/results/${resultId}/review/start`, { method: "POST" });
       document.querySelector("#review-form [name=result_id]").value = resultId;
       document.querySelector("#review-dialog").showModal();
+    }
+    if (button.dataset.inspectResult) {
+      const result = await api(`/results/${button.dataset.inspectResult}`);
+      document.querySelector("#result-detail").innerHTML = `${terrainThumb(result)}<dl class="detail-grid"><div><dt>Opaque result ID</dt><dd>${escapeHtml(result.id)}</dd></div><div><dt>Demonstration score</dt><dd>${Number(result.score).toFixed(3)}</dd></div><div><dt>Review priority</dt><dd>${escapeHtml(humanize(result.priority))}</dd></div><div><dt>Evidence level</dt><dd>${escapeHtml(humanize(result.evidence_level))}</dd></div><div><dt>Runtime</dt><dd>${escapeHtml(result.runtime)}</dd></div><div><dt>Model execution</dt><dd>${escapeHtml(result.model_execution)}</dd></div></dl><p class="callout">Terrain morphology prioritized for specialist review. Synthetic demonstration only—not archaeology or archaeological probability.</p>`;
+      document.querySelector("#result-dialog").showModal();
     }
     if (button.hasAttribute("data-generate-report")) {
       await api(`/projects/${state.project.id}/report`, { method: "POST" });
