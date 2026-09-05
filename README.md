@@ -166,6 +166,7 @@ called `unlabelled_background`, never a true archaeological negative.
 | Manuscript and reproducibility package | ✅ Ready for review | [Draft manuscript](docs/manuscript/archaeoai-e001-manuscript.md); no release executed |
 | Technical consolidation | ✅ Complete | [E001 technical results](docs/e001-technical-results.md) |
 | Inference-system architecture | ✅ Phase 5A complete | Contracts and safety boundaries only; no model executed |
+| Single-patch inference core | ✅ Phase 5B complete | Bit-exact synthetic feature equivalence; no private model executed |
 | Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today
@@ -199,6 +200,8 @@ called `unlabelled_background`, never a true archaeological negative.
   patching, ranking, deduplication, blinded review queues, and aggregate-only outputs.
 - A Phase 5A fail-closed input contract, evidence ladder, safe result envelope, private-model
   availability guard, and reviewed architecture for possible later inference work.
+- A Phase 5B single-patch adapter that reuses the frozen four-channel 4 × 4 feature path and proves
+  bit-exact equivalence on coordinate-free synthetic terrain using an inert test double only.
 - One bounded private 5 km inference run with 5,929 valid windows, a hash-frozen private score
   table, and a 62-item blinded morphology-review packet.
 - Tracked aggregate evidence and a claims register that limits public wording.
@@ -216,7 +219,7 @@ called `unlabelled_background`, never a true archaeological negative.
 - A peer-reviewed paper, DOI, archived release, or institutional affiliation. The Phase 4B
   manuscript is a review draft only.
 - A public model artifact, supported inference CLI/API, terrain upload service, or authorization to
-  run the Phase 5 contracts on real user terrain.
+  run the Phase 5 core on real user terrain.
 
 ## Reproducibility
 
