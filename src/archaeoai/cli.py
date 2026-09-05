@@ -5,30 +5,32 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from dataclasses import dataclass, field
 from enum import IntEnum, StrEnum
 from pathlib import Path
 from types import MappingProxyType
 
-import numpy as np
-import rasterio
-from rasterio.errors import RasterioIOError
-
 from archaeoai import __version__
 from archaeoai.inference import FEATURE_COUNT, REPRESENTATION_CHANNELS
 from archaeoai.inference_system import (
-    E001_TERRAIN_INPUT,
     ApprovedModelArtifactReference,
     ModelArtifactIntegrityError,
     ModelArtifactUnavailableError,
     ModelIdentifier,
-    SinglePatchFeatures,
-    TerrainInputMetadata,
-    TerrainPatch,
-    transform_single_patch,
     verify_approved_model_artifact,
 )
+from archaeoai.inference_system.batch import (
+    BatchManifestError,
+    load_batch_manifest,
+    run_feature_batch,
+)
 from archaeoai.inference_system.contracts import APPROVED_MODEL_CONFIG_SHA256
+from archaeoai.inference_system.geotiff import (
+    CanonicalGeoTIFF,
+    GeoTIFFValidationError,
+)
+from archaeoai.inference_system.geotiff import (
+    load_canonical_geotiff as _load_canonical_geotiff,
+)
 from archaeoai.paths import ProjectPathError, find_project_root
 
 SCHEMA_VERSION = "archaeoai-offline-cli-v1"
@@ -102,6 +104,19 @@ class CliErrorCode(StrEnum):
     MODEL_NOT_AUTHORIZED = "MODEL_NOT_AUTHORIZED"
     ARTIFACT_INTEGRITY = "ARTIFACT_INTEGRITY"
     CONFIGURATION_MISMATCH = "CONFIGURATION_MISMATCH"
+    MANIFEST_UNAVAILABLE = "MANIFEST_UNAVAILABLE"
+    MANIFEST_TOO_LARGE = "MANIFEST_TOO_LARGE"
+    MALFORMED_MANIFEST = "MALFORMED_MANIFEST"
+    MANIFEST_SCHEMA_MISMATCH = "MANIFEST_SCHEMA_MISMATCH"
+    ITEM_LIMIT_EXCEEDED = "ITEM_LIMIT_EXCEEDED"
+    INVALID_ITEM = "INVALID_ITEM"
+    DUPLICATE_ITEM_ID = "DUPLICATE_ITEM_ID"
+    DUPLICATE_FILE_REFERENCE = "DUPLICATE_FILE_REFERENCE"
+    DUPLICATE_FILE_CONTENT = "DUPLICATE_FILE_CONTENT"
+    FILE_TOO_LARGE = "FILE_TOO_LARGE"
+    CUMULATIVE_SIZE_EXCEEDED = "CUMULATIVE_SIZE_EXCEEDED"
+    PATH_ESCAPE = "PATH_ESCAPE"
+    SYMLINK_NOT_ALLOWED = "SYMLINK_NOT_ALLOWED"
     INTERNAL_ERROR = "INTERNAL_ERROR"
 
 
@@ -127,6 +142,31 @@ ERROR_MESSAGES = MappingProxyType(
         CliErrorCode.CONFIGURATION_MISMATCH: (
             "Inference unavailable: model identity, configuration, or private path is invalid."
         ),
+        CliErrorCode.MANIFEST_UNAVAILABLE: (
+            "The local batch manifest is unavailable or is not a JSON file."
+        ),
+        CliErrorCode.MANIFEST_TOO_LARGE: "The batch manifest exceeds the fixed size limit.",
+        CliErrorCode.MALFORMED_MANIFEST: "The batch manifest is not valid strict JSON.",
+        CliErrorCode.MANIFEST_SCHEMA_MISMATCH: (
+            "The batch manifest does not satisfy the fixed Phase 5D schema."
+        ),
+        CliErrorCode.ITEM_LIMIT_EXCEEDED: "The batch exceeds the fixed item-count limit.",
+        CliErrorCode.INVALID_ITEM: "A batch item does not satisfy the fixed admission contract.",
+        CliErrorCode.DUPLICATE_ITEM_ID: "The batch contains a duplicate opaque item ID.",
+        CliErrorCode.DUPLICATE_FILE_REFERENCE: (
+            "The batch contains a duplicate terrain-file reference."
+        ),
+        CliErrorCode.DUPLICATE_FILE_CONTENT: (
+            "The batch contains byte-identical terrain-file content."
+        ),
+        CliErrorCode.FILE_TOO_LARGE: "A terrain file exceeds the fixed per-file size limit.",
+        CliErrorCode.CUMULATIVE_SIZE_EXCEEDED: (
+            "The batch exceeds the fixed cumulative input-size limit."
+        ),
+        CliErrorCode.PATH_ESCAPE: (
+            "A terrain reference escapes the manifest's authorized input directory."
+        ),
+        CliErrorCode.SYMLINK_NOT_ALLOWED: "Symbolic links are not accepted by the batch boundary.",
         CliErrorCode.INTERNAL_ERROR: "The offline operation failed safely.",
     }
 )
@@ -154,80 +194,12 @@ class SafeArgumentParser(argparse.ArgumentParser):
         )
 
 
-@dataclass(frozen=True, slots=True)
-class CanonicalGeoTIFF:
-    """Private in-memory patch plus the safe facts allowed in CLI reports."""
-
-    features: SinglePatchFeatures = field(repr=False)
-    width: int
-    height: int
-    band_count: int
-    dtype: str
-    nodata_fraction: float
-
-
-def _local_geotiff_path(raw_path: str | Path) -> Path:
-    try:
-        source = Path(raw_path).resolve()
-    except (OSError, RuntimeError, ValueError) as exc:
-        raise CliExpectedError(CliErrorCode.FILE_UNAVAILABLE, ExitCode.INVALID_INPUT) from exc
-    if not source.is_file():
-        raise CliExpectedError(CliErrorCode.FILE_UNAVAILABLE, ExitCode.INVALID_INPUT)
-    if source.suffix.casefold() not in {".tif", ".tiff"}:
-        raise CliExpectedError(CliErrorCode.UNSUPPORTED_FORMAT, ExitCode.INVALID_INPUT)
-    return source
-
-
 def load_canonical_geotiff(path: str | Path) -> CanonicalGeoTIFF:
-    """Read one canonical local GeoTIFF without retaining spatial metadata in output."""
-    source = _local_geotiff_path(path)
+    """Map the reusable GeoTIFF reader onto controlled CLI failures."""
     try:
-        with rasterio.open(source) as dataset:
-            if dataset.driver != "GTiff":
-                raise CliExpectedError(CliErrorCode.UNSUPPORTED_FORMAT, ExitCode.INVALID_INPUT)
-            crs = dataset.crs.to_string() if dataset.crs is not None else None
-            resolution = (abs(float(dataset.res[0])), abs(float(dataset.res[1])))
-            preliminary = TerrainInputMetadata(
-                crs=crs,
-                width=dataset.width,
-                height=dataset.height,
-                resolution_m=resolution,
-                band_count=dataset.count,
-                nodata_fraction=0.0,
-            )
-            E001_TERRAIN_INPUT.validate(preliminary)
-            band = dataset.read(1, masked=True)
-            elevation = np.asarray(band.data)
-            mask = np.ma.getmaskarray(band)
-            dtype = str(dataset.dtypes[0])
-    except CliExpectedError:
-        raise
-    except (RasterioIOError, OSError) as exc:
-        raise CliExpectedError(CliErrorCode.RASTER_UNREADABLE, ExitCode.INVALID_INPUT) from exc
-    except (TypeError, ValueError) as exc:
-        raise CliExpectedError(CliErrorCode.NONCANONICAL_INPUT, ExitCode.INVALID_INPUT) from exc
-
-    nodata_fraction = float(mask.mean())
-    metadata = TerrainInputMetadata(
-        crs=crs,
-        width=preliminary.width,
-        height=preliminary.height,
-        resolution_m=resolution,
-        band_count=preliminary.band_count,
-        nodata_fraction=nodata_fraction,
-    )
-    try:
-        features = transform_single_patch(TerrainPatch(elevation, mask, metadata))
-    except (TypeError, ValueError) as exc:
-        raise CliExpectedError(CliErrorCode.NONCANONICAL_INPUT, ExitCode.INVALID_INPUT) from exc
-    return CanonicalGeoTIFF(
-        features=features,
-        width=metadata.width,
-        height=metadata.height,
-        band_count=metadata.band_count,
-        dtype=dtype,
-        nodata_fraction=nodata_fraction,
-    )
+        return _load_canonical_geotiff(path)
+    except GeoTIFFValidationError as exc:
+        raise CliExpectedError(CliErrorCode(exc.code.value), ExitCode.INVALID_INPUT) from exc
 
 
 def inspection_payload(loaded: CanonicalGeoTIFF) -> dict[str, object]:
@@ -275,7 +247,9 @@ def features_payload(loaded: CanonicalGeoTIFF) -> dict[str, object]:
 
 def error_payload(command: str, code: CliErrorCode) -> dict[str, object]:
     """Render errors only through fixed codes and fixed messages."""
-    safe_command = command if command in {"inspect", "features", "infer"} else "cli"
+    safe_command = (
+        command if command in {"inspect", "features", "infer", "batch-features"} else "cli"
+    )
     payload: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
         "command": safe_command,
@@ -310,6 +284,23 @@ def _render_human(payload: dict[str, object]) -> str:
                 f"Finite-value QA: {payload['finite_value_qa']}",
                 f"Feature contract: {payload['canonical_feature_contract']}",
                 "Model inference: not performed",
+            )
+        )
+    if command == "batch-features":
+        return "\n".join(
+            (
+                "ArchaeoAI bounded offline batch",
+                f"Status: {payload['status']}",
+                f"Manifest: {payload['manifest_label']}",
+                f"Processing order: {payload['processing_order']}",
+                f"Submitted: {payload['total_items']}",
+                f"Accepted: {payload['accepted_items']}",
+                f"Invalid: {payload['invalid_items']}",
+                f"Features prepared: {payload['feature_preparation_succeeded']}",
+                f"Processing failures: {payload['processing_failures']}",
+                "Model execution: not performed",
+                "Input retention: none",
+                "Temporary artifacts retained: no",
             )
         )
     return "\n".join(
@@ -360,6 +351,17 @@ def _run_infer(args: argparse.Namespace) -> ExitCode:
     raise CliExpectedError(CliErrorCode.MODEL_NOT_AUTHORIZED, ExitCode.MODEL_UNAVAILABLE)
 
 
+def _run_batch_features(args: argparse.Namespace) -> ExitCode:
+    try:
+        manifest = load_batch_manifest(args.manifest)
+    except BatchManifestError as exc:
+        raise CliExpectedError(CliErrorCode(exc.code.value), ExitCode.INVALID_INPUT) from exc
+    result = run_feature_batch(manifest)
+    payload = result.to_public_dict()
+    _emit(payload, json_output=args.json_output)
+    return ExitCode.SUCCESS if result.invalid_items == 0 else ExitCode.INVALID_INPUT
+
+
 def build_parser() -> SafeArgumentParser:
     parser = SafeArgumentParser(
         prog="archaeoai",
@@ -381,6 +383,12 @@ def build_parser() -> SafeArgumentParser:
     infer.add_argument("terrain", metavar="TERRAIN.tif")
     infer.add_argument("--model", metavar="PRIVATE_MODEL.pkl")
     infer.add_argument("--json", action="store_true", dest="json_output")
+    batch = subcommands.add_parser(
+        "batch-features",
+        help="prepare a bounded manifest of canonical patches without model inference",
+    )
+    batch.add_argument("manifest", metavar="MANIFEST.json")
+    batch.add_argument("--json", action="store_true", dest="json_output")
     return parser
 
 
@@ -389,6 +397,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "infer":
             return int(_run_infer(args))
+        if args.command == "batch-features":
+            return int(_run_batch_features(args))
         loaded = load_canonical_geotiff(args.terrain)
         payload = (
             inspection_payload(loaded) if args.command == "inspect" else features_payload(loaded)

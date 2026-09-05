@@ -1,0 +1,13 @@
+{
+  "schema_version": "archaeoai-batch-manifest-v1",
+  "items": [
+    {
+      "item_id": "item-0001",
+      "terrain": "synthetic_inputs/synthetic_plane.tif"
+    },
+    {
+      "item_id": "item-0002",
+      "terrain": "synthetic_inputs/synthetic_mound.tif"
+    }
+  ]
+}
