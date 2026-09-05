@@ -584,10 +584,13 @@ if (
 $phase4DCheck = 'Phase 4D provisional RQ1 answer and feedback boundaries valid'
 
 $phase5AFiles = @(
+    'SECURITY.md',
     'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
     'docs/CURRENT_STATUS.md',
     'docs/roadmap.md',
-    'research-log/2026-09-05-phase-5a-inference-architecture.md'
+    'research-log/2026-09-05-phase-5a-inference-architecture.md',
+    'research-log/2026-09-05-phase-5a-serialization-correction.md',
+    'src/archaeoai/inference_system/contracts.py'
 )
 $phase5AText = (Get-Content -Raw $phase5AFiles) -join "`n"
 if (
@@ -595,6 +598,9 @@ if (
     $phase5AText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
     $phase5AText -notmatch 'AI_OUTPUT' -or
     $phase5AText -notmatch 'CONFIRMED_ARCHAEOLOGICAL_EVIDENCE' -or
+    $phase5AText -notmatch 'HUMAN_REVIEW_REQUIRED' -or
+    $phase5AText -notmatch 'NOT_ARCHAEOLOGICAL_CONFIRMATION' -or
+    $phase5AText -notmatch 'controlled message codes' -or
     $phase5AText -notmatch 'No CLI or API is added in Phase 5A' -or
     $phase5AText -notmatch 'does not train, tune, score' -or
     $phase5AText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'

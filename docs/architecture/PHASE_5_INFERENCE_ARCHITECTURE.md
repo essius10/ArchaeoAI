@@ -132,9 +132,23 @@ no metadata, coordinate, provenance, date, identifier, filename, or path feature
 
 ## 8. Output contract and terminology
 
-The public result envelope may contain only a schema version, evidence level,
-`terrain_similarity_score`, fixed score semantics, model identifier, frozen configuration hash,
-warnings, and limitations. It contains no location or private request context.
+The public result envelope is constructed from an explicit eight-field allowlist. Every field has a
+runtime-enforced public contract:
+
+| Field | Public boundary |
+|---|---|
+| `schema_version` | Fixed literal owned by the serializer |
+| `evidence_level` | `EvidenceLevel` enum instance restricted to `AI_OUTPUT` or `AI_HYPOTHESIS` |
+| `terrain_similarity_score` | Finite Python float in `[0, 1]` |
+| `score_semantics` | Fixed literal `terrain_pattern_similarity_not_archaeological_probability` |
+| `model_identifier` | Approved `ModelIdentifier` enum; its current value is a 1–64 character lowercase alphanumeric/hyphen slug with no paths, URLs, separators, whitespace, control characters, or caller metadata |
+| `model_config_sha256` | Exact 64-character lowercase SHA-256 digest bound to the approved model identifier |
+| `warnings` | Required `WarningCode` tuple rendered only through fixed coordinate-safe messages |
+| `limitations` | Required `LimitationCode` tuple rendered only through fixed coordinate-safe messages |
+
+Caller-supplied strings, mappings, nested containers, and custom objects are rejected at
+construction rather than recursively serialized. `private_metadata` is retained only as internal
+request context and is not traversed or copied into the public result.
 
 Allowed score descriptions are `terrain-similarity score`, `terrain-pattern-similarity score`,
 `bowl-barrow-class score`, or `candidate-ranking score`. The score is not a calibrated probability
@@ -173,9 +187,18 @@ safer portable format are unresolved decisions, not assumptions made by Phase 5A
 
 ## 11. Privacy and security boundary
 
-The public serializer is allowlist-based. Exact coordinates, extents, transforms, grid references,
-source filenames, paths, request identifiers, sample identifiers, private tokens, rasters, derived
-images, feature vectors, candidate tables, model files, and checkpoints stay private and ignored.
+The public serializer is allowlist-based and uses controlled message codes with fixed rendering.
+Exact coordinates, extents, transforms, grid references, source filenames, paths, request
+identifiers, sample identifiers, private tokens, rasters, derived images, feature vectors,
+candidate tables, model files, and checkpoints stay private and ignored.
+
+The Phase 5A final review found that the first contract revision annotated `warnings` and
+`limitations` as strings but did not enforce those types at runtime, and accepted any non-empty
+model identifier. Fictional path, nested-object, and unsafe-claim probes could therefore reach the
+public payload. The corrected contract fails closed on those values, requires the full safety-code
+set, binds an approved identifier enum to its frozen configuration digest, and renders only fixed
+messages. This was a contract defect, not a scientific-result or private-data incident; no deployed
+interface existed and no real inference was run.
 
 Future interfaces must use local processing by default, bounded file size and raster dimensions,
 content-type verification, decompression limits, time/memory limits, temporary directories with
@@ -223,7 +246,8 @@ Before Phase 5 may score real user terrain, tests must cover:
 - numerical equivalence with the frozen Phase 2F representation and feature path;
 - channel order, feature count, determinism, and CPU compatibility;
 - automatic evidence-level limits and safe score terminology;
-- allowlist serialization, log redaction, and coordinate/private-metadata exclusion;
+- allowlist serialization, controlled warning/limitation codes, strict model identifiers,
+  deterministic JSON safety, log redaction, and coordinate/private-metadata exclusion;
 - concurrency, timeout, memory, and partial-failure behavior;
 - frozen artifact, claim, citation, licensing, manuscript, website, and spent-test immutability;
 - a separately authorized synthetic end-to-end run before any private real-input run.

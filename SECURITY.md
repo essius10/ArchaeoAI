@@ -25,6 +25,21 @@ commit is not sufficient because Git history and forks may retain it.
 Ordinary bugs, reproducibility problems, documentation errors, and methodology questions that do
 not contain sensitive information can use the repository's issue templates.
 
+## Inference-result boundary
+
+Phase 5A defines contracts only; no supported inference interface is deployed. Any future public
+result must use the explicit serializer allowlist. Model identifiers accept only an approved enum
+whose short lowercase alphanumeric/hyphen value is bound to its frozen configuration digest, while
+warnings and limitations accept only approved controlled message codes with fixed coordinate-safe
+rendering. Free-form strings, paths, URLs, nested containers, and custom objects must fail before
+serialization. Private request metadata must never be traversed, logged, or copied into a public
+result.
+
+The Phase 5A final review found and corrected a pre-deployment defect in the original free-form
+warning/limitation fields. No real private data passed through that contract and no model-backed
+public interface existed. A report showing a way around the corrected allowlist should be treated
+as a private security report under the rules above.
+
 ## Scope
 
 This policy covers software vulnerabilities and accidental data exposure. It is not a channel for

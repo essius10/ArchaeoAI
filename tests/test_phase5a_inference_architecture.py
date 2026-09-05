@@ -80,3 +80,26 @@ def test_phase5a_public_contract_contains_no_scientific_result_payload() -> None
     assert result["external_test_spent"] is True
     for forbidden in ("balanced_accuracy", "roc_auc", "average_precision", "confusion_matrix"):
         assert forbidden not in source
+
+
+def test_phase5a_documents_and_enforces_corrected_public_boundary() -> None:
+    architecture = ARCHITECTURE.read_text(encoding="utf-8")
+    contracts = (ROOT / "src/archaeoai/inference_system/contracts.py").read_text(encoding="utf-8")
+    security = (ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    correction = (ROOT / "research-log/2026-09-05-phase-5a-serialization-correction.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "explicit eight-field allowlist" in architecture
+    assert "controlled message codes with fixed rendering" in architecture
+    assert "first contract revision" in architecture
+    assert "class WarningCode(StrEnum)" in contracts
+    assert "class LimitationCode(StrEnum)" in contracts
+    assert "class ModelIdentifier(StrEnum)" in contracts
+    assert "APPROVED_MODEL_CONFIG_SHA256" in contracts
+    assert "warnings: tuple[str" not in contracts
+    assert "limitations: tuple[str" not in contracts
+    assert "approved controlled message codes" in security
+    assert "Private request metadata must never be traversed" in security
+    assert "Fictional probes demonstrated" in correction
+    assert "did not load or execute a model" in correction

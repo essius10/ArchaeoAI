@@ -8,10 +8,13 @@ from archaeoai.inference_system.contracts import (
     E001_TERRAIN_INPUT,
     AutomaticInferenceResult,
     EvidenceLevel,
+    LimitationCode,
     ModelArtifactIntegrityError,
     ModelArtifactUnavailableError,
+    ModelIdentifier,
     TerrainInputContract,
     TerrainInputMetadata,
+    WarningCode,
     verify_model_artifact_checksum,
 )
 
@@ -19,9 +22,12 @@ __all__ = [
     "E001_TERRAIN_INPUT",
     "AutomaticInferenceResult",
     "EvidenceLevel",
+    "LimitationCode",
     "ModelArtifactIntegrityError",
     "ModelArtifactUnavailableError",
+    "ModelIdentifier",
     "TerrainInputContract",
     "TerrainInputMetadata",
+    "WarningCode",
     "verify_model_artifact_checksum",
 ]
