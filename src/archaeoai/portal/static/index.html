@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Local synthetic demonstration of the ArchaeoAI professional terrain-screening workflow.">
+    <title>ArchaeoAI Professional Portal</title>
+    <link rel="stylesheet" href="/static/portal.css">
+  </head>
+  <body>
+    <main class="entry-shell" id="entry-view">
+      <section class="entry-panel" aria-labelledby="entry-title">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">A</span><span>ArchaeoAI</span></div>
+        <p class="eyebrow">Professional terrain screening</p>
+        <h1 id="entry-title">Evidence-led terrain review, with people in control.</h1>
+        <p class="entry-copy">Explore a local workspace using mathematical terrain only. Machine output remains separate from professional archaeological interpretation.</p>
+        <button class="primary-action" type="button" id="enter-workspace">Enter demo workspace <span aria-hidden="true">→</span></button>
+        <p class="boundary"><strong>DEMO MODE — SYNTHETIC DATA</strong><br>No production authentication, private model, real terrain, coordinates, or archaeological determination.</p>
+      </section>
+      <aside class="terrain-field" aria-label="Abstract synthetic topographic motif">
+        <div class="contour contour-a"></div><div class="contour contour-b"></div><div class="contour contour-c"></div>
+        <div class="system-card"><span class="pulse"></span><div><small>System state</small><strong>Local · private · offline</strong></div></div>
+      </aside>
+    </main>
+
+    <div class="app-shell" id="app-shell" hidden>
+      <aside class="sidebar">
+        <div class="sidebar-brand"><span class="brand-mark" aria-hidden="true">A</span><div><strong>ArchaeoAI</strong><small>Professional portal</small></div></div>
+        <nav aria-label="Primary navigation">
+          <button class="nav-item active" data-view="overview"><span aria-hidden="true">⌂</span>Overview</button>
+          <button class="nav-item" data-view="projects"><span aria-hidden="true">▦</span>Projects</button>
+          <button class="nav-item" data-view="review"><span aria-hidden="true">◎</span>Review Queue</button>
+          <button class="nav-item" data-view="reports"><span aria-hidden="true">▤</span>Reports</button>
+          <button class="nav-item" data-view="audit"><span aria-hidden="true">↺</span>Audit</button>
+          <button class="nav-item" data-view="settings"><span aria-hidden="true">⚙</span>Settings</button>
+        </nav>
+        <div class="sidebar-boundary"><span class="status-dot"></span><div><strong>Demo runtime ready</strong><small>Approved model disabled</small></div></div>
+      </aside>
+      <div class="app-column">
+        <header class="topbar">
+          <button class="mobile-menu" type="button" id="mobile-menu" aria-label="Toggle navigation">☰</button>
+          <div><strong id="organization-name">ArchaeoAI Demonstration Workspace</strong><small>Local private workspace</small></div>
+          <div class="topbar-actions"><span class="demo-chip">DEMO MODE — SYNTHETIC DATA</span><span class="system-ok"><i></i>System ready</span><button class="avatar" type="button" title="Local demo session">LD</button></div>
+        </header>
+        <main class="workspace" id="workspace" tabindex="-1" aria-live="polite"></main>
+      </div>
+    </div>
+
+    <dialog id="project-dialog" class="modal">
+      <form id="project-form">
+        <div class="modal-heading"><div><p class="eyebrow">New screening project</p><h2>Create a synthetic demonstration</h2></div><button type="button" class="icon-button" data-close="project-dialog" aria-label="Close">×</button></div>
+        <div class="form-grid">
+          <label>Project name<input name="project_name" required maxlength="80" autocomplete="off"></label>
+          <label>Organization<input name="organization" required maxlength="80" value="ArchaeoAI Demonstration Workspace" autocomplete="organization"></label>
+          <label class="span-two">Project purpose<textarea name="purpose" required maxlength="500" rows="3"></textarea></label>
+          <label>Project reference<input name="project_reference" required maxlength="64" pattern="[A-Za-z0-9][A-Za-z0-9._ -]{0,63}" autocomplete="off"></label>
+          <label>Retention<select name="retention_policy"><option value="SESSION_ONLY">Session only</option><option value="SEVEN_DAYS">7 days</option><option value="THIRTY_DAYS">30 days</option></select></label>
+        </div>
+        <div class="disabled-upload" aria-disabled="true"><span>Import authorized terrain</span><strong>Not enabled</strong><p>Live terrain ingestion is not enabled in this demonstration build.</p></div>
+        <label class="check-row"><input type="checkbox" name="authorized_data_confirmation" required> I confirm this project will use generated synthetic mathematical terrain only.</label>
+        <label class="check-row"><input type="checkbox" name="reviewer_requirement_acknowledgement" required> I acknowledge that specialist human review remains required.</label>
+        <div class="modal-actions"><button type="button" class="secondary-action" data-close="project-dialog">Cancel</button><button type="submit" class="primary-action">Create project</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="review-dialog" class="modal compact-modal">
+      <form id="review-form">
+        <input type="hidden" name="result_id">
+        <div class="modal-heading"><div><p class="eyebrow">Human evidence record</p><h2>Record review observation</h2></div><button type="button" class="icon-button" data-close="review-dialog" aria-label="Close">×</button></div>
+        <p class="callout">This creates a separately attributable <code>HUMAN_VETTED_OBSERVATION</code>. It does not confirm archaeology.</p>
+        <label>Observation category<select name="category" required><option value="MORPHOLOGY_WARRANTS_FURTHER_ASSESSMENT">Morphology warrants further assessment</option><option value="MORPHOLOGY_NOT_PRIORITIZED_AFTER_REVIEW">Morphology not prioritized after review</option><option value="INSUFFICIENT_TERRAIN_EVIDENCE">Insufficient terrain evidence</option><option value="ARTEFACT_OR_UNCERTAIN">Artefact / uncertain</option><option value="ESCALATE_TO_QUALIFIED_ARCHAEOLOGICAL_INTERPRETATION">Escalate to qualified archaeological interpretation</option></select></label>
+        <label>Rationale<textarea name="rationale" required maxlength="500" rows="4"></textarea></label>
+        <label>Confidence descriptor<select name="confidence"><option value="LOW">Low</option><option value="MODERATE">Moderate</option><option value="HIGH">High</option></select></label>
+        <div class="modal-actions"><button type="button" class="secondary-action" data-close="review-dialog">Cancel</button><button type="submit" class="primary-action">Record observation</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="delete-dialog" class="modal compact-modal">
+      <form id="delete-form">
+        <div class="modal-heading"><div><p class="eyebrow danger-text">Destructive action</p><h2>Delete demonstration project?</h2></div><button type="button" class="icon-button" data-close="delete-dialog" aria-label="Close">×</button></div>
+        <p>All associated local jobs, results, reviews, evidence, reports, and audit records will be removed.</p>
+        <input type="hidden" name="project_id">
+        <div class="modal-actions"><button type="button" class="secondary-action" data-close="delete-dialog">Cancel</button><button type="submit" class="danger-action">Delete project</button></div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <noscript>This portal requires JavaScript for its local demonstration workflow.</noscript>
+    <script type="module" src="/static/portal.js"></script>
+  </body>
+</html>

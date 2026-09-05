@@ -389,11 +389,26 @@ def build_parser() -> SafeArgumentParser:
     )
     batch.add_argument("manifest", metavar="MANIFEST.json")
     batch.add_argument("--json", action="store_true", dest="json_output")
+    portal = subcommands.add_parser(
+        "portal",
+        help="launch the local synthetic professional portal demonstration",
+    )
+    portal.add_argument("--demo", action="store_true", help="use synthetic demonstration mode")
+    portal.add_argument("--reset", action="store_true", help="reset and seed local demo data")
+    portal.add_argument("--port", type=int, default=8000, help="localhost port (default: 8000)")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.command == "portal":
+        try:
+            from archaeoai.portal.launch import launch_portal
+
+            return launch_portal(demo=args.demo, reset=args.reset, port=args.port)
+        except Exception:
+            print("ERROR: the local portal failed safely.", file=sys.stderr)
+            return int(ExitCode.INTERNAL_ERROR)
     try:
         if args.command == "infer":
             return int(_run_infer(args))
