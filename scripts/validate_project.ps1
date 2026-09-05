@@ -81,6 +81,7 @@ $required = @(
     'research-log/2026-08-30-phase-4b-manuscript-package.md',
     'research-log/2026-09-05-phase-4d-rq1-audit.md',
     'research-log/2026-09-05-phase-5a-inference-architecture.md',
+    'research-log/2026-09-05-phase-5c-offline-cli.md',
     'docs/review/PHASE_4D_RQ1_AUDIT.md',
     'docs/review/FEEDBACK_REGISTER.md',
     'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
@@ -113,6 +114,8 @@ $required = @(
     'scripts/analyze_e001_external_errors.py',
     'scripts/freeze_e001_manuscript_evidence.py',
     'src/archaeoai/__init__.py',
+    'src/archaeoai/__main__.py',
+    'src/archaeoai/cli.py',
     'src/archaeoai/config.py',
     'src/archaeoai/paths.py',
     'src/archaeoai/nhle_audit.py',
@@ -173,6 +176,7 @@ $required = @(
     'tests/test_inference.py',
     'tests/test_inference_contracts.py',
     'tests/test_phase5a_inference_architecture.py',
+    'tests/test_phase5c_offline_cli.py',
     'tests/test_external_validation.py',
     'tests/test_external_error_analysis.py',
     'tests/test_manuscript_package.py',
@@ -609,6 +613,38 @@ if (
 }
 $phase5ACheck = 'Phase 5A architecture and non-execution boundaries valid'
 
+$phase5CFiles = @(
+    'README.md',
+    'SECURITY.md',
+    'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
+    'docs/CURRENT_STATUS.md',
+    'docs/reproducibility.md',
+    'docs/roadmap.md',
+    'research-log/2026-09-05-phase-5c-offline-cli.md',
+    'src/archaeoai/cli.py'
+)
+$phase5CText = (Get-Content -Raw $phase5CFiles) -join "`n"
+if (
+    $phase5CText -notmatch 'Phase 5C' -or
+    $phase5CText -notmatch 'synthetic' -or
+    $phase5CText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
+    $phase5CText -notmatch 'model execution.*not authorized|does not authorize model execution' -or
+    $phase5CText -notmatch 'no archaeological discovery claim' -or
+    $phase5CText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'
+) {
+    throw 'Phase 5C status, non-execution, scientific, or coordinate-safety boundary failed.'
+}
+$phase5CSource = Get-Content -Raw 'src/archaeoai/cli.py'
+if (
+    $phase5CSource -match '(?i)predict_proba|pickle\.loads|--dummy-model|--mock|--fake-prediction|--test-score' -or
+    $phase5CSource -notmatch 'INSPECT_PUBLIC_FIELDS' -or
+    $phase5CSource -notmatch 'FEATURES_PUBLIC_FIELDS' -or
+    $phase5CSource -notmatch 'ExitCode'
+) {
+    throw 'Phase 5C CLI execution or allowlist boundary failed.'
+}
+$phase5CCheck = 'Phase 5C offline synthetic CLI and fail-closed model boundaries valid'
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -708,4 +744,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $publicDemoCheck."

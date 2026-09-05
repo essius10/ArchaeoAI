@@ -168,6 +168,44 @@ Forest is neither loaded nor deserialized, and the inert test-double score has z
 meaning. These public tests establish preprocessing plumbing only, not archaeological validity or
 model performance.
 
+## Phase 5C offline single-patch CLI
+
+Phase 5C packages the strict Phase 5B path as both `python -m archaeoai` and the installed
+`archaeoai` console command. Validation is synthetic-only and creates temporary GeoTIFFs during
+tests; no real terrain or spent-test material is read.
+
+```powershell
+python -m archaeoai inspect synthetic_patch.tif
+python -m archaeoai inspect synthetic_patch.tif --json
+python -m archaeoai features synthetic_patch.tif --json
+python -m archaeoai infer synthetic_patch.tif
+```
+
+The accepted input is exactly one GeoTIFF band with 128 × 128 cells, 1 m square resolution,
+EPSG:27700, a numeric dtype, and the frozen finite-value and explicit no-data rules. Inputs are not
+cropped, resized, resampled, reprojected, filled, or otherwise corrected. File-reading equivalence
+is tested against direct Phase 5B invocation with `numpy.array_equal` over all 4,096 `float32`
+features.
+
+Human and JSON output are separate strict allowlists. They contain no filename or path, coordinate,
+extent, transform, arbitrary raster tag, feature value, private model location, or score. The
+`features` result exposes only shape, dtype, and the four frozen representation names. The `infer`
+command does not use a test double, fallback, download, or retraining path. It exits before model
+execution with code 3 when the approved artifact is missing or execution remains unauthorized.
+
+| Exit code | Stable category |
+|---:|---|
+| 0 | Success |
+| 2 | Invalid command, file, format, or terrain contract |
+| 3 | Approved model unavailable or not authorized |
+| 4 | Artifact-integrity failure |
+| 5 | Model identity/configuration/path mismatch |
+| 10 | Safely bounded internal error |
+
+Expected failures use controlled messages without tracebacks or private values. Phase 5C did not
+load, deserialize, or execute the approved private Random Forest and did not create scientific
+evidence or an archaeological discovery claim.
+
 ## Known reproducibility limitations
 
 - no independent researcher has completed a clean full-data rerun;

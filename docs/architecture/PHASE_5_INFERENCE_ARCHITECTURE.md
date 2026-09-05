@@ -5,7 +5,8 @@
 Phase 5A translated the completed E001 research pipeline into a conservative architecture for a
 possible future terrain-inference interface. Phase 5B adds the smallest reusable single-patch
 feature and model-adapter boundary, tested only with coordinate-free synthetic terrain and an inert
-test double. Neither phase loads or executes the approved private model, scores real terrain,
+test double. Phase 5C adds an offline GeoTIFF inspection and feature-contract CLI, tested only with
+temporary mathematical terrain. None of these phases loads or executes the approved private model, scores real terrain,
 trains or tunes anything, reuses the spent external test, publishes a service, changes a scientific
 result, or claims an archaeological discovery.
 
@@ -18,10 +19,10 @@ use.
 **B — `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`.**
 
 The qualification is repository-level: tested inference code exists, and this authorized local
-checkout contains the approved hash-matching private artifact, but that artifact is intentionally
+checkout may contain the approved hash-matching private artifact, but that artifact is intentionally
 Git-ignored and unavailable from a public clone. A public checkout therefore cannot perform the
-approved inference without a separately authorized artifact handoff. The current executable is
-also a controlled research script rather than a supported public API or CLI.
+approved inference without a separately authorized artifact handoff. Phase 5C provides a supported
+offline inspection/features CLI, not model-backed inference or a public API.
 
 This is not classification A because the distributable repository is not self-contained for
 inference. It is not C because the core terrain, feature, model-loading, scoring, ranking, and
@@ -44,11 +45,12 @@ hashes, tests, and one bounded execution provide direct evidence of the pipeline
 | Output semantics | Ranking or terrain-pattern-similarity score, not calibrated archaeological probability |
 | Runtime dependencies | NumPy, Rasterio, PyProj, scikit-learn; Torch belongs to the completed CNN comparison and is not required by RF inference |
 
-Reusable package components are in `archaeoai.terrain`, `archaeoai.model_data`, and
-`archaeoai.inference`. The Phase 2F freeze/smoke/run scripts, controlled-domain binding, output
-generation, and research receipts are experiment-specific. There is no installed console command,
-web API, upload handler, authentication layer, retention policy implementation, or public model
-distribution mechanism.
+Reusable package components are in `archaeoai.terrain`, `archaeoai.model_data`,
+`archaeoai.inference`, and `archaeoai.inference_system`. The Phase 2F freeze/smoke/run scripts,
+controlled-domain binding, output generation, and research receipts are experiment-specific. Phase
+5C installs the `archaeoai` offline console command for one local patch. There is no model-backed
+public inference, web API, upload handler, authentication layer, retention policy implementation,
+or public model distribution mechanism.
 
 Inference can run without retraining only in an authorized environment that already has the exact
 private artifact. `load_private_model` checks its artifact and learned-state hashes before scoring.
@@ -98,6 +100,11 @@ non-executing artifact checksum guard. Phase 5B adds strict array/mask validatio
 feature reuse, the exact one-row model-input contract, an approved private-path/hash gate, and a
 minimal model-facing protocol. It still adds no model loader. Future components must depend on
 these boundaries rather than bypass them.
+
+Phase 5C adds only file-to-contract plumbing. Rasterio reads one explicitly supplied local GeoTIFF,
+the existing Phase 5B adapter creates the feature vector, and a strict reporting allowlist discards
+paths, transforms, bounds, coordinates, tags, feature values, and arbitrary metadata. The CLI never
+deserializes or invokes a model.
 
 ## 6. Input contract
 
@@ -246,9 +253,32 @@ reported, not hidden behind automatic retraining.
 
 ## 13. CLI and API boundary
 
-No CLI or API is added in Phase 5A. The smallest future interface is an offline local CLI for one
-validated patch, returning the safe JSON envelope to standard output while keeping sensitive
-metadata out of logs. It must require an explicit private artifact path and expected hashes.
+No CLI or API is added in Phase 5A. Phase 5C now implements the smallest offline interface for one
+validated local patch:
+
+- `archaeoai inspect TERRAIN.tif [--json]` validates and reports a fixed coordinate-free raster QA
+  allowlist;
+- `archaeoai features TERRAIN.tif [--json]` computes the exact frozen feature path but reports only
+  shape, dtype, and representation order;
+- `archaeoai infer TERRAIN.tif [--model PRIVATE_MODEL.pkl] [--json]` defines the future production
+  boundary but always stops before model loading or execution in Phase 5C.
+
+`python -m archaeoai` provides the same interface. The reader accepts only the GeoTIFF driver, one
+band, 128 × 128 pixels, EPSG:27700, 1 m square resolution, and the frozen finite/no-data rules. It
+does not crop, select bands, resize, resample, reproject, fill, or repair inputs. Human and JSON
+outputs use fixed labels rather than filenames and never expose paths, coordinates, bounds,
+transforms, arbitrary tags, feature values, model locations, or scores.
+
+Exit behavior is deterministic:
+
+| Code | Meaning |
+|---:|---|
+| 0 | Successful inspection or feature preparation |
+| 2 | Usage, file, format, or canonical-input failure |
+| 3 | Approved model unavailable or execution not authorized |
+| 4 | Artifact-integrity failure |
+| 5 | Model identity, configuration, or private-path mismatch |
+| 10 | Bounded internal operational failure |
 
 A network API is later and optional. It requires authentication, abuse controls, privacy and
 licensing review, bounded uploads, deletion guarantees, an audit trail, and independent threat
@@ -285,7 +315,7 @@ Before Phase 5 may score real user terrain, tests must cover:
 |---|---|---|
 | 5A | Architecture, inventory, contracts, and boundary tests | **Complete; no inference executed** |
 | 5B | Single-patch preprocessing/model adapter on synthetic data only | **Complete; exact equivalence and fail-closed tests pass** |
-| 5C | Offline local CLI in an authorized private environment | One synthetic smoke run; then separate approval for any real input |
+| 5C | Offline local single-patch CLI | **Complete and ready for review; synthetic validation only; model execution disabled** |
 | 5D | Bounded private batch orchestration, still non-public | Resource, cleanup, retention, abuse, and aggregate-reporting tests pass |
 | 5E | Independent security, privacy, archaeological-workflow, and licensing review | Named findings resolved or documented; owner explicitly approves next step |
 | 5F | Optional public interface or deployment decision | Separate deployment authorization; may legitimately end in `NO-GO` |
@@ -301,12 +331,12 @@ known negatives. The result concerns learned terrain similarity for a narrowly c
 study; it is not England-wide archaeological detection, calibrated site probability, field advice,
 or evidence of discovery.
 
-Phase 5A and Phase 5B do not train, tune, score real terrain, benchmark a real model, acquire
+Phase 5A, Phase 5B, and Phase 5C do not train, tune, score real terrain, benchmark a real model, acquire
 terrain, rerun research, review candidates, cross-check heritage records, expose private material,
 build a website feature, publish a release, or deploy an API. Phase 5B's inert test-double score has
-zero scientific meaning. Independent scientific/privacy review, label-reliability review,
+zero scientific meaning; Phase 5C exposes no score. Independent scientific/privacy review, label-reliability review,
 systematic literature work, authorized private-data reproduction, licensing decisions, artifact
 distribution, and operational security review remain external blockers.
 
-Phase 5A does not train, tune, score, or execute a model; Phase 5B does not change that scientific
-boundary.
+Phase 5A does not train, tune, score, or execute a model; Phase 5B and Phase 5C do not change that
+scientific boundary.
