@@ -11,10 +11,12 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
+from archaeoai.cli import build_parser
 from archaeoai.inference import FEATURE_COUNT, REPRESENTATION_CHANNELS
 from archaeoai.inference_system import TerrainInputMetadata, TerrainPatch, transform_single_patch
 from archaeoai.portal.app import create_app
 from archaeoai.portal.demo_runtime import SyntheticDemoRuntime
+from archaeoai.portal.launch import launch_portal
 from archaeoai.portal.model_runtime import (
     ApprovedModelRuntimeNotAuthorizedError,
     DisabledApprovedModelRuntime,
@@ -117,6 +119,62 @@ def test_health_and_session_are_explicitly_local_demo(client: TestClient) -> Non
         "storage": "LOCAL_PRIVATE_SQLITE",
     }
     assert client.get("/api/v1/session").json()["authenticated"] is False
+
+
+def test_portal_cli_defaults_to_localhost() -> None:
+    args = build_parser().parse_args(["portal", "--demo"])
+    assert args.host == "127.0.0.1"
+
+
+@pytest.mark.parametrize("host", ["127.0.0.1", "0.0.0.0"])
+def test_portal_cli_accepts_only_allowlisted_hosts(host: str) -> None:
+    args = build_parser().parse_args(["portal", "--demo", "--host", host])
+    assert args.host == host
+
+
+def test_portal_cli_rejects_arbitrary_host() -> None:
+    with pytest.raises(SystemExit) as error:
+        build_parser().parse_args(["portal", "--demo", "--host", "preview.example"])
+    assert error.value.code == 2
+
+
+@pytest.mark.parametrize(
+    ("host", "expected_message"),
+    [
+        ("127.0.0.1", "ArchaeoAI portal: http://127.0.0.1:8000"),
+        ("0.0.0.0", "ArchaeoAI portal listening on 0.0.0.0:8000"),
+    ],
+)
+def test_allowlisted_host_reaches_uvicorn(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    host: str,
+    expected_message: str,
+) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_run(_app: object, **options: object) -> None:
+        captured.update(options)
+
+    monkeypatch.setattr("archaeoai.portal.launch.default_database_path", lambda: tmp_path / "db")
+    monkeypatch.setattr("uvicorn.run", fake_run)
+    assert launch_portal(demo=True, reset=False, port=8000, host=host) == 0
+    assert captured["host"] == host
+    output = capsys.readouterr().out
+    assert expected_message in output
+    if host == "0.0.0.0":
+        assert "Web Preview: expose/open port 8000" in output
+        assert "http://0.0.0.0" not in output
+
+
+def test_launcher_rejects_arbitrary_host_before_server() -> None:
+    assert launch_portal(demo=True, reset=False, port=8000, host="preview.example") == 2
+
+
+@pytest.mark.parametrize("port", [0, 1023, 65536])
+def test_port_validation_remains_fail_closed(port: int) -> None:
+    assert launch_portal(demo=True, reset=False, port=port) == 2
 
 
 def test_security_headers_and_no_openapi(client: TestClient) -> None:

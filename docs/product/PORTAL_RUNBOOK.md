@@ -30,6 +30,15 @@ archaeoai portal --demo
 
 The service binds only to `127.0.0.1` and reports its address in the terminal.
 
+For Codex Web Preview only, explicitly bind the demonstration server to all container interfaces:
+
+```powershell
+archaeoai portal --demo --reset --host 0.0.0.0
+```
+
+Expose/open port `8000` in Web Preview. `0.0.0.0` is a listening address, not a browser URL. The
+default remains `127.0.0.1`; `--host` rejects every other value.
+
 ## 4. Open the browser
 
 Open:
