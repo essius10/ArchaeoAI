@@ -43,6 +43,14 @@ automatic result from claiming human review or archaeological confirmation. No m
 executed, no terrain was scored, and no CLI, API, website feature, deployment, or release was
 created. See the [Phase 5 architecture](architecture/PHASE_5_INFERENCE_ARCHITECTURE.md).
 
+Phase 5B has completed a synthetic-only reusable single-patch feature boundary. Strict input
+validation feeds the existing frozen four-representation and 4 × 4 pooling implementation, and six
+deterministic synthetic surfaces matched the research path bit for bit at all 4,096 features. A
+minimal inert model double verified the one-row adapter and corrected safe result contract; its
+fixed score has no scientific meaning. The approved private Random Forest was not loaded,
+deserialized, or executed, no real terrain was processed, and the repository classification remains
+`INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`.
+
 ## Claim boundary
 
 These results concern terrain classification within the frozen E001 and external-validation

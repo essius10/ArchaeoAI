@@ -151,6 +151,23 @@ full-fit Random Forest is private and absent from Git. Its absence is a hard sto
 interface must not retrain, substitute, or fabricate an artifact. See the
 [Phase 5 architecture](architecture/PHASE_5_INFERENCE_ARCHITECTURE.md).
 
+## Phase 5B synthetic feature equivalence
+
+Phase 5B reuses `archaeoai.inference.features_from_elevation`, the same canonical feature function
+used by the controlled research pipeline. The new `archaeoai.inference_system` wrapper validates
+one explicit coordinate-free array, boolean mask, and metadata contract before calling it. The
+result is a read-only 4,096-value `float32` vector and a read-only `(1, 4096)` model matrix. No
+learned scaler or metadata feature is applied.
+
+Tests compare the research entry point with the reusable wrapper for six deterministic synthetic
+surfaces using exact `numpy.array_equal`, and independently reconstruct the documented channel,
+pooling, flattening, and concatenation order. Invalid shapes, dtypes, CRS, resolution, metadata,
+unmasked non-finite values, and inconsistent no-data fail closed. Artifact tests use only absent or
+deliberately invalid temporary bytes; no model weights are created. The approved private Random
+Forest is neither loaded nor deserialized, and the inert test-double score has zero scientific
+meaning. These public tests establish preprocessing plumbing only, not archaeological validity or
+model performance.
+
 ## Known reproducibility limitations
 
 - no independent researcher has completed a clean full-data rerun;

@@ -149,26 +149,51 @@ class TerrainInputContract:
     maximum_nodata_fraction: float
 
     def validate(self, metadata: TerrainInputMetadata) -> None:
+        if not isinstance(metadata, TerrainInputMetadata):
+            raise TerrainInputValidationError("metadata_type_invalid")
         reasons: list[str] = []
         try:
-            crs_matches = metadata.crs is not None and CRS.from_user_input(
+            crs_matches = isinstance(metadata.crs, str) and CRS.from_user_input(
                 metadata.crs
             ) == CRS.from_user_input(self.crs)
         except (TypeError, ValueError):
             crs_matches = False
         if not crs_matches:
             reasons.append("crs_mismatch_no_automatic_reprojection")
-        if (metadata.width, metadata.height) != (self.width, self.height):
+        dimensions_are_integers = all(
+            isinstance(value, int) and not isinstance(value, bool)
+            for value in (metadata.width, metadata.height)
+        )
+        if not dimensions_are_integers or (metadata.width, metadata.height) != (
+            self.width,
+            self.height,
+        ):
             reasons.append("dimensions_mismatch")
-        if len(metadata.resolution_m) != 2 or any(
-            not math.isfinite(value) or not math.isclose(value, self.resolution_m, abs_tol=1e-6)
+        resolution_is_numeric_pair = (
+            isinstance(metadata.resolution_m, tuple)
+            and len(metadata.resolution_m) == 2
+            and all(
+                isinstance(value, (int, float))
+                and not isinstance(value, bool)
+                and math.isfinite(value)
+                for value in metadata.resolution_m
+            )
+        )
+        if not resolution_is_numeric_pair or any(
+            not math.isclose(value, self.resolution_m, abs_tol=1e-6)
             for value in metadata.resolution_m
         ):
             reasons.append("resolution_mismatch")
-        if metadata.band_count != self.band_count:
+        if (
+            not isinstance(metadata.band_count, int)
+            or isinstance(metadata.band_count, bool)
+            or metadata.band_count != self.band_count
+        ):
             reasons.append("band_count_mismatch")
         if (
-            not math.isfinite(metadata.nodata_fraction)
+            not isinstance(metadata.nodata_fraction, (int, float))
+            or isinstance(metadata.nodata_fraction, bool)
+            or not math.isfinite(metadata.nodata_fraction)
             or not 0 <= metadata.nodata_fraction <= self.maximum_nodata_fraction
         ):
             reasons.append("nodata_policy_failed")

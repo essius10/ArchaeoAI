@@ -2,10 +2,12 @@
 
 ## 1. Purpose and boundary
 
-Phase 5A translates the completed E001 research pipeline into a conservative architecture for a
-possible future terrain-inference interface. It adds contracts and safeguards only. It does not
-load or execute a model, score terrain, train or tune anything, reuse the spent external test,
-publish a service, change a scientific result, or claim an archaeological discovery.
+Phase 5A translated the completed E001 research pipeline into a conservative architecture for a
+possible future terrain-inference interface. Phase 5B adds the smallest reusable single-patch
+feature and model-adapter boundary, tested only with coordinate-free synthetic terrain and an inert
+test double. Neither phase loads or executes the approved private model, scores real terrain,
+trains or tunes anything, reuses the spent external test, publishes a service, changes a scientific
+result, or claims an archaeological discovery.
 
 The scientific state remains `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`. This architecture is an
 engineering plan, not new research evidence or proof that automated inference is safe for public
@@ -91,9 +93,11 @@ flowchart TD
     P -. aggregate research only .-> W[Existing website]
 ```
 
-Phase 5A implements only the input metadata contract, evidence enum, safe result envelope, and
-non-executing artifact checksum guard. Future components must depend on these boundaries rather
-than bypass them.
+Phase 5A implements the input metadata contract, evidence enum, safe result envelope, and
+non-executing artifact checksum guard. Phase 5B adds strict array/mask validation, canonical
+feature reuse, the exact one-row model-input contract, an approved private-path/hash gate, and a
+minimal model-facing protocol. It still adds no model loader. Future components must depend on
+these boundaries rather than bypass them.
 
 ## 6. Input contract
 
@@ -129,6 +133,27 @@ After input QA, the adapter must call the existing tested functions without chan
 
 Any training/inference equivalence difference is a hard stop. There is no learned normalization and
 no metadata, coordinate, provenance, date, identifier, filename, or path feature.
+
+### Verified Phase 5B feature trace
+
+The input array may use a real integer or floating NumPy dtype and is converted immediately to
+`float32`, matching the research path. Boolean, complex, object, and non-array inputs fail closed.
+Unmasked NaN or infinity fails; explicitly masked no-data is accepted only when its fraction exactly
+matches metadata and does not exceed 0.20. Metadata must explicitly bind EPSG:27700, two 1 m
+resolution axes, one band, and 128 × 128 cells. No shape, resolution, CRS, or no-data repair occurs.
+
+The established implementation computes and concatenates channels in this order:
+`elevation_normalized`, `slope_degrees`, `hillshade_315_45`, `local_relief_r16m`. Each 128 × 128
+channel is C-order reshaped to `(32, 4, 32, 4)`. Finite values are summed in `float64` and divided by
+their counts over the two four-cell axes; a completely masked pooling block retains the established
+zero value. The 32 × 32 result is C-order flattened to 1,024 `float32` values. Four channel vectors
+are concatenated, without a scaler, into `(4096,)`; the model boundary receives a read-only
+`(1, 4096)` matrix. There is no further transformation before the existing research scorer.
+
+Six deterministic synthetic surfaces—plane, smooth mound, smooth depression, sinusoid, seeded
+noise, and constant elevation—produced bit-for-bit identical vectors through the research and new
+reusable paths using `numpy.array_equal`. This demonstrates implementation equivalence, not model
+quality or archaeological performance.
 
 ## 8. Output contract and terminology
 
@@ -172,7 +197,9 @@ terrain is not by itself confirmation of archaeology.
 
 ## 10. Model-artifact strategy
 
-The current artifact remains private, ignored, and hash-bound. A future authorized runtime must:
+The current artifact remains private, ignored, and hash-bound. Phase 5B accepts only its exact
+approved private relative path, model identifier, configuration digest, and serialized-artifact
+digest. The guard reads bytes only and does not deserialize them. A future authorized runtime must:
 
 1. receive the artifact through a non-Git controlled channel;
 2. verify the serialized artifact SHA-256 before deserialization;
@@ -256,8 +283,8 @@ Before Phase 5 may score real user terrain, tests must cover:
 
 | Phase | Smallest authorized scope | Exit gate |
 |---|---|---|
-| 5A | Architecture, inventory, contracts, and boundary tests | Design reviewed; no inference executed |
-| 5B | Single-patch preprocessing/model adapter on synthetic data only | Frozen equivalence, artifact-failure, determinism, and privacy tests pass |
+| 5A | Architecture, inventory, contracts, and boundary tests | **Complete; no inference executed** |
+| 5B | Single-patch preprocessing/model adapter on synthetic data only | **Complete; exact equivalence and fail-closed tests pass** |
 | 5C | Offline local CLI in an authorized private environment | One synthetic smoke run; then separate approval for any real input |
 | 5D | Bounded private batch orchestration, still non-public | Resource, cleanup, retention, abuse, and aggregate-reporting tests pass |
 | 5E | Independent security, privacy, archaeological-workflow, and licensing review | Named findings resolved or documented; owner explicitly approves next step |
@@ -274,8 +301,12 @@ known negatives. The result concerns learned terrain similarity for a narrowly c
 study; it is not England-wide archaeological detection, calibrated site probability, field advice,
 or evidence of discovery.
 
-Phase 5A does not train, tune, score, benchmark, acquire terrain, rerun research, review candidates,
-cross-check heritage records, expose private material, build a website feature, publish a release,
-or deploy an API. Independent scientific/privacy review, label-reliability review, systematic
-literature work, authorized private-data reproduction, licensing decisions, artifact distribution,
-and operational security review remain external blockers.
+Phase 5A and Phase 5B do not train, tune, score real terrain, benchmark a real model, acquire
+terrain, rerun research, review candidates, cross-check heritage records, expose private material,
+build a website feature, publish a release, or deploy an API. Phase 5B's inert test-double score has
+zero scientific meaning. Independent scientific/privacy review, label-reliability review,
+systematic literature work, authorized private-data reproduction, licensing decisions, artifact
+distribution, and operational security review remain external blockers.
+
+Phase 5A does not train, tune, score, or execute a model; Phase 5B does not change that scientific
+boundary.
