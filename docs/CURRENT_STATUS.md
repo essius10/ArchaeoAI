@@ -51,6 +51,14 @@ fixed score has no scientific meaning. The approved private Random Forest was no
 deserialized, or executed, no real terrain was processed, and the repository classification remains
 `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`.
 
+Phase 5C has completed an offline, single-patch CLI for inspection and feature-contract validation.
+It accepts only one canonical single-band 128 × 128 GeoTIFF at 1 m resolution in EPSG:27700,
+reuses the bit-exact Phase 5B feature path, and exposes neither feature values nor spatial or local
+path metadata. Validation used temporary mathematical terrain only. The `infer` command is present
+as a fail-closed production boundary, but Phase 5C does not authorize model loading,
+deserialization, or execution and emits no score. No real terrain, spent-test data, scientific
+result, website feature, API, deployment, or release was created.
+
 ## Claim boundary
 
 These results concern terrain classification within the frozen E001 and external-validation

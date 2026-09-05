@@ -27,8 +27,10 @@ not contain sensitive information can use the repository's issue templates.
 
 ## Inference-result boundary
 
-Phase 5A defines contracts only; no supported inference interface is deployed. Any future public
-result must use the explicit serializer allowlist. Model identifiers accept only an approved enum
+Phase 5A defines contracts only; no supported inference interface is deployed. Phase 5C later adds
+an offline single-patch inspection and feature-contract CLI, but it is not a deployed or model-backed
+inference service: its `infer` command fails closed without authorization and never executes the
+private model. Any future public result must use the explicit serializer allowlist. Model identifiers accept only an approved enum
 whose short lowercase alphanumeric/hyphen value is bound to its frozen configuration digest, while
 warnings and limitations accept only approved controlled message codes with fixed coordinate-safe
 rendering. Free-form strings, paths, URLs, nested containers, and custom objects must fail before

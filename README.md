@@ -87,6 +87,7 @@ the score reflects genuine geographic generalization rather than spatial or surv
 | Independent external evaluation | **0.842 [0.775, 0.900]; n=120; frozen test spent** |
 | External error analysis | **Post-hoc/exploratory complete; RF retained** |
 | Phase 5 inference readiness | **Code ready; approved model artifact private/unavailable in public clones** |
+| Offline single-patch CLI | **Phase 5C complete; synthetic validation only; inference disabled** |
 
 The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
 128 m terrain-coverage, and survey-provenance checks. They are **curated research
@@ -167,6 +168,7 @@ called `unlabelled_background`, never a true archaeological negative.
 | Technical consolidation | ✅ Complete | [E001 technical results](docs/e001-technical-results.md) |
 | Inference-system architecture | ✅ Phase 5A complete | Contracts and safety boundaries only; no model executed |
 | Single-patch inference core | ✅ Phase 5B complete | Bit-exact synthetic feature equivalence; no private model executed |
+| Offline single-patch CLI | ✅ Phase 5C complete | Inspect/features available; model execution not authorized |
 | Results and research interface | 🔬 Reports complete | Aggregate figures; no sample predictions or map |
 
 ## What exists today
@@ -202,6 +204,8 @@ called `unlabelled_background`, never a true archaeological negative.
   availability guard, and reviewed architecture for possible later inference work.
 - A Phase 5B single-patch adapter that reuses the frozen four-channel 4 × 4 feature path and proves
   bit-exact equivalence on coordinate-free synthetic terrain using an inert test double only.
+- A Phase 5C offline CLI that validates one canonical GeoTIFF and reports the safe 4,096-feature
+  contract without exposing feature values, paths, coordinates, arbitrary tags, or model scores.
 - One bounded private 5 km inference run with 5,929 valid windows, a hash-frozen private score
   table, and a 62-item blinded morphology-review packet.
 - Tracked aggregate evidence and a claims register that limits public wording.
@@ -218,8 +222,29 @@ called `unlabelled_background`, never a true archaeological negative.
   candidate table.
 - A peer-reviewed paper, DOI, archived release, or institutional affiliation. The Phase 4B
   manuscript is a review draft only.
-- A public model artifact, supported inference CLI/API, terrain upload service, or authorization to
-  run the Phase 5 core on real user terrain.
+- A public model artifact, model-backed public inference, inference API, terrain upload service, or
+  authorization to run the Phase 5 core on real user terrain. The offline Phase 5C CLI deliberately
+  stops before model execution.
+
+## Offline single-patch CLI
+
+Phase 5C provides a package-native, offline engineering interface for one synthetic or otherwise
+authorized local GeoTIFF. It does not download, load, deserialize, or execute a model. The input
+must be a single-band 128 × 128 GeoTIFF at 1 m square resolution in EPSG:27700; the CLI never crops,
+resamples, or reprojects it.
+
+```powershell
+python -m archaeoai --help
+python -m archaeoai inspect synthetic_patch.tif
+python -m archaeoai features synthetic_patch.tif --json
+python -m archaeoai infer synthetic_patch.tif
+```
+
+After editable installation, `archaeoai` is equivalent to `python -m archaeoai`. `inspect` emits a
+strict coordinate-free QA summary. `features` computes the exact Phase 5B path but reports only its
+shape, dtype, and channel order—never the 4,096 values. `infer` is a fail-closed boundary: without
+the approved private artifact it exits with code 3, and Phase 5C never authorizes model execution
+even if artifact integrity can be verified. No score is fabricated.
 
 ## Reproducibility
 

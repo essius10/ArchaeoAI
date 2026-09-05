@@ -61,11 +61,12 @@ def test_no_model_or_checkpoint_artifact_is_tracked() -> None:
     assert not [path for path in tracked if path.casefold().endswith(forbidden_suffixes)]
 
 
-def test_phase5a_architecture_does_not_create_an_api_or_console_command() -> None:
+def test_phase5a_architecture_preserves_its_historical_no_interface_boundary() -> None:
     project = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     architecture = ARCHITECTURE.read_text(encoding="utf-8")
-    assert "[project.scripts]" not in project
     assert "No CLI or API is added in Phase 5A" in architecture
+    assert "[project.scripts]" in project
+    assert 'archaeoai = "archaeoai.cli:main"' in project
     assert not (ROOT / "src/archaeoai/inference_system/api.py").exists()
     assert not (ROOT / "src/archaeoai/inference_system/cli.py").exists()
 

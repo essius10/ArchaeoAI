@@ -55,10 +55,12 @@ owner decisions requiring separate review and approval.
 
 Phase 5A has separately completed an engineering-only inference architecture and contract gate.
 The repository is `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`: the approved RF artifact is
-private and absent from public clones. No model was run and no real terrain, API, CLI, deployment,
+private and absent from public clones. No model was run and no real terrain, API, deployment,
 website feature, release, or new scientific result was created. Phase 5B has now proved exact
 single-patch feature equivalence on six synthetic surfaces and tested a minimal inert model adapter.
-The private RF was not loaded or executed, and every Phase 4D boundary remains unchanged.
+Phase 5C adds an offline CLI for strict GeoTIFF inspection and feature-contract reporting, validated
+only with temporary synthetic rasters. Its `infer` boundary fails closed and never loads,
+deserializes, or executes the private RF. Every Phase 4D boundary remains unchanged.
 
 ## Phase 5 engineering sequence
 
@@ -66,7 +68,7 @@ The private RF was not loaded or executed, and every Phase 4D boundary remains u
 |---|---|---|
 | 5A | Inventory, architecture, safe input/result/evidence contracts | **Complete; no inference executed** |
 | 5B | Frozen preprocessing/model adapter with synthetic inputs only | **Complete; bit-exact synthetic equivalence** |
-| 5C | Offline local CLI in an authorized private environment | Not started; artifact and privacy gates required |
+| 5C | Offline local single-patch CLI | **Complete; synthetic validation only; inference disabled** |
 | 5D | Bounded private batch orchestration | Not started; resource/retention/abuse review required |
 | 5E | Independent security, privacy, archaeological-workflow, and licensing review | External work required |
 | 5F | Optional public-interface decision | Not authorized; may end in `NO-GO` |
