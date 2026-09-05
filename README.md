@@ -44,6 +44,22 @@ deployment is enabled yet.
 Preview it locally from the repository root with `python -m http.server 8000`, then open
 `http://127.0.0.1:8000/website/`.
 
+## Professional portal demonstration
+
+A separate local-only professional workflow portal is available for synthetic demonstrations. It
+supports project creation, canonical Phase 5 feature preparation on mathematical terrain, screening
+hypotheses, human review, evidence and audit records, and limitations-first reports. It does **not**
+load the private model, accept real terrain, or provide live commercial inference.
+
+```powershell
+python -m pip install -e ".[portal]"
+archaeoai portal --demo --reset
+```
+
+Open `http://127.0.0.1:8000`. Read the
+[Phase 6C implementation note](docs/product/PHASE_6C_COMMERCIAL_MVP.md) and
+[portal runbook](docs/product/PORTAL_RUNBOOK.md) for boundaries and operator steps.
+
 ## What is ArchaeoAI?
 
 > **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
