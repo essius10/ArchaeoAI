@@ -40,6 +40,13 @@ from archaeoai.inference_system.geotiff import (
     GeoTIFFValidationError,
     load_canonical_geotiff,
 )
+from archaeoai.inference_system.private_model_adapter import (
+    FROZEN_MODEL_STATE_SHA256,
+    ApprovedPrivateModelLoadError,
+    ApprovedPrivateRandomForestAdapter,
+    approved_private_model_reference,
+    load_approved_private_random_forest,
+)
 from archaeoai.inference_system.single_patch import (
     APPROVED_MODEL_ARTIFACT_SHA256,
     APPROVED_MODEL_RELATIVE_PATH,
@@ -62,6 +69,8 @@ __all__ = [
     "APPROVED_MODEL_ARTIFACT_SHA256",
     "APPROVED_MODEL_RELATIVE_PATH",
     "ApprovedModelArtifactReference",
+    "ApprovedPrivateModelLoadError",
+    "ApprovedPrivateRandomForestAdapter",
     "AutomaticInferenceResult",
     "BATCH_MANIFEST_SCHEMA_VERSION",
     "BATCH_RESULT_SCHEMA_VERSION",
@@ -74,6 +83,7 @@ __all__ = [
     "BatchRunResult",
     "CanonicalGeoTIFF",
     "EvidenceLevel",
+    "FROZEN_MODEL_STATE_SHA256",
     "GeoTIFFErrorCode",
     "GeoTIFFValidationError",
     "LimitationCode",
@@ -96,10 +106,12 @@ __all__ = [
     "WarningCode",
     "verify_model_artifact_checksum",
     "load_batch_manifest",
+    "load_approved_private_random_forest",
     "load_canonical_geotiff",
     "run_feature_batch",
     "run_approved_single_patch_inference",
     "score_single_patch_model_adapter",
     "transform_single_patch",
     "verify_approved_model_artifact",
+    "approved_private_model_reference",
 ]
