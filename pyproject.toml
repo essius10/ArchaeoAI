@@ -21,9 +21,19 @@ archaeoai = "archaeoai.cli:main"
 
 [project.optional-dependencies]
 dev = [
+    "fastapi>=0.116,<1",
+    "httpx>=0.28,<1",
     "pytest>=9,<10",
     "ruff>=0.16,<0.17",
+    "uvicorn>=0.35,<1",
 ]
+portal = [
+    "fastapi>=0.116,<1",
+    "uvicorn>=0.35,<1",
+]
+
+[tool.setuptools.package-data]
+"archaeoai.portal" = ["static/*"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
