@@ -46,10 +46,11 @@ Preview it locally from the repository root with `python -m http.server 8000`, t
 
 ## Professional portal demonstration
 
-A separate local-only professional workflow portal is available for synthetic demonstrations. It
-supports project creation, canonical Phase 5 feature preparation on mathematical terrain, screening
-hypotheses, human review, evidence and audit records, and limitations-first reports. It does **not**
-load the private model, accept real terrain, or provide live commercial inference.
+A separate local-only professional workflow portal supports project creation, canonical Phase 5
+feature preparation on mathematical terrain, screening outputs, human review, evidence and audit
+records, and limitations-first reports. The default uses a deterministic demonstration scorer.
+Phase 6D also provides an explicit localhost-only mode that executes the hash-verified frozen E001
+Random Forest on the same synthetic terrain. Neither mode accepts real terrain or coordinates.
 
 ```powershell
 python -m pip install -e ".[portal]"
@@ -58,7 +59,9 @@ archaeoai portal --demo --reset
 
 Open `http://127.0.0.1:8000`. Read the
 [Phase 6C implementation note](docs/product/PHASE_6C_COMMERCIAL_MVP.md) and
-[portal runbook](docs/product/PORTAL_RUNBOOK.md) for boundaries and operator steps.
+[portal runbook](docs/product/PORTAL_RUNBOOK.md) for boundaries and operator steps. The narrowly
+approved real-model path is documented in the
+[Phase 6D runtime note](docs/product/PHASE_6D_APPROVED_MODEL_RUNTIME.md).
 
 ## What is ArchaeoAI?
 
