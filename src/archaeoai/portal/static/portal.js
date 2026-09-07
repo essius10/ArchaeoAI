@@ -66,6 +66,21 @@ function statusBadge(status) {
   return `<span class="status-badge status-${escapeHtml(String(status).toLowerCase())}">${escapeHtml(humanize(status))}</span>`;
 }
 
+function approvedRuntimeAvailable() {
+  return state.session?.runtime_status?.model_execution_available === true;
+}
+
+function applyRuntimeChrome() {
+  const approved = approvedRuntimeAvailable();
+  const badge = approved ? "REAL FROZEN MODEL · SYNTHETIC TERRAIN · LOCAL PRIVATE" : "SYNTHETIC DEMO · MODEL NOT EXECUTED";
+  const copy = approved ? "E001 frozen Random Forest verified; real terrain, coordinates, and remote access remain disabled." : "No production authentication, real terrain, coordinates, or archaeological determination.";
+  document.querySelector("#entry-runtime-badge").textContent = badge;
+  document.querySelector("#entry-runtime-copy").textContent = copy;
+  document.querySelector("#runtime-chip").textContent = badge;
+  document.querySelector("#sidebar-runtime-title").textContent = approved ? "Approved runtime ready" : "Demo runtime ready";
+  document.querySelector("#sidebar-runtime-copy").textContent = approved ? "Real model · synthetic input only" : "Approved model disabled";
+}
+
 function emptyState(title, copy, action = "") {
   return `<section class="empty-state"><div class="empty-icon" aria-hidden="true">◇</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(copy)}</p>${action}</section>`;
 }
@@ -108,12 +123,13 @@ function projectRow(project) {
 
 function overviewView() {
   const o = state.overview;
+  const approved = approvedRuntimeAvailable();
   return `<header class="page-heading"><div><p class="eyebrow">Workspace overview</p><h1>Good evidence starts with a controlled workflow.</h1><p>Manage bounded synthetic demonstrations while preserving the boundary between machine hypotheses and human interpretation.</p></div><button class="primary-action" data-new-project>New project</button></header>
   <section class="metric-grid">
     <article class="metric-card"><span>Active projects</span><strong>${o.active_projects}</strong><small>Local demonstration workspace</small></article>
     <article class="metric-card"><span>Awaiting review</span><strong>${o.awaiting_review}</strong><small>Human attention required</small></article>
     <article class="metric-card"><span>Reports ready</span><strong>${o.reports_ready}</strong><small>Coordinate-safe summaries</small></article>
-    <article class="metric-card guarded"><span>Approved model</span><strong>Disabled</strong><small>No artifact loaded or executed</small></article>
+    <article class="metric-card guarded"><span>Approved model</span><strong>${approved ? "Ready" : "Disabled"}</strong><small>${approved ? "Verified · local synthetic input only" : "No artifact loaded or executed"}</small></article>
   </section>
   <div class="two-column">
     <section class="panel"><div class="panel-heading"><div><p class="eyebrow">Recent work</p><h2>Projects</h2></div><button class="text-button" data-view-target="projects">View all</button></div>
@@ -123,7 +139,7 @@ function overviewView() {
       <ol class="workflow-list"><li><span>1</span><div><strong>Authorize</strong><small>Record scope and synthetic-data attestation.</small></div></li><li><span>2</span><div><strong>Screen</strong><small>Run canonical feature preparation on mathematical terrain.</small></div></li><li><span>3</span><div><strong>Review</strong><small>Record separately attributed human observations.</small></div></li><li><span>4</span><div><strong>Report</strong><small>Generate a limitations-first, coordinate-safe summary.</small></div></li></ol>
     </aside>
   </div>
-  <section class="boundary-banner"><div><strong>Demonstration boundary</strong><p>Scores are deterministic interface values—not archaeological probabilities. No real terrain or approved private model is used.</p></div><span>MODEL EXECUTION: NOT PERFORMED</span></section>`;
+  <section class="boundary-banner"><div><strong>Demonstration boundary</strong><p>${approved ? "The frozen E001 model may score synthetic mathematical terrain. Scores are terrain-pattern similarity—not archaeological probabilities." : "Scores are deterministic interface values—not archaeological probabilities. No real terrain or approved private model is used."}</p></div><span>${approved ? "MODEL AVAILABLE · SYNTHETIC ONLY" : "MODEL EXECUTION: NOT PERFORMED"}</span></section>`;
 }
 
 function projectsView() {
@@ -143,12 +159,13 @@ function terrainThumb(result) {
 }
 
 function resultCard(result) {
+  const realModel = result.model_execution === "PERFORMED_APPROVED_PRIVATE_MODEL";
   return `<article class="result-card">
     ${terrainThumb(result)}
     <div class="result-body"><div class="result-top"><span class="priority priority-${escapeHtml(result.priority.toLowerCase())}">${escapeHtml(humanize(result.priority))}</span><small>${escapeHtml(result.id)}</small></div>
-    <div class="score-row"><strong>${Number(result.score).toFixed(3)}</strong><span>demonstration score</span></div>
+    <div class="score-row"><strong>${Number(result.score).toFixed(3)}</strong><span>${realModel ? "terrain similarity score" : "demonstration score"}</span></div>
     <p><strong>${escapeHtml(humanize(result.evidence_level))}</strong><br>${escapeHtml(humanize(result.review_state))}</p>
-    <p class="result-warning">Terrain-similarity hypothesis only. Not archaeology.</p>
+    <p class="result-warning">${realModel ? "Real frozen model on synthetic terrain. AI output; human review required." : "Terrain-similarity hypothesis only. Not archaeology."}</p>
     <div class="result-actions"><button class="quiet-action" data-inspect-result="${escapeHtml(result.id)}">Inspect result</button><button class="secondary-action" data-review-result="${escapeHtml(result.id)}" ${["REVIEWED","ESCALATED"].includes(result.review_state) ? "disabled" : ""}>${result.review_state === "IN_REVIEW" ? "Continue review" : result.review_state === "UNREVIEWED" ? "Review observation" : "Review recorded"}</button></div></div>
   </article>`;
 }
@@ -162,12 +179,12 @@ function projectSummary() {
   const p = state.project;
   return `<div class="two-column"><section class="panel"><p class="eyebrow">Project brief</p><h2>${escapeHtml(p.name)}</h2><dl class="detail-grid"><div><dt>Reference</dt><dd>${escapeHtml(p.project_reference)}</dd></div><div><dt>Owner</dt><dd>${escapeHtml(p.owner)}</dd></div><div><dt>Purpose</dt><dd>${escapeHtml(p.purpose)}</dd></div><div><dt>Retention</dt><dd>${escapeHtml(humanize(p.retention_policy))}</dd></div><div><dt>Processing mode</dt><dd>Synthetic mathematical terrain</dd></div><div><dt>Authorization</dt><dd>${escapeHtml(humanize(p.authorization_state))}</dd></div></dl></section>
   <aside class="panel"><p class="eyebrow">Next action</p><h2>${p.status === "DRAFT" ? "Authorize demonstration" : p.status === "AUTHORIZED_FOR_DEMO" ? "Run bounded workflow" : "Continue professional review"}</h2><p>${p.status === "DRAFT" ? "Record the two required synthetic-only acknowledgements before processing." : p.status === "AUTHORIZED_FOR_DEMO" ? "Select a mathematical scenario. Canonical features are prepared and immediately discarded." : "Inspect hypotheses and record human observations separately."}</p>${projectAction(p)}</aside></div>
-  <section class="boundary-banner"><div><strong>Scope and interpretation</strong><p>No real terrain, coordinates, private model, archaeological probability, or discovery claim is present.</p></div><span>${escapeHtml(humanize(p.status))}</span></section>`;
+  <section class="boundary-banner"><div><strong>Scope and interpretation</strong><p>${approvedRuntimeAvailable() ? "The verified private model may execute only on generated mathematical terrain. No coordinates, archaeological probability, or discovery claim is present." : "No real terrain, coordinates, private model, archaeological probability, or discovery claim is present."}</p></div><span>${escapeHtml(humanize(p.status))}</span></section>`;
 }
 
 function projectAction(project) {
   if (project.status === "DRAFT") return `<button class="primary-action" data-authorize="${project.id}">Record demo authorization</button>`;
-  if (project.status === "AUTHORIZED_FOR_DEMO") return `<div class="inline-form"><select id="scenario"><option value="MOUND_LIKE">Mound-like mathematical surface</option><option value="DEPRESSION_LIKE">Depression-like surface</option><option value="PLANAR">Planar surface</option><option value="SINUSOIDAL">Sinusoidal surface</option><option value="MIXED_MATHEMATICAL">Mixed mathematical terrain</option></select><button class="primary-action" data-run-demo="${project.id}">Run synthetic demo</button></div>`;
+  if (project.status === "AUTHORIZED_FOR_DEMO") return `<div class="inline-form"><select id="scenario"><option value="MOUND_LIKE">Mound-like mathematical surface</option><option value="DEPRESSION_LIKE">Depression-like surface</option><option value="PLANAR">Planar surface</option><option value="SINUSOIDAL">Sinusoidal surface</option><option value="MIXED_MATHEMATICAL">Mixed mathematical terrain</option></select>${approvedRuntimeAvailable() ? '<select id="runtime"><option value="SYNTHETIC_DEMO">Synthetic demonstration scorer</option><option value="APPROVED_PRIVATE_MODEL">Real frozen E001 model</option></select>' : ''}<button class="primary-action" data-run-demo="${project.id}">Run synthetic terrain</button></div>`;
   return `<button class="primary-action" data-project-tab="results">Open screening results</button>`;
 }
 
@@ -228,7 +245,8 @@ function auditView() {
 }
 
 function globalSettingsView() {
-  return `<header class="page-heading compact"><div><p class="eyebrow">System boundaries</p><h1>Settings</h1><p>Fixed safeguards for this local demonstration build.</p></div></header><div class="settings-grid"><section class="panel"><span class="setting-icon">⌂</span><h2>Local-only service</h2><p>Bound to loopback. No production authentication, remote deployment, analytics, telemetry, or uploads.</p><strong class="safe-state">ACTIVE</strong></section><section class="panel"><span class="setting-icon">◇</span><h2>Approved model runtime</h2><p>Fail-closed boundary. No artifact path, loading, deserialization, or execution is available.</p><strong class="guard-state">DISABLED</strong></section><section class="panel"><span class="setting-icon">▱</span><h2>Private storage</h2><p>Minimal SQLite state under an ignored private directory. No coordinates, rasters, paths, or feature vectors.</p><strong class="safe-state">LOCAL</strong></section><section class="panel"><span class="setting-icon">◎</span><h2>Evidence ceiling</h2><p>Machine outputs stop at AI hypothesis. Demo human review can record only a human-vetted observation.</p><strong class="safe-state">ENFORCED</strong></section></div>`;
+  const approved = approvedRuntimeAvailable();
+  return `<header class="page-heading compact"><div><p class="eyebrow">System boundaries</p><h1>Settings</h1><p>Fixed safeguards for this local demonstration build.</p></div></header><div class="settings-grid"><section class="panel"><span class="setting-icon">⌂</span><h2>Local-only service</h2><p>Bound to loopback. No production authentication, remote deployment, analytics, telemetry, or uploads.</p><strong class="safe-state">ACTIVE</strong></section><section class="panel"><span class="setting-icon">◇</span><h2>Approved model runtime</h2><p>${approved ? "Verified frozen E001 Random Forest. Execution is limited to synthetic terrain on this local server." : "Fail-closed boundary. No artifact path, loading, deserialization, or execution is available."}</p><strong class="${approved ? "safe-state" : "guard-state"}">${approved ? "VERIFIED" : "DISABLED"}</strong></section><section class="panel"><span class="setting-icon">▱</span><h2>Private storage</h2><p>Minimal SQLite state under an ignored private directory. No coordinates, rasters, paths, or feature vectors.</p><strong class="safe-state">LOCAL</strong></section><section class="panel"><span class="setting-icon">◎</span><h2>Evidence ceiling</h2><p>Automatic results stop at machine evidence. Demo human review can record only a human-vetted observation.</p><strong class="safe-state">ENFORCED</strong></section></div>`;
 }
 
 function render() {
@@ -252,6 +270,7 @@ function formJson(form) {
 document.querySelector("#enter-workspace").addEventListener("click", async () => {
   try {
     state.session = await api("/session");
+    applyRuntimeChrome();
     await refreshBase();
     document.querySelector("#organization-name").textContent = state.session.organization.name;
     document.querySelector("#entry-view").hidden = true;
@@ -276,8 +295,9 @@ document.addEventListener("click", async (event) => {
     }
     if (button.dataset.runDemo) {
       button.disabled = true; button.textContent = "Preparing synthetic terrain…";
-      await api(`/projects/${button.dataset.runDemo}/run-demo`, { method: "POST", body: JSON.stringify({ scenario: document.querySelector("#scenario").value, runtime: "SYNTHETIC_DEMO" }) });
-      toast("Synthetic workflow completed. No model was executed."); await refreshBase(); await openProject(button.dataset.runDemo, "results");
+      const runtime = document.querySelector("#runtime")?.value || "SYNTHETIC_DEMO";
+      await api(`/projects/${button.dataset.runDemo}/run-demo`, { method: "POST", body: JSON.stringify({ scenario: document.querySelector("#scenario").value, runtime }) });
+      toast(runtime === "APPROVED_PRIVATE_MODEL" ? "Frozen E001 model executed on synthetic terrain. Human review required." : "Synthetic workflow completed. No model was executed."); await refreshBase(); await openProject(button.dataset.runDemo, "results");
     }
     if (button.dataset.reviewResult) {
       const resultId = button.dataset.reviewResult;
@@ -288,7 +308,7 @@ document.addEventListener("click", async (event) => {
     }
     if (button.dataset.inspectResult) {
       const result = await api(`/results/${button.dataset.inspectResult}`);
-      document.querySelector("#result-detail").innerHTML = `${terrainThumb(result)}<dl class="detail-grid"><div><dt>Opaque result ID</dt><dd>${escapeHtml(result.id)}</dd></div><div><dt>Demonstration score</dt><dd>${Number(result.score).toFixed(3)}</dd></div><div><dt>Review priority</dt><dd>${escapeHtml(humanize(result.priority))}</dd></div><div><dt>Evidence level</dt><dd>${escapeHtml(humanize(result.evidence_level))}</dd></div><div><dt>Runtime</dt><dd>${escapeHtml(result.runtime)}</dd></div><div><dt>Model execution</dt><dd>${escapeHtml(result.model_execution)}</dd></div></dl><p class="callout">Terrain morphology prioritized for specialist review. Synthetic demonstration only—not archaeology or archaeological probability.</p>`;
+      document.querySelector("#result-detail").innerHTML = `${terrainThumb(result)}<dl class="detail-grid"><div><dt>Opaque result ID</dt><dd>${escapeHtml(result.id)}</dd></div><div><dt>Terrain similarity score</dt><dd>${Number(result.score).toFixed(3)}</dd></div><div><dt>Review priority</dt><dd>${escapeHtml(humanize(result.priority))}</dd></div><div><dt>Evidence level</dt><dd>${escapeHtml(humanize(result.evidence_level))}</dd></div><div><dt>Runtime</dt><dd>${escapeHtml(result.runtime)}</dd></div><div><dt>Model execution</dt><dd>${escapeHtml(result.model_execution)}</dd></div></dl><p class="callout">Terrain morphology prioritized for specialist review. Synthetic terrain only—not archaeology or archaeological probability.</p>`;
       document.querySelector("#result-dialog").showModal();
     }
     if (button.hasAttribute("data-generate-report")) {
@@ -350,8 +370,10 @@ workspace.addEventListener("input", (event) => {
 
 document.querySelector("#mobile-menu").addEventListener("click", () => document.querySelector(".sidebar").classList.toggle("open"));
 
+api("/session").then((session) => { state.session = session; applyRuntimeChrome(); }).catch(() => {});
+
 // Optional local browser-agent affordances. These mirror the same bounded APIs and
-// never expose terrain, coordinates, features, or an approved model runtime.
+// never expose terrain, coordinates, features, model paths, or authorization controls.
 if (navigator.modelContext?.registerTool) {
   navigator.modelContext.registerTool({
     name: "list_demo_projects",

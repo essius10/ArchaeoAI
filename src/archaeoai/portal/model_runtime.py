@@ -1,4 +1,4 @@
-"""Portal screening-runtime boundary; the approved runtime is intentionally disabled."""
+"""Portal screening-runtime boundary and safe runtime-status contracts."""
 
 from __future__ import annotations
 
@@ -23,14 +23,26 @@ class RuntimeResult:
 class ScreeningRuntime(Protocol):
     runtime_name: str
 
+    def validate(self) -> None:
+        """Validate that the server-authorized runtime remains ready."""
+
     def screen(self, scenario: SyntheticScenario, count: int = 6) -> tuple[RuntimeResult, ...]:
         """Return bounded automatic screening records."""
+
+    def public_status(self) -> dict[str, object]:
+        """Return a fixed, coordinate- and path-free runtime status."""
 
 
 class ApprovedModelRuntimeNotAuthorizedError(RuntimeError):
     """Raised before any artifact lookup, loading, deserialization, or execution."""
 
     code = "APPROVED_MODEL_RUNTIME_NOT_AUTHORIZED"
+
+
+class ApprovedModelRuntimeExecutionError(RuntimeError):
+    """Fixed safe failure raised if verified execution cannot complete."""
+
+    code = "APPROVED_MODEL_RUNTIME_EXECUTION_FAILED"
 
 
 class DisabledApprovedModelRuntime:
@@ -45,3 +57,12 @@ class DisabledApprovedModelRuntime:
 
     def validate(self) -> None:
         raise ApprovedModelRuntimeNotAuthorizedError(self.code)
+
+    def public_status(self) -> dict[str, object]:
+        return {
+            "runtime_mode": "SYNTHETIC_DEMO",
+            "approved_runtime_enabled": False,
+            "artifact_verified": False,
+            "model_execution_available": False,
+            "input_mode": "SYNTHETIC_ONLY",
+        }

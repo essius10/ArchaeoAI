@@ -30,6 +30,7 @@ from archaeoai.portal.schemas import (
     ReviewRequest,
     SyntheticScenario,
 )
+from archaeoai.portal.workflow import PortalWorkflow
 
 MUTATION_HEADERS = {"X-ArchaeoAI-Demo": "1"}
 FORBIDDEN_RESPONSE_KEYS = {
@@ -117,6 +118,13 @@ def test_health_and_session_are_explicitly_local_demo(client: TestClient) -> Non
         "demo_runtime": "AVAILABLE",
         "approved_model_runtime": "DISABLED_NOT_AUTHORIZED",
         "storage": "LOCAL_PRIVATE_SQLITE",
+        "runtime_status": {
+            "runtime_mode": "SYNTHETIC_DEMO",
+            "approved_runtime_enabled": False,
+            "artifact_verified": False,
+            "model_execution_available": False,
+            "input_mode": "SYNTHETIC_ONLY",
+        },
     }
     assert client.get("/api/v1/session").json()["authenticated"] is False
 
@@ -195,6 +203,20 @@ def test_project_lifecycle_create_read_delete(client: TestClient) -> None:
     assert client.get(f"/api/v1/projects/{project['id']}").status_code == 404
 
 
+def test_seeded_demo_project_ids_satisfy_public_route_contract(tmp_path: Path) -> None:
+    database = tmp_path / "seeded.sqlite3"
+    repository = PortalRepository(database)
+    workflow = PortalWorkflow(repository)
+    workflow.seed_demo()
+    with TestClient(create_app(database)) as seeded_client:
+        projects = seeded_client.get("/api/v1/projects").json()
+        assert len(projects) == 3
+        assert all(
+            seeded_client.get(f"/api/v1/projects/{project['id']}").status_code == 200
+            for project in projects
+        )
+
+
 def test_state_change_requires_demo_header(client: TestClient) -> None:
     response = client.post("/api/v1/projects", json=project_payload())
     assert response.status_code == 403
@@ -262,7 +284,10 @@ def test_synthetic_surface_uses_canonical_phase5_feature_contract() -> None:
 def test_approved_model_runtime_fails_before_artifact_operations(client: TestClient) -> None:
     response = client.post(
         "/api/v1/runtime/approved/check",
-        json={"runtime": "APPROVED_MODEL", "model_identifier": "approved-reference"},
+        json={
+            "runtime": "APPROVED_PRIVATE_MODEL",
+            "model_identifier": "e001-frozen-random-forest",
+        },
         headers=MUTATION_HEADERS,
     )
     assert response.status_code == 403
@@ -478,16 +503,18 @@ def test_database_schema_has_no_spatial_path_raster_or_feature_columns(tmp_path:
 def test_approved_runtime_schema_rejects_paths_urls_and_unknown_fields() -> None:
     for value in ("../../model.pkl", "file:///model.pkl", "https://example.test/model"):
         with pytest.raises(ValidationError):
-            ApprovedRuntimeRequest(runtime="APPROVED_MODEL", model_identifier=value)
+            ApprovedRuntimeRequest(runtime="APPROVED_PRIVATE_MODEL", model_identifier=value)
     with pytest.raises(ValidationError):
         ApprovedRuntimeRequest(
-            runtime="APPROVED_MODEL", model_identifier="safe-id", model_path="private.pkl"
+            runtime="APPROVED_PRIVATE_MODEL",
+            model_identifier="e001-frozen-random-forest",
+            model_path="private.pkl",
         )
 
 
 def test_arbitrary_runtime_name_is_rejected() -> None:
     with pytest.raises(ValidationError):
-        DemoRunRequest(scenario="PLANAR", runtime="APPROVED_MODEL")
+        DemoRunRequest(scenario="PLANAR", runtime="INJECTED_MODEL")
 
 
 def test_project_acknowledgements_are_mandatory() -> None:
@@ -503,7 +530,7 @@ def test_static_portal_contains_required_navigation_and_safe_language(client: Te
     stylesheet = client.get("/static/portal.css").text
     for label in ("Overview", "Projects", "Review Queue", "Reports", "Audit", "Settings"):
         assert label in html
-    assert "DEMO MODE — SYNTHETIC DATA" in html
+    assert "SYNTHETIC DEMO · MODEL NOT EXECUTED" in html
     assert "Import authorized terrain" in html
     assert "Live terrain ingestion is not enabled" in html
     assert "HUMAN_VETTED_OBSERVATION" in html

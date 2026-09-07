@@ -231,14 +231,14 @@ class PortalRepository:
             )
         return self.get_project(project_id)
 
-    def create_job(self, project_id: str, scenario: str) -> dict:
+    def create_job(self, project_id: str, scenario: str, runtime: str) -> dict:
         identifier = opaque_id("job")
         now = utc_now()
         with self.connect() as db:
             db.execute(
                 """INSERT INTO jobs
-                VALUES (?, ?, ?, 'QUEUED', ?, NULL, 'NOT_PERFORMED', 'SYNTHETIC_DEMO')""",
-                (identifier, project_id, scenario, now),
+                VALUES (?, ?, ?, 'QUEUED', ?, NULL, 'PENDING', ?)""",
+                (identifier, project_id, scenario, now, runtime),
             )
             self.add_audit(
                 db,
@@ -271,6 +271,13 @@ class PortalRepository:
             )
 
     def complete_job(self, project_id: str, job_id: str, results: tuple) -> None:
+        runtimes = {item.runtime for item in results}
+        executions = {item.model_execution for item in results}
+        if len(runtimes) != 1 or len(executions) != 1:
+            raise ValueError("runtime provenance must be consistent within a job")
+        runtime = runtimes.pop()
+        model_execution = executions.pop()
+        approved_execution = model_execution == "PERFORMED_APPROVED_PRIVATE_MODEL"
         with self.connect() as db:
             now = utc_now()
             for item in results:
@@ -294,23 +301,47 @@ class PortalRepository:
                 )
                 db.execute(
                     """INSERT INTO evidence
-                    VALUES (?, ?, ?, 'Synthetic demo runtime', 'MACHINE', ?,
+                    VALUES (?, ?, ?, ?, 'MACHINE', ?,
                     'MATHEMATICAL_TERRAIN',
                     'Terrain morphology prioritized for specialist review', 'ACTIVE', ?)""",
-                    (opaque_id("evd"), project_id, result_id, item.evidence_level.value, now),
+                    (
+                        opaque_id("evd"),
+                        project_id,
+                        result_id,
+                        "Frozen E001 Random Forest"
+                        if approved_execution
+                        else "Synthetic demo runtime",
+                        item.evidence_level.value,
+                        now,
+                    ),
                 )
             db.execute(
-                "UPDATE jobs SET status='COMPLETED', completed_at=? WHERE id=? AND project_id=?",
-                (now, job_id, project_id),
+                """UPDATE jobs SET status='COMPLETED', completed_at=?,
+                model_execution=?, runtime=? WHERE id=? AND project_id=?""",
+                (now, model_execution, runtime, job_id, project_id),
             )
             self.add_audit(
                 db,
                 project_id,
                 "PROCESSING_COMPLETED",
-                "Canonical synthetic feature preparation completed; model execution not performed",
+                (
+                    "Frozen E001 model executed on synthetic mathematical terrain"
+                    if approved_execution
+                    else (
+                        "Canonical synthetic feature preparation completed; "
+                        "model execution not performed"
+                    )
+                ),
             )
             self.add_audit(
-                db, project_id, "RESULTS_CREATED", "Bounded synthetic hypotheses created"
+                db,
+                project_id,
+                "RESULTS_CREATED",
+                (
+                    "Bounded synthetic AI outputs created for human review"
+                    if approved_execution
+                    else "Bounded synthetic hypotheses created"
+                ),
             )
         self.update_project_state(project_id, "REVIEW_REQUIRED", "AWAITING_REVIEW")
 
@@ -450,6 +481,22 @@ class PortalRepository:
             report_row = db.execute(
                 "SELECT * FROM reports WHERE project_id=?", (project_id,)
             ).fetchone()
+        runtimes = {result["runtime"] for result in results}
+        executions = {result["model_execution"] for result in results}
+        runtime = next(iter(runtimes)) if len(runtimes) == 1 else "NOT_RUN"
+        model_execution = next(iter(executions)) if len(executions) == 1 else "NOT_PERFORMED"
+        approved_execution = model_execution == "PERFORMED_APPROVED_PRIVATE_MODEL"
+        limitations = [
+            "Synthetic demonstration — not a professional archaeological assessment.",
+            "Scores are terrain-pattern similarity values, not archaeological probabilities.",
+        ]
+        if approved_execution:
+            limitations.append(
+                "The frozen E001 model was executed on synthetic mathematical terrain. This "
+                "demonstration does not establish the presence or absence of archaeology."
+            )
+        else:
+            limitations.append("No approved private model or real terrain was used.")
         return {
             "status": "READY" if report_row else "NOT_GENERATED",
             "generated_at": report_row["generated_at"] if report_row else None,
@@ -457,15 +504,11 @@ class PortalRepository:
             "screening_summary": {
                 "synthetic_hypotheses": len(results),
                 "reviewed": sum(r["review_state"] in {"REVIEWED", "ESCALATED"} for r in results),
-                "model_execution": "NOT_PERFORMED",
-                "runtime": "SYNTHETIC_DEMO",
+                "model_execution": model_execution,
+                "runtime": runtime,
             },
             "human_observations": [e for e in evidence if e["actor_type"] == "HUMAN"],
-            "limitations": [
-                "Synthetic demonstration — not a professional archaeological assessment.",
-                "Scores are deterministic demonstration values, not archaeological probabilities.",
-                "No approved private model or real terrain was used.",
-            ],
+            "limitations": limitations,
             "provenance": (
                 "Deterministic mathematical terrain; canonical Phase 5 feature preparation; "
                 "features discarded"

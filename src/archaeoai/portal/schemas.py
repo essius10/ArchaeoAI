@@ -56,6 +56,11 @@ class SyntheticScenario(StrEnum):
     MIXED_MATHEMATICAL = "MIXED_MATHEMATICAL"
 
 
+class PortalRuntime(StrEnum):
+    SYNTHETIC_DEMO = "SYNTHETIC_DEMO"
+    APPROVED_PRIVATE_MODEL = "APPROVED_PRIVATE_MODEL"
+
+
 class ProjectStatus(StrEnum):
     DRAFT = "DRAFT"
     AUTHORIZED_FOR_DEMO = "AUTHORIZED_FOR_DEMO"
@@ -139,7 +144,7 @@ class DemoAuthorization(StrictModel):
 
 class DemoRunRequest(StrictModel):
     scenario: SyntheticScenario
-    runtime: str = Field(default="SYNTHETIC_DEMO", pattern=r"^SYNTHETIC_DEMO$")
+    runtime: PortalRuntime = PortalRuntime.SYNTHETIC_DEMO
 
 
 class ReviewRequest(StrictModel):
@@ -165,8 +170,8 @@ class RetentionUpdate(StrictModel):
 
 
 class ApprovedRuntimeRequest(StrictModel):
-    runtime: str = Field(pattern=r"^APPROVED_MODEL$")
-    model_identifier: str = Field(min_length=1, max_length=64)
+    runtime: str = Field(pattern=r"^APPROVED_PRIVATE_MODEL$")
+    model_identifier: str = Field(pattern=r"^e001-frozen-random-forest$")
 
     @field_validator("model_identifier")
     @classmethod

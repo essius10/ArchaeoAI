@@ -1,25 +1,40 @@
-"""Application workflow enforcing synthetic-only processing and evidence boundaries."""
+"""Application workflow enforcing synthetic-input and evidence boundaries."""
 
 from __future__ import annotations
 
 from archaeoai.portal.demo_runtime import SyntheticDemoRuntime
-from archaeoai.portal.model_runtime import DisabledApprovedModelRuntime
+from archaeoai.portal.model_runtime import DisabledApprovedModelRuntime, ScreeningRuntime
 from archaeoai.portal.repository import PortalRepository
-from archaeoai.portal.schemas import DemoRunRequest, EvidenceLevel, ReviewRequest
+from archaeoai.portal.schemas import DemoRunRequest, EvidenceLevel, PortalRuntime, ReviewRequest
 
 
 class PortalWorkflow:
-    def __init__(self, repository: PortalRepository):
+    def __init__(
+        self,
+        repository: PortalRepository,
+        *,
+        approved_runtime: ScreeningRuntime | None = None,
+    ):
         self.repository = repository
         self.demo_runtime = SyntheticDemoRuntime()
-        self.approved_runtime = DisabledApprovedModelRuntime()
+        self.approved_runtime = approved_runtime or DisabledApprovedModelRuntime()
+
+    def runtime_status(self) -> dict[str, object]:
+        return self.approved_runtime.public_status()
 
     def run_demo(self, project_id: str, request: DemoRunRequest) -> dict:
         project = self.repository.get_project(project_id)
         if project["status"] != "AUTHORIZED_FOR_DEMO":
             raise ValueError("DEMO_AUTHORIZATION_REQUIRED")
-        job = self.repository.create_job(project_id, request.scenario.value)
-        results = self.demo_runtime.screen(request.scenario)
+        runtime: ScreeningRuntime = (
+            self.approved_runtime
+            if request.runtime is PortalRuntime.APPROVED_PRIVATE_MODEL
+            else self.demo_runtime
+        )
+        if request.runtime is PortalRuntime.APPROVED_PRIVATE_MODEL:
+            self.approved_runtime.validate()
+        job = self.repository.create_job(project_id, request.scenario.value, runtime.runtime_name)
+        results = runtime.screen(request.scenario)
         if any(
             item.evidence_level not in {EvidenceLevel.AI_OUTPUT, EvidenceLevel.AI_HYPOTHESIS}
             for item in results
@@ -38,7 +53,7 @@ class PortalWorkflow:
             return
         seeds = (
             (
-                "prj_demo0000001",
+                "prj_demo00000001",
                 "Demo Terrain Assessment A",
                 "Explore a synthetic terrain screening and human review workflow.",
                 "DEMO-A",
@@ -46,7 +61,7 @@ class PortalWorkflow:
                 "MOUND_LIKE",
             ),
             (
-                "prj_demo0000002",
+                "prj_demo00000002",
                 "Infrastructure Screening Demo",
                 "Demonstrate bounded mixed mathematical terrain processing.",
                 "DEMO-B",
@@ -67,7 +82,8 @@ class PortalWorkflow:
             )
             self.repository.authorize_demo(project["id"])
             self.run_demo(
-                project["id"], DemoRunRequest(scenario=scenario, runtime="SYNTHETIC_DEMO")
+                project["id"],
+                DemoRunRequest(scenario=scenario, runtime=PortalRuntime.SYNTHETIC_DEMO),
             )
         self.repository.create_project(
             {
@@ -79,5 +95,5 @@ class PortalWorkflow:
                 "project_reference": "DEMO-C",
                 "retention_policy": "THIRTY_DAYS",
             },
-            project_id="prj_demo0000003",
+            project_id="prj_demo00000003",
         )

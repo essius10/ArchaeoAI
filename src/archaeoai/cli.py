@@ -394,6 +394,11 @@ def build_parser() -> SafeArgumentParser:
         help="launch the local synthetic professional portal demonstration",
     )
     portal.add_argument("--demo", action="store_true", help="use synthetic demonstration mode")
+    portal.add_argument(
+        "--approved-model-runtime",
+        action="store_true",
+        help="owner-authorize the frozen private model for synthetic terrain on localhost only",
+    )
     portal.add_argument("--reset", action="store_true", help="reset and seed local demo data")
     portal.add_argument("--port", type=int, default=8000, help="localhost port (default: 8000)")
     portal.add_argument(
@@ -416,6 +421,7 @@ def main(argv: list[str] | None = None) -> int:
                 reset=args.reset,
                 port=args.port,
                 host=args.host,
+                approved_model_runtime=args.approved_model_runtime,
             )
         except Exception:
             print("ERROR: the local portal failed safely.", file=sys.stderr)
