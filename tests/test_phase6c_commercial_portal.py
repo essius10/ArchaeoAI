@@ -360,6 +360,7 @@ def test_report_is_limitations_first_and_coordinate_safe(client: TestClient) -> 
     assert response.status_code == 200
     report = response.json()
     assert report["screening_summary"]["model_execution"] == "NOT_PERFORMED"
+    assert report["screening_summary"]["automatic_evidence_level"] == "AI_HYPOTHESIS"
     assert any(
         "not a professional archaeological assessment" in item for item in report["limitations"]
     )

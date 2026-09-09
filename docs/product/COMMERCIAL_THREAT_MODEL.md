@@ -6,6 +6,21 @@ This threat model identifies design risks for a possible professional product. I
 independent security assessment, penetration test, compliance claim, or deployment authorization.
 Controls require validation before implementation and again before any pilot.
 
+## Current implemented boundary
+
+Phase 6C implements a local FastAPI/Uvicorn demonstration with local ignored SQLite persistence and
+a synthetic default scorer. Phase 6D adds an explicitly enabled approved private-model mode, bound
+only to `127.0.0.1` and limited to internally generated mathematical terrain. Current automated
+tests cover strict request schemas, trusted hosts, safe errors, fixed model identity/path, artifact
+and learned-state checks, no fallback, coordinate-safe persistence, and cascade deletion.
+
+This is not a production security boundary: there is no production authentication, tenant
+isolation, upload service, deployment hardening, monitoring, or incident system. The absence of
+authentication is acceptable only within the current loopback, synthetic, single-operator scope.
+SHA-256 detects artifact substitution but cannot establish pickle provenance, benignness, legal
+authority, or safety from code execution during deserialization. Those remain independent-review
+requirements.
+
 | Threat | Potential impact | Proposed control | Required validation/review before implementation |
 | --- | --- | --- | --- |
 | Malicious uploads | Parser compromise, data exposure, resource exhaustion. | Authenticate first; strict extension/MIME/magic allowlist; byte quotas; quarantine; isolated parsing. | Adversarial upload tests, sandbox review, incident procedure. |

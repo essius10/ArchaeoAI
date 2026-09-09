@@ -86,6 +86,8 @@ $required = @(
     'research-log/2026-09-05-phase-5d-bounded-batch.md',
     'docs/review/PHASE_4D_RQ1_AUDIT.md',
     'docs/review/FEEDBACK_REGISTER.md',
+    'docs/review/PHASE_5E_EXTERNAL_REVIEW_CHECKLIST.md',
+    'docs/review/PHASE_5E_REVIEW_PACKAGE.md',
     'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
@@ -182,6 +184,7 @@ $required = @(
     'tests/test_phase5a_inference_architecture.py',
     'tests/test_phase5c_offline_cli.py',
     'tests/test_phase5d_bounded_batch.py',
+    'tests/test_phase5e_a_pre_review_hardening.py',
     'tests/test_external_validation.py',
     'tests/test_external_error_analysis.py',
     'tests/test_manuscript_package.py',
@@ -688,6 +691,55 @@ if (
 }
 $phase5DCheck = 'Phase 5D bounded synthetic batch, deterministic ordering, and no-retention boundaries valid'
 
+$phase5EAFiles = @(
+    'SECURITY.md',
+    'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
+    'docs/CURRENT_STATUS.md',
+    'docs/product/COMMERCIAL_THREAT_MODEL.md',
+    'docs/product/PRODUCT_PRIVACY_AND_DATA_LIFECYCLE.md',
+    'docs/product/PORTAL_RUNBOOK.md',
+    'docs/product/PHASE_6D_APPROVED_MODEL_RUNTIME.md',
+    'docs/review/README.md',
+    'docs/review/PHASE_5E_EXTERNAL_REVIEW_CHECKLIST.md',
+    'docs/review/PHASE_5E_REVIEW_PACKAGE.md'
+)
+$phase5EAText = (Get-Content -Raw $phase5EAFiles) -join "`n"
+$phase5EAChecklist = Get-Content -Raw 'docs/review/PHASE_5E_EXTERNAL_REVIEW_CHECKLIST.md'
+$phase5EAReviewPackage = Get-Content -Raw 'docs/review/PHASE_5E_REVIEW_PACKAGE.md'
+$phase6DLoader = Get-Content -Raw 'src/archaeoai/inference_system/private_model_adapter.py'
+$phase6DLauncher = Get-Content -Raw 'src/archaeoai/portal/launch.py'
+$phase6DSchemas = Get-Content -Raw 'src/archaeoai/portal/schemas.py'
+if (
+    $phase5EAText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
+    $phase5EAText -notmatch 'Phase 5E.*NOT COMPLETED' -or
+    $phase5EAText -notmatch 'Phase 5F.*NOT AUTHORIZED' -or
+    $phase5EAText -notmatch 'SHA-256.*integrity' -or
+    $phase5EAText -notmatch 'pickle.*execute code' -or
+    $phase5EAText -notmatch '127\.0\.0\.1' -or
+    $phase5EAText -notmatch 'synthetic' -or
+    $phase5EAText -notmatch 'logical.*deletion' -or
+    $phase5EAReviewPackage -notmatch 'READY FOR EXTERNAL REVIEW' -or
+    $phase5EAReviewPackage -notmatch 'Intentionally private' -or
+    $phase5EAChecklist -match '(?m)^\|[^|]+\|\s*(?:PASS|CONCERN)\s*\|' -or
+    $phase5EAChecklist -match '(?i)Phase 5E\s*(?:=|status:)\s*COMPLETED' -or
+    $phase5EAText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'
+) {
+    throw 'Phase 5E-A review status, scope, trust, privacy, or unreviewed-state boundary failed.'
+}
+if (
+    $phase6DLoader -notmatch 'APPROVED_MODEL_RELATIVE_PATH' -or
+    $phase6DLoader -notmatch 'verify_approved_model_artifact' -or
+    $phase6DLoader -notmatch 'FROZEN_MODEL_STATE_SHA256' -or
+    $phase6DLoader -notmatch 'type\(estimator\) is not RandomForestClassifier' -or
+    $phase6DLauncher -notmatch 'approved_model_runtime and host != "127\.0\.0\.1"' -or
+    $phase6DLauncher -notmatch 'access_log=False' -or
+    $phase6DSchemas -notmatch 'class DemoRunRequest\(StrictModel\)' -or
+    $phase6DSchemas -match '(?i)terrain_path|geotiff_path|model_path|coordinates|bounding_box'
+) {
+    throw 'Phase 5E-A approved-runtime identity, localhost, logging, or synthetic-only boundary failed.'
+}
+$phase5EACheck = 'Phase 5E-A internal hardening package current; review uncompleted; RQ1 and authorization gates preserved'
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -787,4 +839,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $phase5DCheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $phase5DCheck; $phase5EACheck; $publicDemoCheck."

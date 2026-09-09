@@ -8,9 +8,11 @@ incomplete until actual external review occurs and its substantive findings are 
 
 1. [Phase 5E external-review checklist](PHASE_5E_EXTERNAL_REVIEW_CHECKLIST.md) — structured
    security, privacy, archaeological/scientific-workflow, and licensing/data/model review tracks.
-2. [Reviewer guide](REVIEWER_GUIDE.md) — overall orientation, evidence boundaries, terminology,
+2. [Phase 5E review package](PHASE_5E_REVIEW_PACKAGE.md) — current Phase 6C/6D evidence map,
+   focused commands, expertise needs, limitations, and intentionally private material.
+3. [Reviewer guide](REVIEWER_GUIDE.md) — overall orientation, evidence boundaries, terminology,
    and questions for reviewers.
-3. [Current status](../CURRENT_STATUS.md) — current project state, results boundary, and next gate.
+4. [Current status](../CURRENT_STATUS.md) — current project state, results boundary, and next gate.
 
 ## Supporting review material
 
@@ -25,9 +27,9 @@ incomplete until actual external review occurs and its substantive findings are 
 
 `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`
 
-Phase 5A–5D engineering is complete. Phase 5E external review is **NOT complete**, and Phase 5F or
-other public-interface work is **NOT authorized**. No archaeological discovery claim follows from
-the engineering work, model output, or review materials.
+Phase 5A–5D and Phase 6C–6D engineering are complete. Phase 5E external review is **NOT COMPLETED**,
+and Phase 5F or other public-interface work is **NOT AUTHORIZED**. No archaeological discovery claim
+follows from the engineering work, model output, or review materials.
 
 ## Reviewer workflow
 

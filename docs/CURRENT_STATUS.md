@@ -69,6 +69,20 @@ temporary files or caches are created, and features are discarded after each ite
 only generated mathematical GeoTIFFs. No approved model was loaded or executed, no score was
 created, and no scientific or privacy boundary changed.
 
+Phase 6C has completed a local professional-workflow demonstration using FastAPI/Uvicorn and an
+ignored SQLite database. Its default scorer remains synthetic, it accepts no real terrain or
+coordinates, and it is not a public production service. Phase 6D has connected the single frozen
+E001 Random Forest through an explicit startup-authorized adapter for generated mathematical terrain
+only. Approved execution is restricted to `127.0.0.1`; artifact, learned-state, estimator-class,
+model-identifier, and configuration checks fail closed. The private pickle remains ignored and
+untracked. Its SHA-256 checks establish byte integrity, not independent provenance, benignness,
+legal authority, or deserialization safety.
+
+Phase 5E-A is internal pre-review hardening and package preparation only. Phase 5E independent
+review remains **NOT COMPLETED**, Phase 5F remains **NOT AUTHORIZED**, and pilot readiness remains
+**NO**. Real/customer terrain, uploads, remote inference, and candidate publication remain
+unauthorized. The controlling status is still `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`.
+
 ## Claim boundary
 
 These results concern terrain classification within the frozen E001 and external-validation

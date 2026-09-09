@@ -30,7 +30,10 @@ than stored. Results record `AI_OUTPUT`, `APPROVED_PRIVATE_RANDOM_FOREST`, and
 `PERFORMED_APPROVED_PRIVATE_MODEL` before entering the human-review workflow.
 
 Pickle can execute code during deserialization. This implementation therefore permits only the
-single private, hash-bound artifact. Possession of repository or browser access does not authorize a
+single private, hash-bound artifact. SHA-256 proves only that bytes match the expected bytes; it does
+not prove that those bytes are benign, trustworthy, correctly sourced, lawfully usable, or safe to
+deserialize. Artifact provenance, custody, authority to use, and runtime isolation require separate
+evidence and independent review. Possession of repository or browser access does not authorize a
 different pickle.
 
 ## Safe interpretation
@@ -55,7 +58,9 @@ archaeoai portal --demo --approved-model-runtime --reset
 ```
 
 Open the latter at `http://127.0.0.1:8000`. Approved mode rejects `--host 0.0.0.0`; the default remains
-`127.0.0.1`.
+`127.0.0.1`. The server also uses a trusted-host allowlist. The lack of production authentication is
+acceptable only for this explicit loopback, synthetic, single-operator demonstration scope; it is
+not an authentication design for deployment.
 
 ## Expected closed failures
 

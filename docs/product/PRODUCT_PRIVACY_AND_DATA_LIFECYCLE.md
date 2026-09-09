@@ -7,6 +7,20 @@ location-linked material private; exclude them from ordinary logs and analytics;
 explicit retention; and publish no candidate location. This proposal requires privacy, legal, and
 archaeological review before implementation.
 
+## Current local portal boundary
+
+The Phase 6C/6D portal implements only a local synthetic demonstration. It accepts project display
+metadata and controlled workflow choices, generates mathematical terrain in memory, discards the
+4,096-element feature vector after scoring, and stores only project/job/result/review/evidence/report
+and controlled audit fields in an ignored SQLite database. It accepts no terrain upload, coordinate,
+bounds, transform, URL, filesystem path, or candidate-location request field.
+
+Project deletion cascades through all project-linked SQLite tables. `--reset` replaces the local
+database file. Neither operation proves forensic erasure from SQLite pages, filesystem snapshots,
+backups, or physical media, and retention labels are not an automated expiry scheduler. Uvicorn
+access logging is disabled; warning/error logs can still exist. The application implements no
+telemetry or analytics. This tested synthetic boundary does not authorize real or customer data.
+
 ## Lifecycle
 
 ```text

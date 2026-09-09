@@ -506,6 +506,9 @@ class PortalRepository:
                 "reviewed": sum(r["review_state"] in {"REVIEWED", "ESCALATED"} for r in results),
                 "model_execution": model_execution,
                 "runtime": runtime,
+                "automatic_evidence_level": (
+                    "AI_OUTPUT" if approved_execution else "AI_HYPOTHESIS"
+                ),
             },
             "human_observations": [e for e in evidence if e["actor_type"] == "HUMAN"],
             "limitations": limitations,
