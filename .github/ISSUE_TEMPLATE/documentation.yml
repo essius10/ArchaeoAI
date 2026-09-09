@@ -1,7 +1,10 @@
 name: Documentation improvement
-description: Report unclear, outdated, inaccessible, or incorrect documentation.
+description: Suggest a research-documentation improvement or report unclear, outdated, inaccessible, or incorrect text.
 title: "[Docs]: "
 body:
+  - type: markdown
+    attributes:
+      value: "Do not post archaeological coordinates, candidate locations, private terrain, private paths, credentials, or restricted data."
   - type: input
     id: location
     attributes:
@@ -23,7 +26,9 @@ body:
   - type: checkboxes
     id: claims
     attributes:
-      label: Claim check
+      label: Safety and claim check
       options:
         - label: The suggestion does not add unverified model, discovery, or performance claims.
+          required: true
+        - label: I removed sensitive locations, private data and paths, and credentials.
           required: true
