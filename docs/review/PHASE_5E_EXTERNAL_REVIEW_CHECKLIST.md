@@ -1,92 +1,103 @@
 # Phase 5E external-review checklist
 
-This checklist defines the evidence an independent reviewer should examine before any Phase 5F
-public-interface work is considered. It is a review instrument, not evidence that a review has
-occurred. For every item, select exactly one status—`PASS`, `CONCERN`, or `NOT REVIEWED`—and add
-brief notes with supporting file or line references. Reviewers should assess only material within
-their expertise and record limitations in the declaration.
+This is a blank review instrument for an independent reviewer. It does not record approval, and
+Phase 5E remains **NOT COMPLETED**. For each item, select exactly one of `PASS`, `CONCERN`, or
+`NOT REVIEWED`, cite evidence, and explain the scope and limitations of the assessment.
+
+## Current implementation boundary
+
+- **Current local portal:** a FastAPI/Uvicorn professional-workflow demonstration with ignored,
+  local SQLite persistence. Its default scorer is synthetic. It has no production authentication
+  and is not a public production SaaS.
+- **Current approved private runtime:** one fixed-path private pickle, verified by artifact and
+  learned-state SHA-256, exact `RandomForestClassifier` type, frozen model identifier, and explicit
+  server-start authorization. It is restricted to `127.0.0.1` and application-generated
+  mathematical terrain. It accepts no caller model path and cannot silently fall back to demo
+  scoring while reporting approved execution.
+- **Still unauthorized:** real or customer terrain, uploads, public/remote model inference,
+  candidate-location publication, Phase 5F, and pilot or production deployment.
+
+SHA-256 is an integrity check, not evidence that a pickle is benign, trustworthy, lawfully sourced,
+or safe to deserialize. Pickle deserialization can execute code. Reviewers must separately assess
+artifact provenance, custody, authorization, and runtime isolation.
 
 ## 1. Security / threat review
 
-| Review item | Status: PASS / CONCERN / NOT REVIEWED | Reviewer notes | Repository evidence |
+| Review item | PASS / CONCERN / NOT REVIEWED | Reviewer notes | Repository evidence |
 | --- | --- | --- | --- |
-| Local file handling is allowlisted, bounded, and fail-closed. |  |  | `src/archaeoai/inference_system/geotiff.py`; `src/archaeoai/inference_system/batch.py` |
-| Absolute paths, traversal, drive/URL syntax, and directory escape are rejected. |  |  | `src/archaeoai/inference_system/batch.py`; `tests/test_phase5d_bounded_batch.py` |
-| Symlinks cannot bypass manifest or terrain-file boundaries. |  |  | `src/archaeoai/inference_system/batch.py`; `tests/test_phase5d_bounded_batch.py` |
-| Malformed, truncated, oversized, or non-canonical GeoTIFFs fail safely. |  |  | `src/archaeoai/inference_system/geotiff.py`; `tests/test_phase5c_offline_cli.py` |
-| Batch limits remain 64 items, 64 KiB per manifest, 2 MiB per item, and 16 MiB cumulative. |  |  | `src/archaeoai/inference_system/batch.py`; `tests/test_phase5d_bounded_batch.py` |
-| No temporary-file, cache, or persistent-retention path is introduced. |  |  | `src/archaeoai/inference_system/batch.py`; `src/archaeoai/cli.py`; `SECURITY.md` |
-| Pickle and unsafe model deserialization risks are absent now and explicitly addressed before future model loading. |  |  | `SECURITY.md`; `docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md` |
-| Any future approved model artifact must be authenticated against its frozen hash before use. |  |  | `docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md`; `docs/reproducibility.md` |
-| Errors use bounded codes and do not disclose caller-controlled paths or private content. |  |  | `src/archaeoai/inference_system/batch.py`; `src/archaeoai/cli.py` |
-| Future network/API entry points have an explicit threat model before authorization. |  |  | `SECURITY.md`; `docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md` |
-| Future abuse controls cover authentication, rate/size limits, isolation, monitoring, and denial-of-service risks. |  |  | `SECURITY.md`; `docs/roadmap.md` |
+| Local Phase 5C/5D file handling rejects traversal, absolute/drive/URL syntax, directory escape, and symlinks. |  |  | `src/archaeoai/inference_system/geotiff.py`; `src/archaeoai/inference_system/batch.py`; `tests/test_phase5d_bounded_batch.py` |
+| Malformed, truncated, oversized, or non-canonical GeoTIFFs fail closed. |  |  | `src/archaeoai/inference_system/geotiff.py`; `tests/test_phase5c_offline_cli.py` |
+| Batch limits remain 64 items, 64 KiB manifest, 2 MiB each, and 16 MiB cumulative. |  |  | `src/archaeoai/inference_system/batch.py`; `tests/test_phase5d_bounded_batch.py` |
+| The portal creates no terrain/feature temporary files or caches; its documented SQLite retention is accurate. |  |  | `src/archaeoai/portal/repository.py`; `docs/product/PORTAL_RUNBOOK.md`; `tests/test_phase5e_a_pre_review_hardening.py` |
+| The approved pickle is fixed-path, private, ignored, untracked, and never caller-selectable. |  |  | `src/archaeoai/inference_system/private_model_adapter.py`; `.gitignore`; `tests/test_phase6d_private_model_adapter.py` |
+| Artifact SHA mismatch is rejected before deserialization; missing artifact, state mismatch, wrong class, identifier, or configuration fail closed. |  |  | `src/archaeoai/inference_system/private_model_adapter.py`; `tests/test_phase6d_private_model_adapter.py` |
+| Artifact provenance/trust is established independently of its SHA-256 digest before deserialization. |  |  | `docs/product/PHASE_6D_APPROVED_MODEL_RUNTIME.md`; owner-controlled private evidence (not public) |
+| Approved-runtime failures never fall back to demo scoring while claiming real execution. |  |  | `src/archaeoai/portal/launch.py`; `src/archaeoai/portal/workflow.py`; `tests/test_phase6d_portal_runtime.py` |
+| Error responses omit paths, pickle/model internals, request bodies, and private content. |  |  | `src/archaeoai/portal/app.py`; `tests/test_phase6d_portal_runtime.py` |
+| Approved execution is startup-authorized, server-side, synthetic-only, and bound only to `127.0.0.1`. |  |  | `src/archaeoai/portal/launch.py`; `src/archaeoai/portal/app.py`; `tests/test_phase5e_a_pre_review_hardening.py` |
+| The unauthenticated local demonstration is acceptable only within the stated loopback, synthetic, non-production scope. |  |  | `docs/product/COMMERCIAL_THREAT_MODEL.md`; `docs/product/PORTAL_RUNBOOK.md` |
+| Future network/API deployment has separate authentication, authorization, isolation, monitoring, incident, rate/size, and abuse-control gates. |  |  | `docs/product/COMMERCIAL_THREAT_MODEL.md`; `SECURITY.md` |
 
-## 2. Privacy review
+## 2. Privacy / retention review
 
-| Review item | Status: PASS / CONCERN / NOT REVIEWED | Reviewer notes | Repository evidence |
+| Review item | PASS / CONCERN / NOT REVIEWED | Reviewer notes | Repository evidence |
 | --- | --- | --- | --- |
-| Exact coordinates are excluded from public inputs, outputs, logs, and documentation. |  |  | `SECURITY.md`; `docs/reproducibility.md`; `tests/test_phase5d_bounded_batch.py` |
-| Raster bounds, transforms, and other georeferencing metadata are not emitted. |  |  | `src/archaeoai/inference_system/geotiff.py`; `src/archaeoai/inference_system/batch.py` |
-| Filenames and filesystem paths are not exposed in errors or results. |  |  | `src/archaeoai/inference_system/batch.py`; `src/archaeoai/cli.py` |
-| Archaeological location sensitivity is reflected in the public/private data boundary. |  |  | `SECURITY.md`; `docs/reproducibility.md`; `docs/review/REVIEWER_GUIDE.md` |
-| Logs and telemetry do not capture private inputs or location-linked metadata. |  |  | `src/archaeoai/cli.py`; `SECURITY.md` |
-| Inputs, arrays, and derived features are not retained after bounded processing. |  |  | `src/archaeoai/inference_system/batch.py`; `docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md` |
-| Per-item output is limited to opaque IDs and bounded operational status. |  |  | `src/archaeoai/inference_system/batch.py`; `tests/test_phase5d_bounded_batch.py` |
-| Aggregate reporting contains no coordinates, paths, feature vectors, or model scores. |  |  | `src/archaeoai/inference_system/batch.py`; `tests/test_phase5d_bounded_batch.py` |
-| Any future upload flow defines access, deletion, retention, encryption, and incident-response controls first. |  |  | `SECURITY.md`; `docs/roadmap.md` |
-| Candidate locations cannot be published without a documented archaeological sensitivity review and owner approval. |  |  | `docs/claims-register.md`; `docs/review/REVIEWER_GUIDE.md`; `SECURITY.md` |
+| Portal request schemas admit no terrain uploads, paths, arrays, URLs, coordinates, bounds, or transforms. |  |  | `src/archaeoai/portal/schemas.py`; `tests/test_phase5e_a_pre_review_hardening.py` |
+| API/HTML/results/reports/evidence/audit/runtime surfaces expose no coordinates, paths, bounds, transforms, feature vectors, model contents, or candidate locations. |  |  | `src/archaeoai/portal/app.py`; `src/archaeoai/portal/static/`; `tests/test_phase5e_a_pre_review_hardening.py` |
+| SQLite schema contains no terrain, coordinate, path, transform, raster, feature-vector, or candidate-location fields. |  |  | `src/archaeoai/portal/repository.py`; `tests/test_phase5e_a_pre_review_hardening.py` |
+| The 4,096-element model input is transient and discarded after scoring rather than persisted. |  |  | `src/archaeoai/portal/approved_runtime.py`; `tests/test_phase6d_portal_runtime.py`; `tests/test_phase5e_a_pre_review_hardening.py` |
+| Project metadata, human rationales, scores, and audit events retained in local SQLite match the documented data inventory. |  |  | `src/archaeoai/portal/repository.py`; `docs/product/PRODUCT_PRIVACY_AND_DATA_LIFECYCLE.md` |
+| Project deletion cascades through jobs, results, reviews, evidence, reports, and audit rows. |  |  | `src/archaeoai/portal/repository.py`; `tests/test_phase5e_a_pre_review_hardening.py` |
+| Documentation distinguishes logical SQLite deletion/reset from forensic or physical-media erasure. |  |  | `docs/product/PORTAL_RUNBOOK.md`; `docs/product/PRODUCT_PRIVACY_AND_DATA_LIFECYCLE.md` |
+| Uvicorn access logs are disabled; warning/error logs are not falsely described as nonexistent and exclude request bodies/private values by design. |  |  | `src/archaeoai/portal/launch.py`; `docs/product/PORTAL_RUNBOOK.md` |
+| There is no application telemetry or analytics in the current portal. |  |  | `src/archaeoai/portal/`; `docs/product/PRODUCT_PRIVACY_AND_DATA_LIFECYCLE.md` |
+| Archaeological location sensitivity and future upload/retention/deletion obligations remain explicit blockers. |  |  | `SECURITY.md`; `docs/product/PRODUCT_PRIVACY_AND_DATA_LIFECYCLE.md` |
+| Candidate locations cannot be published without archaeological sensitivity review and explicit owner approval. |  |  | `docs/claims-register.md`; `SECURITY.md`; `docs/review/REVIEWER_GUIDE.md` |
 
-## 3. Archaeological/scientific workflow review
+## 3. Archaeological / scientific workflow review
 
-| Review item | Status: PASS / CONCERN / NOT REVIEWED | Reviewer notes | Repository evidence |
+| Review item | PASS / CONCERN / NOT REVIEWED | Reviewer notes | Repository evidence |
 | --- | --- | --- | --- |
-| AI output is kept distinct from archaeological interpretation. |  |  | `docs/review/REVIEWER_GUIDE.md`; `docs/claims-register.md` |
-| The evidence ladder distinguishes model output, hypothesis, human-vetted observation, archaeologist validation, and confirmation. |  |  | `docs/review/REVIEWER_GUIDE.md`; `docs/review/PHASE_4D_RQ1_AUDIT.md` |
-| Public wording uses “terrain similarity” only within its documented bounded meaning. |  |  | `docs/claims-register.md`; `docs/CURRENT_STATUS.md`; `README.md` |
-| Scores are not interpreted as calibrated archaeological probabilities. |  |  | `docs/review/REVIEWER_GUIDE.md`; `docs/claims-register.md` |
-| No output or workflow implies an archaeological discovery claim. |  |  | `README.md`; `docs/claims-register.md`; `docs/review/PHASE_4D_RQ1_AUDIT.md` |
-| Qualified human review is required before stronger archaeological interpretation. |  |  | `docs/review/REVIEWER_GUIDE.md`; `docs/roadmap.md` |
-| Claims remain limited to documented bowl-barrow terrain versus matched `unlabelled_background`. |  |  | `docs/research-charter.md`; `docs/manuscript/archaeoai-e001-manuscript.md` |
-| Geographic results are not generalized beyond the evaluated regions, data sources, and design. |  |  | `docs/manuscript/archaeoai-e001-manuscript.md`; `docs/CURRENT_STATUS.md` |
-| The independent external test is identified as spent and unavailable for tuning or reinterpretation. |  |  | `docs/CURRENT_STATUS.md`; `docs/reproducibility.md`; `docs/claims-register.md` |
-| RQ1 remains exactly `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`; this checklist does not advance it. |  |  | `docs/review/PHASE_4D_RQ1_AUDIT.md`; `docs/CURRENT_STATUS.md`; `docs/decision-log.md` |
+| Automatic approved-model output is exactly `AI_OUTPUT`, distinct from human or archaeological interpretation. |  |  | `src/archaeoai/portal/approved_runtime.py`; `src/archaeoai/portal/repository.py` |
+| The evidence ladder distinguishes model output, hypothesis, human observation, archaeologist validation, and confirmation. |  |  | `docs/review/REVIEWER_GUIDE.md`; `docs/product/PRODUCT_EVIDENCE_AND_HUMAN_REVIEW.md` |
+| The score is described only as bounded terrain-pattern similarity, never archaeological/site probability or calibrated confidence. |  |  | `src/archaeoai/portal/`; `docs/product/PHASE_6D_APPROVED_MODEL_RUNTIME.md` |
+| No output implies archaeological discovery, confirmation, absence, or that land is safe to build/develop. |  |  | `README.md`; `docs/claims-register.md`; `tests/test_phase5e_a_pre_review_hardening.py` |
+| Qualified human review remains mandatory before stronger archaeological interpretation. |  |  | `src/archaeoai/portal/schemas.py`; `docs/review/REVIEWER_GUIDE.md` |
+| Claims remain limited to bowl-barrow terrain versus matched `unlabelled_background`. |  |  | `docs/research-charter.md`; `docs/manuscript/archaeoai-e001-manuscript.md` |
+| Geographic generalization remains limited to the evaluated regions, sources, and design. |  |  | `docs/manuscript/archaeoai-e001-manuscript.md`; `docs/CURRENT_STATUS.md` |
+| The external test remains spent and unavailable for tuning or reinterpretation. |  |  | `docs/CURRENT_STATUS.md`; `docs/reproducibility.md`; `docs/claims-register.md` |
+| RQ1 remains exactly `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`; internal hardening does not advance it. |  |  | `docs/review/PHASE_4D_RQ1_AUDIT.md`; `docs/CURRENT_STATUS.md`; `docs/decision-log.md` |
 
 ## 4. Licensing / data / model review
 
-| Review item | Status: PASS / CONCERN / NOT REVIEWED | Reviewer notes | Repository evidence |
+| Review item | PASS / CONCERN / NOT REVIEWED | Reviewer notes | Repository evidence |
 | --- | --- | --- | --- |
-| Source-data terms and attribution requirements are identified and verified against authoritative terms. |  |  | `docs/licensing-and-attribution.md`; `docs/reproducibility.md` |
-| Redistribution restrictions are respected for raw and location-linked data. |  |  | `docs/licensing-and-attribution.md`; `SECURITY.md` |
-| Private terrain remains untracked and outside public release artifacts. |  |  | `.gitignore`; `SECURITY.md`; `docs/reproducibility.md` |
-| Ownership and authority to use the private model artifact are documented before deployment. |  |  | `docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md`; `SECURITY.md` |
-| Model redistribution is separately authorized and does not follow automatically from code publication. |  |  | `docs/licensing-and-attribution.md`; `docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md` |
-| The repository’s own licensing status is accurate, visible, and compatible with proposed use. |  |  | `README.md`; `docs/licensing-and-attribution.md` |
+| Source-data terms, attribution requirements, and redistribution restrictions are verified against authoritative terms. |  |  | `docs/licensing-and-attribution.md`; `docs/reproducibility.md` |
+| Private terrain and location-linked source material remain untracked and outside public releases. |  |  | `.gitignore`; `SECURITY.md`; `docs/reproducibility.md` |
+| Ownership, provenance, custody, and authority to use the private pickle are established separately from hash verification. |  |  | `docs/product/PHASE_6D_APPROVED_MODEL_RUNTIME.md`; private owner evidence (not public) |
+| Model use and redistribution are separately authorized; code publication does not grant model redistribution rights. |  |  | `docs/licensing-and-attribution.md`; `docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md` |
+| Repository licensing status is accurate and compatible with the intended use. |  |  | `README.md`; `docs/licensing-and-attribution.md`; `LICENSE` if present |
 | Third-party dependency licenses and notices are reviewed for the intended distribution. |  |  | `pyproject.toml`; `docs/licensing-and-attribution.md` |
-| Rights and restrictions for derived representations, figures, reports, and other outputs are documented. |  |  | `docs/licensing-and-attribution.md`; `docs/reproducibility.md` |
-| Commercial use is not assumed; data, model, dependency, and repository terms are assessed for the specific use case. |  |  | `docs/licensing-and-attribution.md`; `README.md` |
+| Rights for derived representations, figures, reports, and other outputs are documented. |  |  | `docs/licensing-and-attribution.md`; `docs/reproducibility.md` |
+| Commercial use is not assumed; unresolved data, model, dependency, and repository terms remain `NOT REVIEWED` or `CONCERN`. |  |  | `docs/licensing-and-attribution.md`; `docs/product/COMMERCIAL_DECISION_GATES.md` |
 
 ## Reviewer declaration
 
 - **Reviewer role/expertise:**
 - **Review date:**
 - **Review scope (tracks/items examined):**
-- **Conflicts, access constraints, or other limitations:**
+- **Conflicts, access constraints, or limitations:**
 - **Overall recommendation:** `PASS` / `PASS WITH CONDITIONS` / `CHANGES REQUIRED` / `NO-GO`
 - **Recommendation notes and required actions:**
 
-Signing or completing this form records only the stated reviewer’s assessment of the stated scope.
-It does not imply institutional endorsement, archaeological confirmation, or completion of review
-tracks marked `NOT REVIEWED`.
+Completing this form records only the named reviewer's assessment of the stated scope. It does not
+imply institutional endorsement, archaeological confirmation, or completion of unreviewed tracks.
 
 ## Owner decision gate
 
-Completion of this checklist does **not** automatically authorize Phase 5F or any public-interface,
-network, upload, deployment, model-execution, or candidate-publication work. Every substantive
-`CONCERN` or conditional recommendation must have a documented disposition, including evidence of
-the correction or a reasoned acceptance of residual risk. Phase 5F may begin only after the owner
-records explicit approval based on the completed review record and confirms that all required
-security, privacy, scientific, archaeological, licensing, and data safeguards remain in force.
+Checklist completion does not automatically authorize Phase 5F or any real-data, upload, network,
+deployment, model-distribution, pilot, or candidate-publication work. Substantive findings require
+documented disposition and explicit owner approval at a separate gate.
 
-Until then, external review remains **NOT COMPLETED**, Phase 5E status is unchanged, and
-`RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW` remains the controlling RQ1 status.
+Until actual independent review occurs, external review remains **NOT COMPLETED**, Phase 5F remains
+**NOT AUTHORIZED**, and `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW` remains controlling.

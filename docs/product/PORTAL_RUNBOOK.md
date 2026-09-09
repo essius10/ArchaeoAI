@@ -87,6 +87,17 @@ The database is:
 The entire `data/private/` tree is ignored by Git. After stopping the service, the owner may delete
 that SQLite file to remove all retained demo state. Running again with `--reset` also replaces it.
 
+Deleting one project in the portal uses SQLite foreign-key cascades to remove its jobs, results,
+reviews, evidence, reports, and audit rows. Retention-policy values are recorded labels; this build
+does not run a background expiry scheduler. Project deletion and `--reset` are logical application
+deletion operations, not claims of forensic erasure from SQLite pages, filesystem snapshots,
+backups, or physical media.
+
+The launcher disables Uvicorn access logs and the application has no analytics or telemetry.
+Uvicorn/FastAPI warning and error logging still exists, so this is not a claim that the process emits
+no logs. Current request schemas accept no terrain, coordinates, paths, arrays, or uploads, and safe
+error responses do not include request bodies or model paths.
+
 ## Troubleshooting
 
 - If the portal extra is missing, run `python -m pip install -e ".[portal]"`.

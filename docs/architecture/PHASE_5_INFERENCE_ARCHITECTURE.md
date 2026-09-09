@@ -3,14 +3,13 @@
 ## 1. Purpose and boundary
 
 Phase 5A translated the completed E001 research pipeline into a conservative architecture for a
-possible future terrain-inference interface. Phase 5B adds the smallest reusable single-patch
-feature and model-adapter boundary, tested only with coordinate-free synthetic terrain and an inert
-test double. Phase 5C adds an offline GeoTIFF inspection and feature-contract CLI, tested only with
-temporary mathematical terrain. Phase 5D adds bounded sequential orchestration of those same
-feature operations over a strict local manifest. None of these phases loads or executes the
-approved private model, scores real terrain,
-trains or tunes anything, reuses the spent external test, publishes a service, changes a scientific
-result, or claims an archaeological discovery.
+possible future terrain-inference interface. Phase 5B adds the reusable single-patch feature and
+model-adapter boundary; Phase 5C adds offline GeoTIFF inspection; and Phase 5D adds bounded local
+batch feature preparation. Those phases did not load the approved model. Phase 6C subsequently
+implemented a local FastAPI/SQLite workflow with a synthetic default scorer. Phase 6D added an
+explicit startup-authorized, localhost-only adapter for the one private frozen Random Forest, still
+limited to generated mathematical terrain. No phase has authorized portal uploads, real/customer
+terrain, remote inference, candidate publication, training/tuning, spent-test reuse, or discovery.
 
 The scientific state remains `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`. This architecture is an
 engineering plan, not new research evidence or proof that automated inference is safe for public
@@ -18,13 +17,13 @@ use.
 
 ## 2. Current repository classification
 
-**B — `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`.**
+**Public repository: B — `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`.**
 
-The qualification is repository-level: tested inference code exists, and this authorized local
-checkout may contain the approved hash-matching private artifact, but that artifact is intentionally
-Git-ignored and unavailable from a public clone. A public checkout therefore cannot perform the
-approved inference without a separately authorized artifact handoff. Phase 5C provides a supported
-offline inspection/features CLI, not model-backed inference or a public API.
+The qualification is repository-level: tested inference code and a local portal exist, while the
+approved artifact is intentionally Git-ignored and unavailable from a public clone. An authorized
+local checkout containing the exact artifact can run Phase 6D only on generated mathematical
+terrain at `127.0.0.1`. This does not make the repository self-contained, deployed, or public-model
+capable. Hash identity does not establish pickle trust or provenance.
 
 This is not classification A because the distributable repository is not self-contained for
 inference. It is not C because the core terrain, feature, model-loading, scoring, ranking, and
@@ -51,9 +50,9 @@ Reusable package components are in `archaeoai.terrain`, `archaeoai.model_data`,
 `archaeoai.inference`, and `archaeoai.inference_system`. The Phase 2F freeze/smoke/run scripts,
 controlled-domain binding, output generation, and research receipts are experiment-specific. Phase
 5C installs the `archaeoai` offline console command for one local patch, and Phase 5D adds bounded
-feature preparation over a strict local manifest. There is no model-backed public inference, web
-API, upload handler, authentication layer, retained-input store, or public model distribution
-mechanism.
+feature preparation over a strict local manifest. Phase 6C/6D adds a local web API and SQLite
+workflow, but no terrain upload handler, production authentication, retained terrain/features,
+remote model execution, or public model distribution mechanism.
 
 Inference can run without retraining only in an authorized environment that already has the exact
 private artifact. `load_private_model` checks its artifact and learned-state hashes before scoring.
@@ -101,8 +100,9 @@ flowchart TD
 Phase 5A implements the input metadata contract, evidence enum, safe result envelope, and
 non-executing artifact checksum guard. Phase 5B adds strict array/mask validation, canonical
 feature reuse, the exact one-row model-input contract, an approved private-path/hash gate, and a
-minimal model-facing protocol. It still adds no model loader. Future components must depend on
-these boundaries rather than bypass them.
+minimal model-facing protocol. Phase 6D now supplies the one fixed-path, hash/state/type-bound private
+loader used by the synthetic-only local portal. Future components must depend on these boundaries
+rather than bypass them.
 
 Phase 5C adds only file-to-contract plumbing. Rasterio reads one explicitly supplied local GeoTIFF,
 the existing Phase 5B adapter creates the feature vector, and a strict reporting allowlist discards
@@ -362,6 +362,8 @@ Before Phase 5 may score real user terrain, tests must cover:
 | 5B | Single-patch preprocessing/model adapter on synthetic data only | **Complete; exact equivalence and fail-closed tests pass** |
 | 5C | Offline local single-patch CLI | **Complete and merged; synthetic validation only; model execution disabled** |
 | 5D | Bounded private batch feature orchestration, still non-public | **Complete and ready for review; synthetic validation only; no retention or model execution** |
+| 6C | Local professional-workflow portal with synthetic default scorer and SQLite state | **Complete; local demonstration only; no real terrain or production authorization** |
+| 6D | Approved private frozen model over generated mathematical terrain | **Complete; explicit startup authorization and `127.0.0.1` only; no real terrain** |
 | 5E | Independent security, privacy, archaeological-workflow, and licensing review | Named findings resolved or documented; owner explicitly approves next step |
 | 5F | Optional public interface or deployment decision | Separate deployment authorization; may legitimately end in `NO-GO` |
 
@@ -376,12 +378,15 @@ known negatives. The result concerns learned terrain similarity for a narrowly c
 study; it is not England-wide archaeological detection, calibrated site probability, field advice,
 or evidence of discovery.
 
-Phase 5A, Phase 5B, Phase 5C, and Phase 5D do not train, tune, score real terrain, benchmark a real model, acquire
+Phase 5A, Phase 5B, Phase 5C, and Phase 5D did not train, tune, score real terrain, benchmark a real model, acquire
 terrain, rerun research, review candidates, cross-check heritage records, expose private material,
-build a website feature, publish a release, or deploy an API. Phase 5B's inert test-double score has
-zero scientific meaning; Phase 5C and Phase 5D expose no score. Independent scientific/privacy review, label-reliability review,
+build a website feature, publish a release, or deploy an API. Phase 6D now executes the unchanged
+frozen model only on generated mathematical terrain in a local portal; that operation has no new
+scientific meaning. Phase 5B's inert test-double score has zero scientific meaning; Phase 5C and
+Phase 5D expose no score. Independent scientific/privacy review, label-reliability review,
 systematic literature work, authorized private-data reproduction, licensing decisions, artifact
 distribution, and operational security review remain external blockers.
 
 Phase 5A does not train, tune, score, or execute a model; Phase 5B, Phase 5C, and Phase 5D do not
-change that scientific boundary.
+change that scientific boundary. Phase 6D's approved synthetic-only execution does not authorize
+real terrain, change a result, or advance the research claim.
