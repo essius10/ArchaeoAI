@@ -15,7 +15,7 @@
         <h1 id="entry-title">Evidence-led terrain review, with people in control.</h1>
         <p class="entry-copy">Explore a local workspace using mathematical terrain only. Machine output remains separate from professional archaeological interpretation.</p>
         <button class="primary-action" type="button" id="enter-workspace">Enter demo workspace <span aria-hidden="true">→</span></button>
-        <p class="boundary"><strong>DEMO MODE — SYNTHETIC DATA</strong><br>No production authentication, private model, real terrain, coordinates, or archaeological determination.</p>
+        <p class="boundary"><strong id="entry-runtime-badge">SYNTHETIC DEMO · MODEL NOT EXECUTED</strong><br><span id="entry-runtime-copy">No production authentication, real terrain, coordinates, or archaeological determination.</span></p>
       </section>
       <aside class="terrain-field" aria-label="Abstract synthetic topographic motif">
         <div class="contour contour-a"></div><div class="contour contour-b"></div><div class="contour contour-c"></div>
@@ -34,13 +34,13 @@
           <button class="nav-item" data-view="audit"><span aria-hidden="true">↺</span>Audit</button>
           <button class="nav-item" data-view="settings"><span aria-hidden="true">⚙</span>Settings</button>
         </nav>
-        <div class="sidebar-boundary"><span class="status-dot"></span><div><strong>Demo runtime ready</strong><small>Approved model disabled</small></div></div>
+        <div class="sidebar-boundary"><span class="status-dot"></span><div><strong id="sidebar-runtime-title">Demo runtime ready</strong><small id="sidebar-runtime-copy">Approved model disabled</small></div></div>
       </aside>
       <div class="app-column">
         <header class="topbar">
           <button class="mobile-menu" type="button" id="mobile-menu" aria-label="Toggle navigation">☰</button>
           <div><strong id="organization-name">ArchaeoAI Demonstration Workspace</strong><small>Local private workspace</small></div>
-          <div class="topbar-actions"><span class="demo-chip">DEMO MODE — SYNTHETIC DATA</span><span class="system-ok"><i></i>System ready</span><button class="avatar" type="button" title="Local demo session">LD</button></div>
+          <div class="topbar-actions"><span class="demo-chip" id="runtime-chip">SYNTHETIC DEMO · MODEL NOT EXECUTED</span><span class="system-ok"><i></i>System ready</span><button class="avatar" type="button" title="Local demo session">LD</button></div>
         </header>
         <main class="workspace" id="workspace" tabindex="-1" aria-live="polite"></main>
       </div>

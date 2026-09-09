@@ -11,7 +11,11 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from archaeoai.portal.model_runtime import ApprovedModelRuntimeNotAuthorizedError
+from archaeoai.portal.model_runtime import (
+    ApprovedModelRuntimeExecutionError,
+    ApprovedModelRuntimeNotAuthorizedError,
+    ScreeningRuntime,
+)
 from archaeoai.portal.repository import (
     DEMO_ORGANIZATION_ID,
     DEMO_USER_ID,
@@ -58,10 +62,14 @@ def _safe_project(repository: PortalRepository, project_id: str) -> dict:
         raise PortalApiError("PROJECT_NOT_FOUND", 404) from exc
 
 
-def create_app(database_path: Path | None = None) -> FastAPI:
+def create_app(
+    database_path: Path | None = None,
+    *,
+    approved_runtime: ScreeningRuntime | None = None,
+) -> FastAPI:
     """Create an offline portal bound to one local demo organization."""
     repository = PortalRepository(database_path or _default_database_path())
-    workflow = PortalWorkflow(repository)
+    workflow = PortalWorkflow(repository, approved_runtime=approved_runtime)
     static_root = Path(__file__).with_name("static")
     app = FastAPI(
         title="ArchaeoAI professional portal demonstration",
@@ -132,6 +140,24 @@ def create_app(database_path: Path | None = None) -> FastAPI:
             status_code=exc.status_code,
         )
 
+    @app.exception_handler(ApprovedModelRuntimeNotAuthorizedError)
+    async def approved_not_authorized(
+        _request: Request, exc: ApprovedModelRuntimeNotAuthorizedError
+    ) -> JSONResponse:
+        return JSONResponse(
+            {"error": exc.code, "message": "Approved runtime is not server-authorized."},
+            status_code=403,
+        )
+
+    @app.exception_handler(ApprovedModelRuntimeExecutionError)
+    async def approved_execution_failed(
+        _request: Request, exc: ApprovedModelRuntimeExecutionError
+    ) -> JSONResponse:
+        return JSONResponse(
+            {"error": exc.code, "message": "Approved runtime failed safely."},
+            status_code=503,
+        )
+
     @app.exception_handler(ValueError)
     async def state_error(_request: Request, exc: ValueError) -> JSONResponse:
         allowed = {
@@ -147,17 +173,24 @@ def create_app(database_path: Path | None = None) -> FastAPI:
         )
 
     @app.get("/api/v1/health")
-    def health() -> dict[str, str]:
+    def health() -> dict[str, object]:
+        runtime_status = workflow.runtime_status()
         return {
             "status": "READY",
             "portal": "LOCAL_DEMO",
             "demo_runtime": "AVAILABLE",
-            "approved_model_runtime": "DISABLED_NOT_AUTHORIZED",
+            "approved_model_runtime": (
+                "VERIFIED_LOCAL_SYNTHETIC_ONLY"
+                if runtime_status["model_execution_available"]
+                else "DISABLED_NOT_AUTHORIZED"
+            ),
             "storage": "LOCAL_PRIVATE_SQLITE",
+            "runtime_status": runtime_status,
         }
 
     @app.get("/api/v1/session")
     def session() -> dict[str, object]:
+        runtime_status = workflow.runtime_status()
         return {
             "session_type": "LOCAL_DEMONSTRATION_ONLY",
             "authenticated": False,
@@ -166,7 +199,8 @@ def create_app(database_path: Path | None = None) -> FastAPI:
                 "id": DEMO_ORGANIZATION_ID,
                 "name": "ArchaeoAI Demonstration Workspace",
             },
-            "model_runtime": "DISABLED_NOT_AUTHORIZED",
+            "model_runtime": runtime_status["runtime_mode"],
+            "runtime_status": runtime_status,
         }
 
     @app.get("/api/v1/overview")
@@ -180,7 +214,11 @@ def create_app(database_path: Path | None = None) -> FastAPI:
             ),
             "reports_ready": sum(p["status"] == "REPORT_READY" for p in projects),
             "recent_projects": projects[:5],
-            "model_execution": "NOT_PERFORMED",
+            "model_execution": (
+                "AVAILABLE_ON_SYNTHETIC_INPUT"
+                if workflow.runtime_status()["model_execution_available"]
+                else "NOT_PERFORMED"
+            ),
         }
 
     @app.get("/api/v1/projects")
@@ -274,11 +312,12 @@ def create_app(database_path: Path | None = None) -> FastAPI:
         return repository.update_retention(project["id"], payload.retention_policy.value)
 
     @app.post("/api/v1/runtime/approved/check")
-    def approved_runtime_check(_payload: ApprovedRuntimeRequest) -> None:
+    def approved_runtime_check(_payload: ApprovedRuntimeRequest) -> dict[str, object]:
         try:
             workflow.approved_runtime.validate()
         except ApprovedModelRuntimeNotAuthorizedError as exc:
             raise PortalApiError(exc.code, 403) from exc
+        return workflow.runtime_status()
 
     app.mount("/static", StaticFiles(directory=static_root), name="static")
 

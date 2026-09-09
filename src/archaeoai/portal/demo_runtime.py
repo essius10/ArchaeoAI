@@ -18,6 +18,18 @@ class SyntheticDemoRuntime:
     runtime_name = "SYNTHETIC_DEMO"
     result_count = 6
 
+    def validate(self) -> None:
+        return None
+
+    def public_status(self) -> dict[str, object]:
+        return {
+            "runtime_mode": self.runtime_name,
+            "approved_runtime_enabled": False,
+            "artifact_verified": False,
+            "model_execution_available": False,
+            "input_mode": "SYNTHETIC_ONLY",
+        }
+
     @staticmethod
     def surface(scenario: SyntheticScenario, variant: int) -> np.ndarray:
         y, x = np.mgrid[-64:64, -64:64]
