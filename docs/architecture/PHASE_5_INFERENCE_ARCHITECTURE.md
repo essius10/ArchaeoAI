@@ -17,11 +17,11 @@ use.
 
 ## 2. Current repository classification
 
-**Public repository: B — `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`.**
+**B — `INFERENCE_CODE_READY_MODEL_ARTIFACT_UNAVAILABLE`.**
 
-The qualification is repository-level: tested inference code and a local portal exist, while the
-approved artifact is intentionally Git-ignored and unavailable from a public clone. An authorized
-local checkout containing the exact artifact can run Phase 6D only on generated mathematical
+This classification applies to the public repository. Tested inference code and a local portal
+exist, while the approved artifact is intentionally Git-ignored and unavailable from a public
+clone. An authorized local checkout containing the exact artifact can run Phase 6D only on generated mathematical
 terrain at `127.0.0.1`. This does not make the repository self-contained, deployed, or public-model
 capable. Hash identity does not establish pickle trust or provenance.
 
