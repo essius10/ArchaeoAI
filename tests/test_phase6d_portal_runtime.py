@@ -186,6 +186,8 @@ def test_verified_approved_runtime_reaches_local_server_only(
         == 0
     )
     assert captured["host"] == "127.0.0.1"
+    assert captured["access_log"] is False
+    assert captured["log_level"] == "warning"
     output = capsys.readouterr().out
     assert "REAL FROZEN MODEL · SYNTHETIC TERRAIN · LOCAL PRIVATE" in output
     assert "not archaeological probability" in output
@@ -274,6 +276,7 @@ def test_approved_report_preserves_safe_model_provenance(
             "reviewed": 0,
             "model_execution": "PERFORMED_APPROVED_PRIVATE_MODEL",
             "runtime": "APPROVED_PRIVATE_RANDOM_FOREST",
+            "automatic_evidence_level": "AI_OUTPUT",
         }
         assert any("does not establish" in item for item in report["limitations"])
         assert not (_walk_keys(report) & FORBIDDEN)
