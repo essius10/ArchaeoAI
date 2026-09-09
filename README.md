@@ -1,130 +1,110 @@
 # ArchaeoAI
 
-**Student-led geospatial AI research at the intersection of archaeology, LiDAR terrain, responsible
-machine learning, and geographic generalization.**
+**Privacy-conscious geospatial machine learning for studying archaeological terrain in LiDAR with
+leakage-resistant geographic evaluation and human review.**
 
 [![CI](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml/badge.svg)](https://github.com/essius10/ArchaeoAI/actions/workflows/ci.yml)
-![Research stage](https://img.shields.io/badge/research-ready%20for%20external%20review-2f855a)
 ![Python](https://img.shields.io/badge/Python-3.12%E2%80%933.14-3776AB?logo=python&logoColor=white)
+![Research status](https://img.shields.io/badge/RQ1-provisional-8a6d3b)
+![External review](https://img.shields.io/badge/external%20review-not%20completed-6b7280)
 
-ArchaeoAI tests whether machine learning can recognize the terrain signature of **documented bowl
-barrows** in public LiDAR-derived terrain—and whether that signal survives leakage-resistant
-evaluation on geographically new groups.
+## In 10 seconds
 
-## Results
+ArchaeoAI asks whether a machine-learning model can recognize terrain patterns associated with
+**documented bowl barrows** in LiDAR-derived terrain and still perform in geographically different
+areas. It is reproducible **terrain-pattern screening research**, not archaeological discovery:
+scores are not archaeological probabilities, and human review remains necessary.
+
+> **The research hook:** Can a model recognize archaeological terrain patterns when geographic
+> separation prevents nearby terrain from leaking between training and testing?
+
+This independently developed, student-led reproducible research project connects archaeology,
+remote sensing, terrain analysis, spatial leakage, geographic generalization, Random Forest
+baselines, responsible AI, and human review.
+
+## Why this repository is interesting
+
+- Geographic holdouts and provenance audits make spatial leakage a first-class research question.
+- A frozen Random Forest is evaluated across a final geographic test, five robustness folds, and a
+  separate external dataset.
+- A compact CNN underperformed the simpler baseline; the negative result is retained transparently.
+- Sensitive locations, private terrain, and candidate material stay outside the public repository.
+- An evidence ladder separates `AI_OUTPUT` from human review and archaeological interpretation.
+- A coordinate-safe research site and synthetic local portal make the work inspectable without
+  exposing the private model or real terrain.
+
+## Results snapshot
 
 | Evidence | Balanced accuracy | Interpretation |
 |---|---:|---|
 | Frozen geographic final test | **87.1%** | Specific two-group holdout; n=62; primary confirmatory result |
 | Five-fold geographic RF robustness | **82.3% mean** | Post-hoc robustness across 23 coarse groups |
 | Compact CNN comparison | **70.1% mean** | Worse than the RF on every fold; RF retained |
-| Independent external test | **84.2% [77.5–90.0%]** | n=120 across five pre-specified 25 km cells; test spent |
-| Phase 2F-B | **One controlled run complete** | 5,929 private windows; blinded review pending |
+| Independent external test | **84.2%; 95% CI 77.5–90.0%** | n=120 across five pre-specified 25 km cells; test spent |
+
+E001 retained 261 curated positive records across 23 coarse groups; 12 groups met the provisional
+viability threshold. The frozen result covers two geographically held-out groups.
+It reached 0.871 balanced accuracy. ArchaeoAI has not discovered archaeological sites.
 
 > [!IMPORTANT]
-> **Active research, not a discovery system.** The 0.871 balanced accuracy result (87.1%) applies only
-> to the frozen test of two
-> geographically held-out groups—not England as a whole. Model scores are not archaeological
-> probabilities. ArchaeoAI has not discovered archaeological sites. One bounded private domain has
-> been scored for terrain similarity, but no human morphology review or heritage cross-check has
-> occurred and no candidate location is public.
+> These results are bounded to E001's documented bowl-barrow classification design; they are not
+> England-wide detection performance. The external test is spent. ArchaeoAI makes no archaeological
+> discovery claim. The exact status is `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`; Phase 5E is
+> **NOT COMPLETED**, and Phase 5F is **NOT AUTHORIZED**.
 
 ![Aggregate random and geographic balanced-accuracy comparison](outputs/modelling/figures/e001_balanced_accuracy_comparison.svg)
 
 *Coordinate-safe aggregate evaluation; no sites, maps, or candidate locations are shown.*
 
-## Public research demo
+## Architecture snapshot
 
-The repository now includes a lightweight, coordinate-safe public research demo in
-[`website/`](website/README.md). It presents the verified E001 evidence, geographic-validation
-rationale, negative CNN result, privacy boundaries, and current review status without publishing
-candidate-level material. It is prepared for a future GitHub Pages or Vercel deployment, but no
-deployment is enabled yet.
-
-Preview it locally from the repository root with `python -m http.server 8000`, then open
-`http://127.0.0.1:8000/website/`.
-
-## Professional portal demonstration
-
-A separate local-only professional workflow portal supports project creation, canonical Phase 5
-feature preparation on mathematical terrain, screening outputs, human review, evidence and audit
-records, and limitations-first reports. The default uses a deterministic demonstration scorer.
-Phase 6D also provides an explicit localhost-only mode that executes the hash-verified frozen E001
-Random Forest on the same synthetic terrain. Neither mode accepts real terrain or coordinates.
-
-```powershell
-python -m pip install -e ".[portal]"
-archaeoai portal --demo --reset
+```mermaid
+flowchart LR
+    A[Documented archaeology] --> B[LiDAR terrain]
+    B --> C[Privacy-safe preprocessing]
+    C --> D[Four terrain representations]
+    D --> E[Frozen Random Forest]
+    E --> F["AI_OUTPUT: bounded terrain-pattern similarity"]
+    F --> G[Human morphology review]
+    G --> H[Evidence and limitations-first report]
 ```
 
-Open `http://127.0.0.1:8000`. Read the
-[Phase 6C implementation note](docs/product/PHASE_6C_COMMERCIAL_MVP.md) and
-[portal runbook](docs/product/PORTAL_RUNBOOK.md) for boundaries and operator steps. The narrowly
-approved real-model path is documented in the
-[Phase 6D runtime note](docs/product/PHASE_6D_APPROVED_MODEL_RUNTIME.md).
+`AI_OUTPUT` is a screening observation. It does not become an archaeological identification,
+probability, or discovery without stronger independent evidence and accountable human review.
 
-## What is ArchaeoAI?
+## Try the repository
 
-> **Can a model recognize the terrain signature of a documented archaeological earthwork—and does
-> that apparent skill survive when the model is tested somewhere geographically new?**
+The public clone supports tests, coordinate-safe evidence inspection, a static research site, and a
+**synthetic** local portal:
 
-ArchaeoAI is a student-led, reproducible research project built around that question. Its first
-experiment, E001, studies **scheduled, surviving single bowl barrows in England** using public
-LiDAR-derived terrain. The central concern is not simply whether a model scores well, but whether
-the score reflects genuine geographic generalization rather than spatial or survey leakage.
+```powershell
+git clone https://github.com/essius10/ArchaeoAI.git
+cd ArchaeoAI
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+.\.venv\Scripts\python.exe -m pytest
+.\.venv\Scripts\archaeoai.exe portal --demo --reset
+```
 
-## Current status
+Open `http://127.0.0.1:8000`. The approved private model artifact is intentionally unavailable in
+normal public clones; do not attempt to obtain it. For macOS/Linux commands and complete checks,
+use the [reproducibility guide](docs/reproducibility.md). To preview the coordinate-safe research
+site instead, run `python -m http.server 8000` and open `http://127.0.0.1:8000/website/`.
 
-[Read the concise current research status →](docs/CURRENT_STATUS.md)
+## Start here
 
-[Read the E001 manuscript draft](docs/manuscript/archaeoai-e001-manuscript.md) ·
-[Reproduce the coordinate-safe evidence](docs/reproducibility.md) ·
-[Use the external reviewer guide](docs/review/REVIEWER_GUIDE.md) ·
-[Review the bounded RQ1 audit](docs/review/PHASE_4D_RQ1_AUDIT.md) ·
-[Inspect the Phase 5 inference architecture](docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md)
+| Want to… | Go here |
+|---|---|
+| Understand the current evidence and limits | [Current status](docs/CURRENT_STATUS.md) and [manuscript draft](docs/manuscript/archaeoai-e001-manuscript.md) |
+| Reproduce the public evidence | [Reproducibility guide](docs/reproducibility.md) |
+| Review the science | [Reviewer guide](docs/review/REVIEWER_GUIDE.md) |
+| Review security and privacy | [Phase 5E review package](docs/review/PHASE_5E_REVIEW_PACKAGE.md) |
+| Understand the inference design | [Phase 5 architecture](docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md) |
+| Try the synthetic portal | [Portal runbook](docs/product/PORTAL_RUNBOOK.md) |
+| Contribute safely | [Contributing guide](CONTRIBUTING.md) |
 
-| E001 data gate | Verified status |
-|---|---:|
-| Official Historic England entries reviewed | **360** |
-| Records accepted through all Phase 2A.5 gates | **261** |
-| Occupied coarse geographic groups | **23** |
-| Frozen nonadjacent final-test groups | **2** |
-| Review readiness | **READY_FOR_EXTERNAL_REVIEW; not publication-ready** |
-| RQ001 status | **PROVISIONALLY ANSWERED PENDING REVIEW** |
-| Real terrain pilot | **5/5 patches passed QA** |
-| Full positive terrain dataset | **261/261 acquired and QA-passed** |
-| Matched unlabelled backgrounds | **261/261 acquired and QA-passed** |
-| Frozen dataset | **522 observations; 254 assignment groups** |
-| Geographic final test | **2 nonadjacent blocks; 31 + 31 observations by class** |
-| Development selection | **0.821 balanced accuracy; n=28** |
-| Random final comparison | **0.823 [0.719, 0.917]; n=62** |
-| Primary geographic final result | **0.871 [0.774, 0.952]; n=62** |
-| Post-hoc geographic robustness | **5-fold mean 0.823; range 0.790–0.861** |
-| Robustness classification | **ROBUST under the frozen Phase 2E-A rule** |
-| Post-hoc compact CNN | **5-fold/3-seed mean 0.701; CNN not justified at current scale** |
-| First controlled private inference | **5,929/5,929 valid; 1,159 deduplicated; review pending** |
-| Independent external evaluation | **0.842 [0.775, 0.900]; n=120; frozen test spent** |
-| External error analysis | **Post-hoc/exploratory complete; RF retained** |
-| Phase 5 inference readiness | **Code ready; approved model artifact private/unavailable in public clones** |
-| Offline single-patch CLI | **Phase 5C complete; synthetic validation only; inference disabled** |
-| Bounded batch feature orchestration | **Phase 5D complete; synthetic validation only; no model execution** |
-
-The 261 records passed official-entry, single-monument, upstanding-relief, designation-geometry,
-128 m terrain-coverage, and survey-provenance checks. They are **curated research
-records, not unquestionable ground truth**. A frozen 40-record queue still awaits review by a
-different human reviewer.
-
-[Read the post-hoc robustness and sensitivity report →](docs/e001-phase-2e-robustness.md)
-
-[Read the compact-CNN stronger-model comparison →](docs/e001-phase-2eb-compact-cnn.md)
-
-[Read the controlled Random-Forest inference design →](docs/e001-phase-2f-a-controlled-inference.md)
-
-[Read the first controlled private inference report →](docs/e001-phase-2f-b-controlled-inference.md)
-
-[Read the independent external geographic-validation protocol →](docs/e001-phase-3a-external-validation.md)
-
-[Read the one-time independent external evaluation →](docs/e001-phase-3c-external-evaluation.md)
+If you find the research or its approach to responsible geospatial ML useful, consider starring the
+repository to follow its development.
 
 ## Why this matters
 
@@ -414,10 +394,9 @@ archaeological methodology, baseline evaluation, testing, and documentation. Res
 should begin with an issue so assumptions and evidence standards are visible before implementation.
 
 Start with the [coordinate-safe contribution opportunities](docs/contribution-opportunities.md),
-then read the contributor and security guidance below.
-
-If you are interested in reproducible machine learning for archaeology, consider starring the
-repository or following the project.
+then read the contributor and security guidance below. Coordinate-safe, community-specific sharing
+drafts are available in the [GitHub launch kit](docs/outreach/GITHUB_LAUNCH_KIT.md); the
+[social-preview specification](docs/outreach/SOCIAL_PREVIEW_SPEC.md) remains unconfigured.
 
 ## Citation
 

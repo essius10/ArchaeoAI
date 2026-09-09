@@ -1,15 +1,19 @@
 # Contributing to ArchaeoAI
 
-Thank you for considering a contribution. ArchaeoAI is an early-stage, student-led research project,
-so scientific validity and responsible data handling matter as much as code quality.
+Thank you for considering a contribution. ArchaeoAI is an independently developed research
+project, so scientific validity and responsible data handling matter as much as code quality.
 
 ## Useful contribution areas
 
 - reproducibility and environment checks;
+- privacy and security review;
+- cross-platform compatibility;
+- synthetic demonstration usability;
 - geospatial processing and CRS validation;
 - spatial statistics and leakage-resistant evaluation;
 - archaeological methodology and terminology;
 - interpretable machine-learning baselines;
+- responsible geospatial machine-learning discussion;
 - aggregate visualization and accessibility;
 - synthetic terrain examples and inference benchmarks;
 - tests and documentation.
@@ -21,11 +25,13 @@ approved and scoped.
 
 ## New-contributor workflow
 
-1. Choose a small issue or discuss the proposed scope before substantial work.
+1. Fork the repository and choose a small issue, or discuss the proposed scope before substantial
+   work.
 2. Use synthetic or clearly fictional data for code and documentation examples.
-3. Create a focused branch and keep unrelated research artifacts unchanged.
+3. Create a focused branch in your fork and keep unrelated research artifacts unchanged.
 4. Run the public quality checks below.
-5. Open a pull request using the repository template and describe research/privacy impact.
+5. Push the branch and open a focused pull request using the repository template; describe its
+   research and privacy impact.
 
 ## Local setup
 
@@ -81,8 +87,12 @@ Never include these in an issue, pull request, test fixture, screenshot, or trac
 - sensitive or permission-restricted archaeological coordinates;
 - raw NHLE polygons or machine-ready coordinate tables;
 - locations of unreviewed potential sites or future model predictions;
+- private terrain, review imagery, model artifacts, or checkpoints;
 - restricted datasets or data whose redistribution terms are unclear;
 - credentials, tokens, private URLs, or local environment files.
+
+Do not submit or promote claims that ArchaeoAI—or a contribution to it—has discovered archaeology.
+Model output is terrain-pattern screening evidence, not archaeological probability or confirmation.
 
 Use fictional values for tests. Exact data needed for approved local processing belongs only in an
 ignored controlled-data location such as `data/private/`. See [SECURITY.md](SECURITY.md) before
