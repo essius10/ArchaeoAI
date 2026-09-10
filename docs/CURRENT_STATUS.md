@@ -83,6 +83,15 @@ review remains **NOT COMPLETED**, Phase 5F remains **NOT AUTHORIZED**, and pilot
 **NO**. Real/customer terrain, uploads, remote inference, and candidate publication remain
 unauthorized. The controlling status is still `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`.
 
+Phase 5E-B consolidates the final work that can be completed internally: a candid
+[AI-assistance disclosure](review/AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md), a five-minute
+[reviewer handoff](review/PHASE_5E_REVIEWER_HANDOFF.md), an empty
+[owner disposition register](review/PHASE_5E_OWNER_DISPOSITION.md), exact
+[licensing questions](review/PHASE_5E_LICENSING_QUESTIONS.md), and the authoritative
+[completion gate](review/PHASE_5E_COMPLETION_GATE.md). Its computed state is internal readiness
+`READY`, independent review `PENDING`, Phase 5E `NOT COMPLETE`, and Phase 5F `NOT AUTHORIZED`.
+Generative-AI assistance and internal automation are explicitly not independent external review.
+
 ## Claim boundary
 
 These results concern terrain classification within the frozen E001 and external-validation

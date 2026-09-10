@@ -44,6 +44,11 @@ Please begin with the [manuscript](../manuscript/archaeoai-e001-manuscript.md), 
 [claims register](../claims-register.md). Precise locations and location-linked terrain are
 intentionally withheld.
 
+Before assessing authorship or independence, read the
+[AI assistance and authorship disclosure](AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md). The project
+is owner-directed and materially generative-AI-assisted. AI drafting, automated checks, and the
+internal Phase 5E-B audit are not independent external review.
+
 ## Questions for reviewers
 
 1. Does the distinction between documented-terrain classification and archaeological discovery
@@ -60,4 +65,6 @@ intentionally withheld.
 8. Are the limitations proportionate, especially inventory bias, limited geography, absent field
    validation, and the unreviewed Phase 2F packet?
 9. Do the privacy controls and withheld-data policy adequately address responsible archaeology?
-10. What must change before this could be considered for a preprint or formal publication?
+10. What must change before this could be considered for a preprint or formal publication, and is
+    the division of owner, generative-AI, automated-tool, and external-human contributions candid
+    enough for the intended venue?

@@ -88,6 +88,11 @@ $required = @(
     'docs/review/FEEDBACK_REGISTER.md',
     'docs/review/PHASE_5E_EXTERNAL_REVIEW_CHECKLIST.md',
     'docs/review/PHASE_5E_REVIEW_PACKAGE.md',
+    'docs/review/AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md',
+    'docs/review/PHASE_5E_COMPLETION_GATE.md',
+    'docs/review/PHASE_5E_LICENSING_QUESTIONS.md',
+    'docs/review/PHASE_5E_OWNER_DISPOSITION.md',
+    'docs/review/PHASE_5E_REVIEWER_HANDOFF.md',
     'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
@@ -740,6 +745,45 @@ if (
 }
 $phase5EACheck = 'Phase 5E-A internal hardening package current; review uncompleted; RQ1 and authorization gates preserved'
 
+$phase5EBFiles = @(
+    'docs/CURRENT_STATUS.md',
+    'docs/review/README.md',
+    'docs/review/AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md',
+    'docs/review/FEEDBACK_REGISTER.md',
+    'docs/review/PHASE_5E_COMPLETION_GATE.md',
+    'docs/review/PHASE_5E_LICENSING_QUESTIONS.md',
+    'docs/review/PHASE_5E_OWNER_DISPOSITION.md',
+    'docs/review/PHASE_5E_REVIEWER_HANDOFF.md'
+)
+$phase5EBText = (Get-Content -Raw $phase5EBFiles) -join "`n"
+$phase5EBGate = Get-Content -Raw 'docs/review/PHASE_5E_COMPLETION_GATE.md'
+$phase5EBDisclosure = Get-Content -Raw 'docs/review/AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md'
+$phase5EBDisposition = Get-Content -Raw 'docs/review/PHASE_5E_OWNER_DISPOSITION.md'
+$phase5EBFeedback = Get-Content -Raw 'docs/review/FEEDBACK_REGISTER.md'
+if (
+    $phase5EBGate -notmatch 'INTERNAL_PHASE_5E_READINESS = READY' -or
+    $phase5EBGate -notmatch 'INDEPENDENT_REVIEW_COMPLETION = PENDING' -or
+    $phase5EBGate -notmatch 'PHASE_5E_OVERALL_STATUS = NOT COMPLETE' -or
+    $phase5EBGate -notmatch 'PHASE_5F_AUTHORIZATION = NOT AUTHORIZED' -or
+    $phase5EBText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
+    $phase5EBDisclosure -notmatch 'materially generative-AI-assisted' -or
+    $phase5EBDisclosure -notmatch 'OpenAI Codex' -or
+    $phase5EBDisclosure -notmatch 'AI assistance is not an independent external review' -or
+    $phase5EBDisclosure -notmatch 'no complete model/version chronology is claimed' -or
+    $phase5EBDisposition -notmatch 'No findings are recorded at this snapshot' -or
+    $phase5EBFeedback -notmatch 'NO_REVIEW_OBTAINED' -or
+    $phase5EBFeedback -notmatch 'AI_INTERNAL_WORK' -or
+    $phase5EBGate -match '(?m)^INDEPENDENT_REVIEW_COMPLETION = COMPLETE$' -or
+    $phase5EBGate -match '(?m)^PHASE_5F_AUTHORIZATION = AUTHORIZED$' -or
+    $phase5EBText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'
+) {
+    throw 'Phase 5E-B disclosure, review evidence, privacy, status, or authorization boundary failed.'
+}
+if ((Test-Path 'LICENSE') -or (Test-Path 'LICENSE.md')) {
+    throw 'Phase 5E-B must not add a licence while qualified licensing review remains unresolved.'
+}
+$phase5EBCheck = 'Phase 5E-B internal readiness consolidated; AI assistance disclosed; independent review pending; Phase 5F unauthorized'
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -839,4 +883,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $phase5DCheck; $phase5EACheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $phase5DCheck; $phase5EACheck; $phase5EBCheck; $publicDemoCheck."
