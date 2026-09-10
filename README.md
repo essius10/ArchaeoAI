@@ -99,6 +99,7 @@ site instead, run `python -m http.server 8000` and open `http://127.0.0.1:8000/w
 | Reproduce the public evidence | [Reproducibility guide](docs/reproducibility.md) |
 | Review the science | [Reviewer guide](docs/review/REVIEWER_GUIDE.md) |
 | Review security and privacy | [Phase 5E review package](docs/review/PHASE_5E_REVIEW_PACKAGE.md) |
+| Understand human and AI contributions | [AI assistance and authorship disclosure](docs/review/AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md) |
 | Understand the inference design | [Phase 5 architecture](docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md) |
 | Try the synthetic portal | [Portal runbook](docs/product/PORTAL_RUNBOOK.md) |
 | Contribute safely | [Contributing guide](CONTRIBUTING.md) |

@@ -1,19 +1,31 @@
 # ArchaeoAI external-feedback register
 
-Status: `OPEN_FOR_EXTERNAL_REVIEW`
+Status: `OPEN_FOR_EXTERNAL_REVIEW — NO COMPLETED PHASE_5E REVIEW RECORDED`
 
 This register records feedback without implying endorsement, supervision, collaboration,
 affiliation, or completed independent review. Names appear only when already public or explicitly
 authorized. Paraphrases are labelled as such; undocumented comments are not invented.
 
-An exhaustive repository-text search on 5 September 2026 found no other identifiable professor or
-expert recommendation. The entry below records the recommendation supplied to the project owner
-for this Phase 4D brief. It is owner-relayed feedback, not a verified quotation or evidence of an
-independent review.
+The entries below are owner-relayed prerequisites or informal advice.
+Each is a paraphrase, not a verified quotation or evidence of independent review. Recording them
+makes their influence visible without converting correspondence into endorsement.
 
-| ID | Reviewer | Date and source | Comment | Area | Actionable now | Response and implementation evidence | Remaining limitation | Status |
+| ID | Source class | Reviewer/source | Date and source status | Comment | Area | Response and evidence | Remaining limitation | Status |
 |---|---|---|---|---|---|---|---|---|
-| F001 | External professor/expert; name not supplied or authorized for publication | Recorded 2026-09-05; project-owner Phase 4D brief | Careful paraphrase: clearly separate AI-generated output, hypotheses or candidate interpretations, human-vetted observations, and archaeologist-validated evidence | Archaeology; AI transparency; communication; privacy | Yes | Adopted a five-level evidence-status vocabulary in the [Phase 4D audit](PHASE_4D_RQ1_AUDIT.md) and [reviewer guide](REVIEWER_GUIDE.md) | Source wording and reviewer identity have not been independently verified; no endorsement or completed review is claimed | Accepted |
+| F001 | `INFORMAL_EXPERT_ADVICE` | External professor/expert; name not supplied or authorized for publication | Recorded 2026-09-05 from owner brief | Careful paraphrase: clearly separate AI-generated output, hypotheses or candidate interpretations, human-vetted observations, and archaeologist-validated evidence | Archaeology; AI transparency; communication; privacy | Adopted a five-level evidence vocabulary in the [Phase 4D audit](PHASE_4D_RQ1_AUDIT.md) and [reviewer guide](REVIEWER_GUIDE.md) | Source wording and identity have not been independently verified; no endorsement or completed review is claimed | Accepted |
+| F002 | `REVIEW_REQUEST_PREREQUISITE` | Professor James Conolly; identity supplied by project owner | Recorded 2026-09-10 from owner Phase 5E-B brief; owner-relayed paraphrase | Clarify human versus generative-AI contribution before detailed feedback | AI transparency; authorship | Added the [full AI assistance and authorship disclosure](AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md) and manuscript-ready wording | This records a prerequisite, not detailed feedback, approval, endorsement, supervision, collaboration, or completed review | Implemented; review pending |
+
+## Source and outcome classes
+
+- `INFORMAL_EXPERT_ADVICE`: a suggestion outside a completed, declared review scope.
+- `EXTERNAL_REVIEW`: attributable feedback with date, commit, scope, expertise, conflicts, and access
+  limitations.
+- `LEGAL_OR_LICENSING_REVIEW`: qualified advice whose jurisdiction and limits are stated.
+- `REVIEWER_PENDING`: an invitation or requested prerequisite with no completed review yet.
+- `NO_REVIEW_OBTAINED`: a declined invitation or unavailable reviewer; this is neither a failure nor
+  a concern about ArchaeoAI.
+- `AI_INTERNAL_WORK`: AI-assisted planning, drafting, implementation, or checking; never an
+  independent reviewer identity.
 
 ## Status meanings
 
@@ -25,3 +37,7 @@ independent review.
 Future entries must retain the original source, distinguish quotations from paraphrases, link the
 response to evidence, and state unresolved limitations. AI-assisted project work is not an
 independent human review.
+
+Substantive Phase 5E findings must also be copied into the
+[owner disposition register](PHASE_5E_OWNER_DISPOSITION.md). Private email bodies, sensitive
+locations, terrain, model paths, and candidate material must not be published here.

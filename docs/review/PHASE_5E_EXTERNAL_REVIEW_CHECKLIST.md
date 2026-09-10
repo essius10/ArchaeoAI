@@ -67,6 +67,7 @@ artifact provenance, custody, authorization, and runtime isolation.
 | Geographic generalization remains limited to the evaluated regions, sources, and design. |  |  | `docs/manuscript/archaeoai-e001-manuscript.md`; `docs/CURRENT_STATUS.md` |
 | The external test remains spent and unavailable for tuning or reinterpretation. |  |  | `docs/CURRENT_STATUS.md`; `docs/reproducibility.md`; `docs/claims-register.md` |
 | RQ1 remains exactly `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`; internal hardening does not advance it. |  |  | `docs/review/PHASE_4D_RQ1_AUDIT.md`; `docs/CURRENT_STATUS.md`; `docs/decision-log.md` |
+| Human, external-expert, generative-AI, and automated-tool roles are disclosed candidly without treating AI assistance as independent review. |  |  | `docs/review/AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md`; `research-log/` |
 
 ## 4. Licensing / data / model review
 
@@ -86,7 +87,9 @@ artifact provenance, custody, authorization, and runtime isolation.
 - **Reviewer role/expertise:**
 - **Review date:**
 - **Review scope (tracks/items examined):**
+- **Exact commit reviewed:**
 - **Conflicts, access constraints, or limitations:**
+- **AI or automated tools used during this review (if any):**
 - **Overall recommendation:** `PASS` / `PASS WITH CONDITIONS` / `CHANGES REQUIRED` / `NO-GO`
 - **Recommendation notes and required actions:**
 
@@ -97,7 +100,8 @@ imply institutional endorsement, archaeological confirmation, or completion of u
 
 Checklist completion does not automatically authorize Phase 5F or any real-data, upload, network,
 deployment, model-distribution, pilot, or candidate-publication work. Substantive findings require
-documented disposition and explicit owner approval at a separate gate.
+documented disposition in `PHASE_5E_OWNER_DISPOSITION.md` and explicit owner approval under
+`PHASE_5E_COMPLETION_GATE.md` at a separate gate.
 
 Until actual independent review occurs, external review remains **NOT COMPLETED**, Phase 5F remains
 **NOT AUTHORIZED**, and `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW` remains controlling.
