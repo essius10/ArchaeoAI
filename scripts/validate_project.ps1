@@ -93,9 +93,15 @@ $required = @(
     'docs/review/PHASE_5E_LICENSING_QUESTIONS.md',
     'docs/review/PHASE_5E_OWNER_DISPOSITION.md',
     'docs/review/PHASE_5E_REVIEWER_HANDOFF.md',
+    'docs/review/phase5e-review-policy.json',
+    'docs/review/evidence/README.md',
+    'docs/review/templates/phase5e_review.template.json',
+    'docs/review/templates/phase5e_owner_decision.template.json',
     'docs/architecture/PHASE_5_INFERENCE_ARCHITECTURE.md',
     'experiments/E001_geographic_baseline.md',
     'scripts/doctor.ps1',
+    'scripts/build_phase5e_review_bundle.py',
+    'scripts/validate_phase5e_review.py',
     'scripts/audit_nhle_bowl_barrows.py',
     'scripts/curate_e001_labels.py',
     'scripts/reconstruct_e001_sites.py',
@@ -158,6 +164,7 @@ $required = @(
     'src/archaeoai/external_evaluation.py',
     'src/archaeoai/external_error_analysis.py',
     'src/archaeoai/manuscript.py',
+    'src/archaeoai/review_evidence.py',
     'src/archaeoai/data/manifest.py',
     'tests/test_config.py',
     'tests/test_manifest.py',
@@ -193,6 +200,7 @@ $required = @(
     'tests/test_external_validation.py',
     'tests/test_external_error_analysis.py',
     'tests/test_manuscript_package.py',
+    'tests/test_phase5e_c_review_execution.py',
     'outputs/manuscript/e001_manuscript_evidence.json',
     'outputs/feasibility/bowl_barrow_summary.json',
     'outputs/feasibility/bowl_barrow_counts.csv',
@@ -784,6 +792,63 @@ if ((Test-Path 'LICENSE') -or (Test-Path 'LICENSE.md')) {
 }
 $phase5EBCheck = 'Phase 5E-B internal readiness consolidated; AI assistance disclosed; independent review pending; Phase 5F unauthorized'
 
+$phase5ECFiles = @(
+    'README.md',
+    'docs/CURRENT_STATUS.md',
+    'docs/review/README.md',
+    'docs/review/PHASE_5E_COMPLETION_GATE.md',
+    'docs/review/PHASE_5E_REVIEW_PACKAGE.md',
+    'docs/review/PHASE_5E_REVIEWER_HANDOFF.md',
+    'docs/review/evidence/README.md'
+)
+$phase5ECText = (Get-Content -Raw $phase5ECFiles) -join "`n"
+$phase5ECTemplate = Get-Content -Raw 'docs/review/templates/phase5e_review.template.json'
+$phase5ECPolicy = Get-Content -Raw 'docs/review/phase5e-review-policy.json' | ConvertFrom-Json
+$phase5ECStatusOutput = & $pythonExecutable 'scripts/validate_phase5e_review.py'
+if ($LASTEXITCODE -ne 0) {
+    throw 'Phase 5E-C review-evidence validation failed.'
+}
+$phase5ECStatus = ($phase5ECStatusOutput -join "`n") | ConvertFrom-Json
+$phase5ECDomainNames = @(
+    'security',
+    'privacy',
+    'archaeological_scientific',
+    'licensing'
+)
+if (
+    $phase5ECPolicy.schema_version -ne 'archaeoai-phase5e-review-policy-v1' -or
+    ($phase5ECPolicy.required_domains -join ',') -ne ($phase5ECDomainNames -join ',') -or
+    $phase5ECTemplate -notmatch '"record_status": "TEMPLATE"' -or
+    $phase5ECText -notmatch 'version-bound' -or
+    $phase5ECText -notmatch 'machine-valid' -or
+    $phase5ECText -notmatch 'NOT_RECEIVED' -or
+    $phase5ECText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
+    $phase5ECText -notmatch 'Phase 5E.*NOT COMPLETE' -or
+    $phase5ECText -notmatch 'Phase 5F.*NOT AUTHORIZED' -or
+    $phase5ECStatus.schema_version -ne 'archaeoai-phase5e-gate-status-v1' -or
+    $phase5ECStatus.internal_phase5e_readiness -ne 'READY' -or
+    $phase5ECStatus.independent_review_completion -ne 'PENDING' -or
+    $phase5ECStatus.phase5e_status -ne 'NOT COMPLETE' -or
+    $phase5ECStatus.phase5f_authorization -ne 'NOT AUTHORIZED' -or
+    $phase5ECStatus.owner_decision -ne 'PENDING' -or
+    $phase5ECStatus.rq1_status -ne 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
+    $phase5ECStatus.blockers.Count -lt 6 -or
+    $phase5ECText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'
+) {
+    throw 'Phase 5E-C evidence, gate, privacy, status, or authorization boundary failed.'
+}
+foreach ($domain in $phase5ECDomainNames) {
+    $domainStatus = $phase5ECStatus.review_domains.$domain.status
+    if ($domainStatus -notin @('NOT_RECEIVED', 'RECEIVED', 'ACCEPTED', 'BLOCKED')) {
+        throw "Phase 5E-C returned an unsupported status for $domain."
+    }
+}
+$reviewBundleIgnoreCheck = & git check-ignore 'outputs/review/private-sentinel/manifest.json'
+if ($LASTEXITCODE -ne 0 -or -not $reviewBundleIgnoreCheck) {
+    throw 'Generated Phase 5E review bundles must remain ignored by Git.'
+}
+$phase5ECCheck = 'Phase 5E-C external-review evidence and bundle infrastructure valid; external reviews not completed; Phase 5F unauthorized'
+
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
     throw 'The tracked terrain index contains a coordinate-bearing field.'
@@ -883,4 +948,4 @@ foreach ($copy in $publicFigureCopies.Keys) {
 }
 $publicDemoCheck = 'public demo aggregate claims, privacy boundary, and frozen figure copies valid'
 
-Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $phase5DCheck; $phase5EACheck; $phase5EBCheck; $publicDemoCheck."
+Write-Output "Validation passed: $($required.Count) required artifacts; $runtimeCheck; $phaseOneCheck; $terrainCheck; $phase2cCheck; $phase2dACheck; $phase2dBCheck; $phase2eACheck; $phase2eB0Check; $phase2eBCheck; $phase2fACheck; $phase2fASmokeCheck; $phase2fBCheck; $phase3ACheck; $phase3BCheck; $phase3BR1Check; $phase3BDatasetCheck; $phase3CCheck; $phase4ACheck; $phase4BCheck; $phase4CCheck; $phase4DCheck; $phase5ACheck; $phase5CCheck; $phase5DCheck; $phase5EACheck; $phase5EBCheck; $phase5ECCheck; $publicDemoCheck."

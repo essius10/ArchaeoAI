@@ -41,3 +41,8 @@ independent human review.
 Substantive Phase 5E findings must also be copied into the
 [owner disposition register](PHASE_5E_OWNER_DISPOSITION.md). Private email bodies, sensitive
 locations, terrain, model paths, and candidate material must not be published here.
+
+For a completed Phase 5E review, the public-safe declaration and findings must also pass the
+machine-readable [evidence workflow](evidence/README.md). This prose register does not independently
+satisfy a review domain and must not be used to turn informal advice, unavailable reviewers, or AI
+work into attributable external evidence.

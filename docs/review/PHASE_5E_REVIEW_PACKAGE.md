@@ -2,12 +2,12 @@
 
 Status: **READY FOR EXTERNAL REVIEW — PHASE 5E NOT COMPLETED**
 
-The scientific/runtime evidence package sent to reviewers is pinned to
-`2eab2716af01c7cf007b84342058483bfd1414a0`. The Phase 5E-B review PR starts from
-`430ed346c49fb7fa89d778d1b7483fe5be4a2216`; the intervening PR #13 changed only GitHub discovery
-and contributor documentation. Review the Phase 5E-B PR head for the disclosure, completion gate,
-and handoff. This remains internal preparation, not evidence that independent review occurred. The
-controlling status is `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`.
+The scientific/runtime evidence package originally sent to reviewers is pinned to
+`2eab2716af01c7cf007b84342058483bfd1414a0`. Phase 5E-C starts from merged Phase 5E-B commit
+`8ac77c0c313a2966a0de54210a0e2dfd4f7a43f9`. A new review must name the exact commit actually
+examined; use the deterministic bundle manifest rather than assuming that either historical SHA was
+reviewed. This infrastructure is not evidence that independent review occurred. The controlling
+status is `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW`.
 
 The current implementation includes the Phase 5A–5D inference foundations, the Phase 6C local
 FastAPI/SQLite workflow, and the Phase 6D approved private Random Forest runtime over generated
@@ -113,3 +113,46 @@ For a five-minute orientation, start with the
 5. Hold a separate authorization gate. Review completion alone does not authorize Phase 5F.
 
 No reviewer names, decisions, endorsements, or completed `PASS` statuses are asserted here.
+
+## Version-bound execution workflow
+
+1. From a clean committed checkout, run `python scripts/build_phase5e_review_bundle.py --commit HEAD`.
+2. Record the generated directory and `manifest.sha256`; verify it with
+   `python scripts/validate_phase5e_review.py --verify-bundle <bundle-directory>`.
+3. Inspect only the assigned track and the files labelled for it in `manifest.json`. Do not request
+   private material unless the owner separately authorizes a bounded private process.
+4. Copy `templates/phase5e_review.template.json` outside the repository. Use a stable review ID,
+   one domain, the manifest's full commit SHA, and complete every declaration.
+5. Validate with `python scripts/validate_phase5e_review.py --review <completed-review.json>`.
+   Record the returned review SHA-256 when handing the public-safe record to the owner.
+6. The owner places accepted public-safe evidence under `docs/review/evidence/`, records every
+   finding disposition, and runs `python scripts/validate_phase5e_review.py`.
+
+The validator enforces four independent domain records, strict attribution and declarations, safe
+repository references, stable finding IDs, and exact hashes. The same JSON record cannot satisfy
+multiple domains. One person may cover more than one domain only through separate records with
+domain-specific scope and supportable expertise; the owner must not infer unreviewed coverage.
+
+## Evidence and finding contract
+
+A completed record identifies the review, domain, commit, review-bundle manifest SHA-256, date,
+public attribution, optional affiliation, expertise, independence and conflict declarations, scope,
+methodology, tools, AI assistance, limitations, findings, conclusion, attestation, and evidence
+references. Private contact details are prohibited.
+
+Findings use stable `P5E-<DOMAIN>-F###` IDs and severities `blocker`, `high`, `medium`, `low`, or
+`informational`. Each records its originating review, evidence, affected components, four impact
+flags, and recommended action. Reviewer evidence remains distinct from owner disposition,
+remediation, and final verification. The owner's machine-readable closing decision may use
+`ACCEPT`, `REMEDIATE`, `DEFER`, or `REJECT_WITH_RATIONALE`; rationale is mandatory, remediation
+requires evidence and a resolving commit, and `blocker`/`high` findings must be remediated before
+the automated completion gate can close. Hash-bound accepted reviews prevent a finding from being
+silently removed by deleting a register row.
+
+## Safe reporting
+
+Do not put coordinates, private terrain, model bytes, credentials, exploitable details, restricted
+data, private correspondence, or unnecessary personal information in a public issue or review
+record. Use a redacted public finding with an opaque owner-controlled evidence reference. Arrange
+private transfer through an already agreed owner-controlled channel; this repository invents no
+email address or public contact route. See `evidence/README.md` and `SECURITY.md`.

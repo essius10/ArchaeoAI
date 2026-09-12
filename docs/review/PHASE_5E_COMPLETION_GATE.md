@@ -8,23 +8,23 @@ as review-assessment states.
 
 - Scientific/runtime evidence package sent to reviewers: commit
   `2eab2716af01c7cf007b84342058483bfd1414a0`
-- Phase 5E-B starting `main`: commit `430ed346c49fb7fa89d778d1b7483fe5be4a2216`
-- The intervening PR #13 changed discovery/onboarding documentation only; it did not change
-  scientific results, frozen artifacts, model/runtime behaviour, privacy, or authorization.
-- Phase 5E-B changes are review-consolidation documents, tests, and validation rules on top of that
-  starting commit. The PR head is the exact review revision for this consolidation.
+- Phase 5E-C starting `main`: commit `8ac77c0c313a2966a0de54210a0e2dfd4f7a43f9`
+- Phase 5E-C adds execution infrastructure without changing the reviewed scientific/runtime
+  evidence. Every new review must cite the exact commit in its deterministic bundle manifest.
+- SHA-256 binds content and version; it does not prove reviewer identity, expertise, or approval.
 
 ## 2. Current main SHA
 
-`430ed346c49fb7fa89d778d1b7483fe5be4a2216`
+`8ac77c0c313a2966a0de54210a0e2dfd4f7a43f9`
 
-This is the base for the Phase 5E-B review PR, not evidence of review approval.
+This is the base for the Phase 5E-C review PR, not evidence of review approval. The exact commit a
+reviewer examines is recorded separately in that review's bundle and evidence record.
 
 ## 3. Scientific/frozen integrity status
 
 | Assessment | Status | Evidence |
 |---|---|---|
-| Phase 5E-B protected scientific/frozen diff | `PASS` | Branch diff and validator; no result/config/dataset/split/manuscript-evidence mutation |
+| Phase 5E-C protected scientific/frozen diff | `PASS` | Branch diff and validator; no result/config/dataset/split/manuscript-evidence mutation |
 | Spent external test remains untouched | `PASS` | Phase 3C immutable artifacts and existing safeguards |
 | RQ1 remains exact | `PASS` | `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW` |
 
@@ -78,6 +78,27 @@ This is the base for the Phase 5E-B review PR, not evidence of review approval.
 | Actual Phase 5E external findings received | `PENDING` | None recorded at this snapshot |
 | Substantive findings disposition complete | `PENDING` | Owner disposition rows with evidence and residual limitations |
 
+## Machine-derived external-review status
+
+The canonical evidence policy is `phase5e-review-policy.json`. Run
+`python scripts/validate_phase5e_review.py` to derive status from completed JSON records under
+`evidence/`; do not edit this section to simulate receipt. At this snapshot:
+
+```text
+security review = NOT_RECEIVED
+privacy review = NOT_RECEIVED
+archaeological_scientific review = NOT_RECEIVED
+licensing review = NOT_RECEIVED
+unresolved blocker findings = NONE RECORDED
+owner decision = PENDING
+```
+
+`NOT_RECEIVED` means no machine-valid attributable record exists. `RECEIVED` means valid evidence
+exists but owner disposition is pending. `BLOCKED` means a `NO_GO` or blocker finding exists.
+`ACCEPTED` is available only through a valid owner decision bound to four distinct review-record
+hashes and complete finding dispositions. A blank template, placeholder, prose-only note, or reused
+record cannot advance a domain.
+
 ## 10. Unresolved concerns
 
 - No attributable completed independent review exists for any of the four tracks.
@@ -126,6 +147,11 @@ All of the following are required:
    separately authorized transparent amendment process is used.
 7. A final owner decision that names the exact review evidence and declares Phase 5E complete.
 8. A separate later decision for Phase 5F; it cannot be bundled implicitly into review completion.
+
+The machine decision record additionally requires one distinct hash-bound record per domain, an
+owner disposition for every finding, rationale for every nontrivial decision, evidence and a
+resolving commit for remediation, and remediation of all `blocker` or `high` findings. Removing a
+register row or evidence file invalidates rather than closes the decision.
 
 ## Computed current end state
 

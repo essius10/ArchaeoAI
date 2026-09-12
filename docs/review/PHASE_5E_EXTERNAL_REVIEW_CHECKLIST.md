@@ -84,14 +84,20 @@ artifact provenance, custody, authorization, and runtime isolation.
 
 ## Reviewer declaration
 
+- **Stable public attribution (private contact details are not required):**
+- **Affiliation, if supplied:**
 - **Reviewer role/expertise:**
 - **Review date:**
 - **Review scope (tracks/items examined):**
 - **Exact commit reviewed:**
+- **Review methodology:**
+- **Tools used:**
 - **Conflicts, access constraints, or limitations:**
 - **AI or automated tools used during this review (if any):**
 - **Overall recommendation:** `PASS` / `PASS WITH CONDITIONS` / `CHANGES REQUIRED` / `NO-GO`
 - **Recommendation notes and required actions:**
+- **Evidence references:**
+- **Attestation that this record represents the stated scope and limitations:**
 
 Completing this form records only the named reviewer's assessment of the stated scope. It does not
 imply institutional endorsement, archaeological confirmation, or completion of unreviewed tracks.
@@ -105,3 +111,8 @@ documented disposition in `PHASE_5E_OWNER_DISPOSITION.md` and explicit owner app
 
 Until actual independent review occurs, external review remains **NOT COMPLETED**, Phase 5F remains
 **NOT AUTHORIZED**, and `RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW` remains controlling.
+
+For attributable machine validation, transfer the completed assessment into one copy of
+`templates/phase5e_review.template.json` per review domain and run
+`python scripts/validate_phase5e_review.py --review <record.json>`. A blank template, placeholder,
+or structurally valid but unattributable note cannot satisfy the gate.

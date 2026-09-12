@@ -92,6 +92,13 @@ Phase 5E-B consolidates the final work that can be completed internally: a candi
 `READY`, independent review `PENDING`, Phase 5E `NOT COMPLETE`, and Phase 5F `NOT AUTHORIZED`.
 Generative-AI assistance and internal automation are explicitly not independent external review.
 
+Phase 5E-C adds external-review execution infrastructure: a strict version-bound evidence model,
+deterministic public-safe review bundles with SHA-256 manifests, machine validation that rejects
+blank or placeholder submissions, derived four-domain status, and hash-bound owner disposition.
+This makes review executable and auditable; it does **not** supply a reviewer or complete a review.
+Security, privacy, archaeological/scientific, and qualified licensing reviews remain
+`NOT_RECEIVED`; Phase 5E remains `NOT COMPLETE`, and Phase 5F remains `NOT AUTHORIZED`.
+
 ## Claim boundary
 
 These results concern terrain classification within the frozen E001 and external-validation
