@@ -10,6 +10,13 @@
     "archaeological_scientific": [{"review_id": "REPLACE", "record_sha256": "REPLACE"}],
     "licensing": [{"review_id": "REPLACE", "record_sha256": "REPLACE"}]
   },
+  "historical_reviews": [
+    {
+      "review_id": "REPLACE_WITH_SUPERSEDED_REVIEW_ID_OR_REMOVE_THIS_OBJECT",
+      "record_sha256": "REPLACE_WITH_SUPERSEDED_RECORD_SHA256",
+      "superseded_by_review_id": "REPLACE_WITH_ACCEPTED_REVIEW_ID_FOR_THE_SAME_DOMAIN"
+    }
+  ],
   "finding_dispositions": [
     {
       "finding_id": "REPLACE",

@@ -747,6 +747,7 @@ def validate_owner_decision(
             "decision_date",
             "owner_public_attribution",
             "accepted_reviews",
+            "historical_reviews",
             "finding_dispositions",
             "phase5e_decision",
             "phase5f_authorization",
@@ -770,7 +771,6 @@ def validate_owner_decision(
     accepted = _mapping(payload["accepted_reviews"], "owner_decision.accepted_reviews")
     _exact_keys(accepted, set(REQUIRED_DOMAINS), "owner_decision.accepted_reviews")
     accepted_ids: set[str] = set()
-    accepted_records: list[Mapping[str, Any]] = []
     for domain in REQUIRED_DOMAINS:
         bindings = _list(accepted[domain], f"owner_decision.accepted_reviews.{domain}")
         for index, raw_binding in enumerate(bindings):
@@ -791,9 +791,42 @@ def validate_owner_decision(
                 raise ReviewEvidenceError(f"accepted {domain} review has a NO_GO conclusion")
             if binding["record_sha256"] != review_record_sha256(review):
                 raise ReviewEvidenceError(f"accepted {domain} review hash mismatch")
-            accepted_records.append(review)
-    if accepted_ids != set(reviews):
-        raise ReviewEvidenceError("owner decision must bind every submitted review record")
+
+    historical = _list(
+        payload["historical_reviews"], "owner_decision.historical_reviews", allow_empty=True
+    )
+    historical_ids: set[str] = set()
+    for index, raw_binding in enumerate(historical):
+        field = f"owner_decision.historical_reviews[{index}]"
+        binding = _mapping(raw_binding, field)
+        _exact_keys(
+            binding,
+            {"review_id", "record_sha256", "superseded_by_review_id"},
+            field,
+        )
+        review_id = _text(binding["review_id"], f"{field}.review_id")
+        superseding_id = _text(
+            binding["superseded_by_review_id"], f"{field}.superseded_by_review_id"
+        )
+        if review_id in accepted_ids or review_id in historical_ids:
+            raise ReviewEvidenceError("review records must have exactly one closeout role")
+        review = reviews.get(review_id)
+        superseding_review = reviews.get(superseding_id)
+        if review is None:
+            raise ReviewEvidenceError(f"historical review is missing: {review_id}")
+        if superseding_id not in accepted_ids or superseding_review is None:
+            raise ReviewEvidenceError(
+                f"historical review must name an accepted superseding review: {review_id}"
+            )
+        if superseding_review["review_domain"] != review["review_domain"]:
+            raise ReviewEvidenceError(f"historical review superseding domain mismatch: {review_id}")
+        if binding["record_sha256"] != review_record_sha256(review):
+            raise ReviewEvidenceError(f"historical review hash mismatch: {review_id}")
+        historical_ids.add(review_id)
+    if accepted_ids | historical_ids != set(reviews):
+        raise ReviewEvidenceError(
+            "owner decision must bind every submitted review as accepted or historical"
+        )
 
     dispositions = _list(
         payload["finding_dispositions"], "owner_decision.finding_dispositions", allow_empty=True
@@ -807,14 +840,19 @@ def validate_owner_decision(
             raise ReviewEvidenceError(f"duplicate owner disposition: {finding_id}")
         by_finding[finding_id] = disposition
 
-    accepted_findings = {
-        finding["finding_id"]: finding
-        for review in accepted_records
-        for finding in review["findings"]
-    }
-    if set(by_finding) != set(accepted_findings):
-        raise ReviewEvidenceError("every accepted finding requires exactly one owner disposition")
-    for finding_id, finding in accepted_findings.items():
+    all_findings: dict[str, Mapping[str, Any]] = {}
+    for review in reviews.values():
+        for finding in review["findings"]:
+            finding_id = finding["finding_id"]
+            if finding_id in all_findings:
+                raise ReviewEvidenceError(f"duplicate finding ID across reviews: {finding_id}")
+            all_findings[finding_id] = finding
+    if set(by_finding) != set(all_findings):
+        raise ReviewEvidenceError(
+            "every finding in accepted and historical reviews requires exactly one "
+            "owner disposition"
+        )
+    for finding_id, finding in all_findings.items():
         disposition = by_finding[finding_id]
         if disposition["originating_review_id"] != finding["originating_review_id"]:
             raise ReviewEvidenceError(f"disposition origin mismatch: {finding_id}")
@@ -954,6 +992,11 @@ def evaluate_review_gate(root: str | Path, policy_path: str | Path | None = None
             domain: {
                 "status": "ACCEPTED",
                 "review_ids": [binding["review_id"] for binding in accepted[domain]],
+                "historical_review_ids": [
+                    binding["review_id"]
+                    for binding in decision["historical_reviews"]
+                    if reviews[binding["review_id"]]["review_domain"] == domain
+                ],
                 "reviewed_repository_commits": sorted(
                     {
                         reviews[binding["review_id"]]["reviewed_repository_commit"]

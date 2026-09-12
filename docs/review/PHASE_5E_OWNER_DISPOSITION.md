@@ -40,8 +40,10 @@ Machine-readable records under `evidence/` are the integrity source; this table 
 human-readable register. Use `ACCEPT`, `REMEDIATE`, `DEFER`, or `REJECT_WITH_RATIONALE`. Every
 nontrivial disposition requires rationale. Remediation requires linked evidence, a resolving
 commit, and final verification. Acceptance or deferral must retain an explicit residual limitation.
-Deleting a row cannot close a finding: the owner decision binds the accepted review SHA-256 and
-must disposition every finding in that immutable record.
+Deleting a row cannot close a finding: the owner decision separately binds satisfying reviews and
+all superseded historical review SHA-256 values, and must disposition every finding across both
+sets. A later acceptable review may satisfy a domain only after blocker/high findings in earlier
+evidence are genuinely remediated; unfavorable evidence remains in the audit history.
 
 ## Closing rule
 

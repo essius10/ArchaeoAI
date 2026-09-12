@@ -13,11 +13,12 @@ as review-assessment states.
   evidence. Every new review must cite the exact commit in its deterministic bundle manifest.
 - SHA-256 binds content and version; it does not prove reviewer identity, expertise, or approval.
 
-## 2. Current main SHA
+## 2. Phase 5E-C starting/base SHA
 
 `8ac77c0c313a2966a0de54210a0e2dfd4f7a43f9`
 
-This is the base for the Phase 5E-C review PR, not evidence of review approval. The exact commit a
+This is the historical base for the Phase 5E-C review PR, not a moving repository-status marker or
+evidence of review approval. The exact commit a
 reviewer examines is recorded separately in that review's bundle and evidence record.
 
 ## 3. Scientific/frozen integrity status
@@ -95,9 +96,10 @@ owner decision = PENDING
 
 `NOT_RECEIVED` means no machine-valid attributable record exists. `RECEIVED` means valid evidence
 exists but owner disposition is pending. `BLOCKED` means a `NO_GO` or blocker finding exists.
-`ACCEPTED` is available only through a valid owner decision bound to four distinct review-record
-hashes and complete finding dispositions. A blank template, placeholder, prose-only note, or reused
-record cannot advance a domain.
+`ACCEPTED` is available only through a valid owner decision bound to distinct satisfying records
+for all four domains, with every other submitted record hash-bound as historical and every finding
+dispositioned. A blank template, placeholder, prose-only note, or reused record cannot advance a
+domain.
 
 ## 10. Unresolved concerns
 

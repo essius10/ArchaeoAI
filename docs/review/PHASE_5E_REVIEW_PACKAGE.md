@@ -146,8 +146,8 @@ flags, and recommended action. Reviewer evidence remains distinct from owner dis
 remediation, and final verification. The owner's machine-readable closing decision may use
 `ACCEPT`, `REMEDIATE`, `DEFER`, or `REJECT_WITH_RATIONALE`; rationale is mandatory, remediation
 requires evidence and a resolving commit, and `blocker`/`high` findings must be remediated before
-the automated completion gate can close. Hash-bound accepted reviews prevent a finding from being
-silently removed by deleting a register row.
+the automated completion gate can close. Hash-bound satisfying and historical reviews prevent a
+finding from being silently removed by deleting a register row.
 
 ## Safe reporting
 

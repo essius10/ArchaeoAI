@@ -233,6 +233,7 @@ def test_owner_decision_binds_distinct_hashed_reviews_and_every_finding() -> Non
         "decision_date": "2026-09-12",
         "owner_public_attribution": "ArchaeoAI project owner",
         "accepted_reviews": accepted,
+        "historical_reviews": [],
         "finding_dispositions": [
             {
                 "finding_id": "P5E-SEC-F001",
@@ -256,7 +257,7 @@ def test_owner_decision_binds_distinct_hashed_reviews_and_every_finding() -> Non
 
     missing_finding = copy.deepcopy(decision)
     missing_finding["finding_dispositions"] = []
-    with pytest.raises(ReviewEvidenceError, match="every accepted finding"):
+    with pytest.raises(ReviewEvidenceError, match="every finding"):
         validate_owner_decision(missing_finding, reviews)
 
     reused = copy.deepcopy(decision)
@@ -269,7 +270,7 @@ def test_owner_decision_binds_distinct_hashed_reviews_and_every_finding() -> Non
     extra_payload["review_id"] = "P5E-SEC-R002"
     extra = validate_review_record(extra_payload)
     extra_reviews[extra["review_id"]] = extra
-    with pytest.raises(ReviewEvidenceError, match="every submitted review"):
+    with pytest.raises(ReviewEvidenceError, match="accepted or historical"):
         validate_owner_decision(decision, extra_reviews)
 
 
@@ -308,6 +309,7 @@ def test_gate_accepts_only_four_bound_reviews_plus_explicit_owner_decision(tmp_p
             ]
             for domain, record in reviews.items()
         },
+        "historical_reviews": [],
         "finding_dispositions": [],
         "phase5e_decision": "COMPLETE",
         "phase5f_authorization": "NOT_AUTHORIZED",
@@ -320,6 +322,130 @@ def test_gate_accepts_only_four_bound_reviews_plus_explicit_owner_decision(tmp_p
     assert complete["independent_review_completion"] == "COMPLETE"
     assert complete["phase5f_authorization"] == "NOT AUTHORIZED"
     assert {value["status"] for value in complete["review_domains"].values()} == {"ACCEPTED"}
+
+
+def _write_no_go_then_pass_evidence(tmp_path: Path) -> tuple[str, dict[str, dict[str, object]]]:
+    original_commit = _write_test_repository(tmp_path, _policy())
+    original_digest = expected_review_bundle_manifest_sha256(tmp_path, revision=original_commit)
+    (tmp_path / "README.md").write_text(
+        "# Public-safe review fixture\n\nBlocking issue remediated.\n", encoding="utf-8"
+    )
+    subprocess.run(["git", "add", "README.md"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-qm", "remediate blocker"], cwd=tmp_path, check=True)
+    remediated_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    remediated_digest = expected_review_bundle_manifest_sha256(tmp_path, revision=remediated_commit)
+    evidence = tmp_path / "docs/review/evidence"
+    evidence.mkdir()
+
+    no_go = _review("security", finding=True)
+    no_go["overall_conclusion"] = "NO_GO"
+    no_go["findings"][0]["severity"] = "blocker"  # type: ignore[index]
+    no_go["reviewed_repository_commit"] = original_commit
+    no_go["review_bundle_manifest_sha256"] = original_digest
+    later_pass = _review("security")
+    later_pass["review_id"] = "P5E-SEC-R002"
+    raw_records = [
+        no_go,
+        later_pass,
+        _review("privacy"),
+        _review("archaeological_scientific"),
+        _review("licensing"),
+    ]
+    reviews: dict[str, dict[str, object]] = {}
+    for raw in raw_records:
+        if raw is not no_go:
+            raw["reviewed_repository_commit"] = remediated_commit
+            raw["review_bundle_manifest_sha256"] = remediated_digest
+        review = validate_review_record(raw)
+        reviews[review["review_id"]] = review
+        (evidence / f"{review['review_id'].lower()}.json").write_text(
+            json.dumps(review), encoding="utf-8"
+        )
+    return remediated_commit, reviews
+
+
+def test_historical_no_go_can_be_retained_after_remediation_and_later_pass(
+    tmp_path: Path,
+) -> None:
+    commit, reviews = _write_no_go_then_pass_evidence(tmp_path)
+    accepted = {
+        domain: [
+            {
+                "review_id": review_id,
+                "record_sha256": review_record_sha256(reviews[review_id]),
+            }
+        ]
+        for domain, review_id in {
+            "security": "P5E-SEC-R002",
+            "privacy": "P5E-PRIV-R001",
+            "archaeological_scientific": "P5E-SCI-R001",
+            "licensing": "P5E-LIC-R001",
+        }.items()
+    }
+    decision = {
+        "schema_version": OWNER_DECISION_SCHEMA,
+        "decision_status": "COMPLETE",
+        "decision_id": "P5E-OWNER-001",
+        "decision_date": "2026-09-12",
+        "owner_public_attribution": "ArchaeoAI project owner",
+        "accepted_reviews": accepted,
+        "historical_reviews": [
+            {
+                "review_id": "P5E-SEC-R001",
+                "record_sha256": review_record_sha256(reviews["P5E-SEC-R001"]),
+                "superseded_by_review_id": "P5E-SEC-R002",
+            }
+        ],
+        "finding_dispositions": [
+            {
+                "finding_id": "P5E-SEC-F001",
+                "originating_review_id": "P5E-SEC-R001",
+                "owner_disposition": "REMEDIATE",
+                "disposition_rationale": "The original blocking issue was corrected and verified.",
+                "code_or_doc_change": "Bounded remediation for the original security finding.",
+                "evidence_references": ["README.md"],
+                "residual_limitation": "",
+                "resolution_status": "RESOLVED",
+                "resolved_by_commit": commit,
+                "final_verification": "The later independent review verified the remediation.",
+            }
+        ],
+        "phase5e_decision": "COMPLETE",
+        "phase5f_authorization": "NOT_AUTHORIZED",
+        "residual_limitations": ["All bounded scientific limitations remain controlling."],
+        "attestation": "I explicitly close Phase 5E against all current and historical evidence.",
+    }
+    decision_path = tmp_path / "docs/review/evidence/phase5e-owner-decision.json"
+    decision_path.write_text(json.dumps(decision), encoding="utf-8")
+
+    status = evaluate_review_gate(tmp_path)
+    assert status["phase5e_status"] == "COMPLETE"
+    assert status["review_domains"]["security"]["review_ids"] == ["P5E-SEC-R002"]
+    assert status["review_domains"]["security"]["historical_review_ids"] == ["P5E-SEC-R001"]
+    assert (tmp_path / "docs/review/evidence/p5e-sec-r001.json").is_file()
+
+
+def test_unresolved_no_go_remains_blocked_despite_later_evidence(tmp_path: Path) -> None:
+    _, _reviews = _write_no_go_then_pass_evidence(tmp_path)
+    status = evaluate_review_gate(tmp_path)
+    assert status["phase5e_status"] == "NOT COMPLETE"
+    assert status["review_domains"]["security"]["status"] == "BLOCKED"
+    assert status["unresolved_blocker_findings"] == ["P5E-SEC-F001"]
+
+
+def test_project_validator_accepts_consistent_incomplete_or_complete_gate_states() -> None:
+    validator = (ROOT / "scripts/validate_project.ps1").read_text(encoding="utf-8")
+    assert "$phase5EIncompleteState" in validator
+    assert "$phase5ECompleteState" in validator
+    assert "$phase5EAllDomainsAccepted" in validator
+    assert "$phase5ECStatus.phase5e_status -ne 'NOT COMPLETE'" not in validator
+    assert "$phase5ECStatus.phase5f_authorization -ne 'NOT AUTHORIZED'" in validator
 
 
 def test_bundle_manifest_is_deterministic_and_hashes_git_blobs(tmp_path: Path) -> None:

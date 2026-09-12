@@ -815,6 +815,28 @@ $phase5ECDomainNames = @(
     'archaeological_scientific',
     'licensing'
 )
+$phase5EAllDomainsAccepted = $true
+foreach ($domain in $phase5ECDomainNames) {
+    if ($phase5ECStatus.review_domains.$domain.status -ne 'ACCEPTED') {
+        $phase5EAllDomainsAccepted = $false
+    }
+}
+$phase5EIncompleteState = (
+    $phase5ECStatus.independent_review_completion -eq 'PENDING' -and
+    $phase5ECStatus.phase5e_status -eq 'NOT COMPLETE' -and
+    $phase5ECStatus.owner_decision -eq 'PENDING' -and
+    $phase5ECStatus.blockers -contains 'explicit owner Phase 5E completion decision absent' -and
+    $phase5ECStatus.blockers -contains 'separate explicit owner Phase 5F authorization absent'
+)
+$phase5ECompleteState = (
+    $phase5ECStatus.independent_review_completion -eq 'COMPLETE' -and
+    $phase5ECStatus.phase5e_status -eq 'COMPLETE' -and
+    $phase5ECStatus.owner_decision -eq 'COMPLETE' -and
+    $phase5EAllDomainsAccepted -and
+    $phase5ECStatus.unresolved_blocker_findings.Count -eq 0 -and
+    $phase5ECStatus.blockers.Count -eq 1 -and
+    $phase5ECStatus.blockers[0] -eq 'separate explicit owner Phase 5F authorization absent'
+)
 if (
     $phase5ECPolicy.schema_version -ne 'archaeoai-phase5e-review-policy-v1' -or
     ($phase5ECPolicy.required_domains -join ',') -ne ($phase5ECDomainNames -join ',') -or
@@ -823,16 +845,12 @@ if (
     $phase5ECText -notmatch 'machine-valid' -or
     $phase5ECText -notmatch 'NOT_RECEIVED' -or
     $phase5ECText -notmatch 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
-    $phase5ECText -notmatch 'Phase 5E.*NOT COMPLETE' -or
     $phase5ECText -notmatch 'Phase 5F.*NOT AUTHORIZED' -or
     $phase5ECStatus.schema_version -ne 'archaeoai-phase5e-gate-status-v1' -or
     $phase5ECStatus.internal_phase5e_readiness -ne 'READY' -or
-    $phase5ECStatus.independent_review_completion -ne 'PENDING' -or
-    $phase5ECStatus.phase5e_status -ne 'NOT COMPLETE' -or
+    (-not $phase5EIncompleteState -and -not $phase5ECompleteState) -or
     $phase5ECStatus.phase5f_authorization -ne 'NOT AUTHORIZED' -or
-    $phase5ECStatus.owner_decision -ne 'PENDING' -or
     $phase5ECStatus.rq1_status -ne 'RQ1_PROVISIONALLY_ANSWERED_PENDING_REVIEW' -or
-    $phase5ECStatus.blockers.Count -lt 6 -or
     $phase5ECText -match '(?i)["'']?(?:easting|northing|latitude|longitude|heritage_id|sample_id|pair_id)["'']?\s*[:=]\s*[-+]?\d'
 ) {
     throw 'Phase 5E-C evidence, gate, privacy, status, or authorization boundary failed.'
@@ -847,7 +865,7 @@ $reviewBundleIgnoreCheck = & git check-ignore 'outputs/review/private-sentinel/m
 if ($LASTEXITCODE -ne 0 -or -not $reviewBundleIgnoreCheck) {
     throw 'Generated Phase 5E review bundles must remain ignored by Git.'
 }
-$phase5ECCheck = 'Phase 5E-C external-review evidence and bundle infrastructure valid; external reviews not completed; Phase 5F unauthorized'
+$phase5ECCheck = 'Phase 5E-C external-review evidence, bundle, and gate state consistent; Phase 5F unauthorized'
 
 $terrainIndexHeader = Get-Content 'outputs/terrain/e001_terrain_index.csv' -TotalCount 1
 if ($terrainIndexHeader -match '(?i)easting|northing|ngr|latitude|longitude|geometry|polygon|bbox|bounds|centre|center') {
