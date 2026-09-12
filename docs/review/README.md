@@ -17,6 +17,8 @@ incomplete until actual external review occurs and its substantive findings are 
 5. [Reviewer guide](REVIEWER_GUIDE.md) — overall orientation, evidence boundaries, terminology,
    and questions for reviewers.
 6. [Current status](../CURRENT_STATUS.md) — current project state, results boundary, and next gate.
+7. [Evidence submission directory](evidence/README.md) — machine-validatable review records and
+   sensitive-reporting boundary.
 
 ## Supporting review material
 
@@ -31,6 +33,8 @@ incomplete until actual external review occurs and its substantive findings are 
   legal advice.
 - [External-review note](EXTERNAL_REVIEW_NOTE.md) — scope and status of external-review activity.
 - [Research review checklist](REVIEW_CHECKLIST.md) — discipline-specific E001 review prompts.
+- [Review execution policy](phase5e-review-policy.json) — canonical four-domain evidence and
+  deterministic bundle allowlist.
 
 ## Current gate
 
@@ -43,15 +47,28 @@ follows from the engineering work, model output, or review materials.
 Phase 5E-B classifies internal readiness as `READY` and independent review completion as `PENDING`.
 It does not convert internal or AI-assisted checks into external review.
 
+Phase 5E-C makes that review operational. Generate an exact, ignored review bundle only from a
+clean committed tree, verify its manifest, and inspect the current fail-closed status with:
+
+```powershell
+python scripts/build_phase5e_review_bundle.py --commit HEAD
+python scripts/validate_phase5e_review.py --verify-bundle outputs/review/phase5e-<short-sha>
+python scripts/validate_phase5e_review.py
+```
+
+The generated SHA-256 manifest binds content; it does not establish reviewer identity or approval.
+
 ## Reviewer workflow
 
 1. Read the [five-minute handoff](PHASE_5E_REVIEWER_HANDOFF.md) and
    [current status](../CURRENT_STATUS.md).
 2. Read the [reviewer guide](REVIEWER_GUIDE.md) and
    [AI disclosure](AI_ASSISTANCE_AND_AUTHORSHIP_DISCLOSURE.md).
-3. Complete the appropriate track or tracks in the
+3. Build or verify the version-bound bundle and complete the appropriate track or tracks in the
    [Phase 5E checklist](PHASE_5E_EXTERNAL_REVIEW_CHECKLIST.md).
-4. Record concerns in the [feedback register](FEEDBACK_REGISTER.md).
+4. Create one completed JSON record per domain from the
+   [review template](templates/phase5e_review.template.json), validate it, and record a public-safe
+   summary in the [feedback register](FEEDBACK_REGISTER.md).
 5. The owner documents substantive findings and resolutions in the
    [disposition register](PHASE_5E_OWNER_DISPOSITION.md).
 6. Apply the [completion gate](PHASE_5E_COMPLETION_GATE.md); a separate explicit decision is

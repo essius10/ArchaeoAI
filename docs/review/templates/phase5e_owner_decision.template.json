@@ -1,0 +1,40 @@
+{
+  "schema_version": "archaeoai-phase5e-owner-decision-v1",
+  "decision_status": "TEMPLATE",
+  "decision_id": "P5E-OWNER-000",
+  "decision_date": "YYYY-MM-DD",
+  "owner_public_attribution": "REPLACE_WITH_OWNER_ATTRIBUTION",
+  "accepted_reviews": {
+    "security": [{"review_id": "REPLACE", "record_sha256": "REPLACE"}],
+    "privacy": [{"review_id": "REPLACE", "record_sha256": "REPLACE"}],
+    "archaeological_scientific": [{"review_id": "REPLACE", "record_sha256": "REPLACE"}],
+    "licensing": [{"review_id": "REPLACE", "record_sha256": "REPLACE"}]
+  },
+  "historical_reviews": [
+    {
+      "review_id": "REPLACE_WITH_SUPERSEDED_REVIEW_ID_OR_REMOVE_THIS_OBJECT",
+      "record_sha256": "REPLACE_WITH_SUPERSEDED_RECORD_SHA256",
+      "superseded_by_review_id": "REPLACE_WITH_ACCEPTED_REVIEW_ID_FOR_THE_SAME_DOMAIN"
+    }
+  ],
+  "finding_dispositions": [
+    {
+      "finding_id": "REPLACE",
+      "originating_review_id": "REPLACE",
+      "owner_disposition": "REPLACE_WITH_ACCEPT_REMEDIATE_DEFER_OR_REJECT_WITH_RATIONALE",
+      "disposition_rationale": "REPLACE_WITH_RATIONALE",
+      "code_or_doc_change": "",
+      "evidence_references": [],
+      "residual_limitation": "REPLACE_WITH_RESIDUAL_LIMITATION_OR_EMPTY_IF_REMEDIATED",
+      "resolution_status": "REPLACE_WITH_MATCHING_FINAL_STATUS",
+      "resolved_by_commit": "",
+      "final_verification": "REPLACE_WITH_FINAL_VERIFICATION"
+    }
+  ],
+  "phase5e_decision": "PENDING",
+  "phase5f_authorization": "NOT_AUTHORIZED",
+  "residual_limitations": [
+    "REPLACE_WITH_RESIDUAL_LIMITATION"
+  ],
+  "attestation": "REPLACE_WITH_EXPLICIT_OWNER_DECISION"
+}

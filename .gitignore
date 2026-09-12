@@ -44,6 +44,7 @@ data/processed/
 *.onnx
 outputs/deep_learning/checkpoints/
 outputs/deep_learning/training_runs/
+outputs/review/
 
 # Generated experiment runs are reproducible artifacts, not source files.
 outputs/E*/

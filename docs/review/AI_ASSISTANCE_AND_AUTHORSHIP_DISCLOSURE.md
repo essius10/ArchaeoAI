@@ -75,6 +75,8 @@ phases. Its recorded work includes:
 - checking interpretations against frozen results and claim limits;
 - suggesting security/privacy threat controls and evidence boundaries; and
 - preparing repository and contributor-facing materials.
+- designing and implementing the Phase 5E-C review-evidence schema, deterministic bundle tooling,
+  validation tests, gate derivation, and reviewer workflow under owner authorization.
 
 Standard software libraries and deterministic tools—including Python, Git, pytest, Ruff,
 scikit-learn, PyTorch, Rasterio, and GitHub Actions—also executed code or checks. Their output is not

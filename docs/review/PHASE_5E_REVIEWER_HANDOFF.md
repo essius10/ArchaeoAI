@@ -18,9 +18,10 @@ institutional endorsement, peer review, publication, or authorization for public
 ## Exact snapshot
 
 - Scientific/runtime evidence supplied for review: `2eab2716af01c7cf007b84342058483bfd1414a0`
-- Phase 5E-B starting `main`: `430ed346c49fb7fa89d778d1b7483fe5be4a2216`
-- PR #13 between those commits changed discoverability/onboarding documentation only.
-- Review the Phase 5E-B PR at its final head for this handoff, disclosure, gate, and tests.
+- Phase 5E-C starting `main`: `8ac77c0c313a2966a0de54210a0e2dfd4f7a43f9`
+- The scientific/runtime package originally sent for review remains pinned to the SHA above.
+- Review the exact commit in your generated bundle manifest; do not infer that a later commit was
+  examined.
 
 ## Key evidence and limitations
 
@@ -74,14 +75,25 @@ The [review package](PHASE_5E_REVIEW_PACKAGE.md) gives exact paths and focused c
 
 ## How to record the review
 
-1. State your role/expertise, date, exact commit, scope, conflicts, access limits, and whether AI
-   tools assisted your review.
-2. Mark each item you examined `PASS`, `CONCERN`, or `NOT REVIEWED`. Do not infer a pass outside your
+1. Build or verify the bundle using `scripts/build_phase5e_review_bundle.py` and its SHA-256
+   manifest. This proves content integrity, not reviewer identity.
+2. State your stable public attribution, role/expertise, date, exact commit, scope, methodology,
+   conflicts, access limits, tools, and whether AI tools assisted your review.
+3. Mark each item you examined `PASS`, `CONCERN`, or `NOT REVIEWED`. Do not infer a pass outside your
    expertise or access.
-3. Record concise findings without sensitive material in the
-   [feedback register](FEEDBACK_REGISTER.md).
-4. The owner copies substantive findings into the
+4. Transfer the declaration and findings into one domain-specific copy of
+   `templates/phase5e_review.template.json`; validate it with
+   `python scripts/validate_phase5e_review.py --review <record.json>`.
+5. Record concise findings without sensitive material in the
+   [feedback register](FEEDBACK_REGISTER.md). Never post coordinates, private terrain, credentials,
+   exploitable details, or private correspondence; use a redacted summary and opaque private
+   evidence reference instead.
+6. The owner copies substantive findings into the
    [owner disposition register](PHASE_5E_OWNER_DISPOSITION.md), links changes/evidence, and records
    residual limitations.
-5. Review completion does not itself authorize Phase 5F, real terrain, public inference,
+7. Review completion does not itself authorize Phase 5F, real terrain, public inference,
    deployment, release, model redistribution, or candidate publication.
+
+Your review records a bounded expert assessment. It does not prove archaeological truth, reviewer
+identity through hashing, institutional endorsement, legal compliance outside its stated scope, or
+the safety of material you did not inspect.

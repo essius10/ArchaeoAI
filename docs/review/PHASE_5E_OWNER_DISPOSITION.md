@@ -23,7 +23,8 @@ No findings are recorded at this snapshot.
 
 ## Entry rules
 
-- Assign stable IDs such as `P5E-SEC-001`, `P5E-PRIV-001`, `P5E-SCI-001`, or `P5E-LIC-001`.
+- Assign stable review IDs `P5E-<DOMAIN>-R###` and finding IDs `P5E-<DOMAIN>-F###`, where domain is
+  `SEC`, `PRIV`, `SCI`, or `LIC`.
 - Record whether the source is an attributable reviewer, informal adviser, legal/licensing reviewer,
   unavailable invitee, declined invitation, pending invitee, or AI-assisted internal audit.
 - A reviewer declining or being unavailable means no review was obtained; it is not a concern about
@@ -34,6 +35,15 @@ No findings are recorded at this snapshot.
 - `Resolved` requires linked evidence. `Accepted risk` must state the residual limitation and owner
   rationale. `Unresolved` remains a blocker where the completion gate says it is required.
 - Never convert an automated or AI-assisted internal check into an independent-review identity.
+
+Machine-readable records under `evidence/` are the integrity source; this table is the concise
+human-readable register. Use `ACCEPT`, `REMEDIATE`, `DEFER`, or `REJECT_WITH_RATIONALE`. Every
+nontrivial disposition requires rationale. Remediation requires linked evidence, a resolving
+commit, and final verification. Acceptance or deferral must retain an explicit residual limitation.
+Deleting a row cannot close a finding: the owner decision separately binds satisfying reviews and
+all superseded historical review SHA-256 values, and must disposition every finding across both
+sets. A later acceptable review may satisfy a domain only after blocker/high findings in earlier
+evidence are genuinely remediated; unfavorable evidence remains in the audit history.
 
 ## Closing rule
 
