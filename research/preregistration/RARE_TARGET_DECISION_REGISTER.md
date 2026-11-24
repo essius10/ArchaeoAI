@@ -66,6 +66,14 @@ assessment remain necessary before asserting novelty.
 
 ## Prospective feasibility, precision and power
 
+The [Environment Agency 1 m DTM catalogue](https://environment.data.gov.uk/dataset/13787b9a-26a4-4775-8523-806d13af58fc)
+reports coverage of about 99% of England from combined surveys. This supports a desktop coverage
+audit. Exact untouched areas, native acquisition compatibility and usable terrain after exclusions
+are unverified. [Historic England's NHLE](https://historicengland.org.uk/listing/the-list/data-downloads)
+provides documented nationally designated examples. Its scope cannot support verified absence or
+complete population prevalence. Supplementary evidence, adjudication capacity and exact usage
+rights remain prerequisites.
+
 The following numbers are **hypothetical design calculations**.
 
 - At illustrative prevalence 0.1%, 100,000 probability-sampled units yield 100 expected targets
