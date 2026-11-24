@@ -20,7 +20,7 @@ class Scenario(NamedTuple):
     false_alerts_per_1000: float
     false_alerts_per_km2: float | None
     expected_review_minutes: float | None
-    expected_minutes_over_budget: float | None
+    mean_minutes_above_budget: float | None
 
 
 def _validate(name: str, value: float, maximum: float | None = None) -> None:
@@ -51,6 +51,7 @@ def evaluate(
 
     Density requires a stated unit/coverage basis. This interface cannot verify that the
     basis is sound. Area alone does not authorize interpreting overlapping windows as objects.
+    The budget comparison uses the mean workload, not the expected overrun across runs.
     """
     for name, probability in (
         ("prevalence", prevalence),
@@ -102,7 +103,7 @@ def evaluate(
         false_alerts_per_1000=1000 * fp,
         false_alerts_per_km2=fp * units_per_km2 if units_per_km2 is not None else None,
         expected_review_minutes=review_minutes,
-        expected_minutes_over_budget=(
+        mean_minutes_above_budget=(
             max(0.0, review_minutes - budget_minutes)
             if review_minutes is not None and budget_minutes is not None
             else None

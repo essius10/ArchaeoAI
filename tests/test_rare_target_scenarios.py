@@ -37,7 +37,7 @@ def test_worked_example_and_conservation():
     assert result.false_alerts_per_1000 == pytest.approx(9.99)
     assert result.false_alerts_per_km2 == pytest.approx(0.999)
     assert result.expected_review_minutes == pytest.approx(2178)
-    assert result.expected_minutes_over_budget == pytest.approx(1938)
+    assert result.mean_minutes_above_budget == pytest.approx(1938)
 
 
 def test_degenerate_predicted_classes_are_explicit():
@@ -93,7 +93,17 @@ def test_invalid_inputs(overrides):
 def test_no_implicit_density_and_budget_surplus():
     result = scenario(area_km2=100, minutes_per_review=0, budget_minutes=100)
     assert result.false_alerts_per_km2 is None
-    assert result.expected_minutes_over_budget == 0
+    assert result.mean_minutes_above_budget == 0
+
+
+def test_specificity_monotonically_reduces_workload_at_fixed_recall():
+    coarse = scenario(specificity=0.9, minutes_per_review=1)
+    selective = scenario(specificity=0.999, minutes_per_review=1)
+    assert selective.true_positives == coarse.true_positives
+    assert selective.false_negatives == coarse.false_negatives
+    assert selective.false_positives < coarse.false_positives
+    assert selective.expected_reviews < coarse.expected_reviews
+    assert selective.positive_predictive_value > coarse.positive_predictive_value
 
 
 def test_demo_is_labelled_deterministic_and_covers_requested_prevalence():
