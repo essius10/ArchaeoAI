@@ -21,9 +21,8 @@ unauthorized.
 | Protected inventory and scientific claims | Baseline validation passed 187 protected files and 13 traceable claims. Public hashes cannot establish private custody, source truth, or reviewer independence. |
 | Security and rights | Tracked filename scan found no matching raster, serialized model, checkpoint, `.env` or key file. CI sets contents read-only. Public ruleset API returned an empty list. Branch protection and secret-scanning settings were inaccessible (HTTP 401). Push protection and dependency-security settings remain unverified. Existing runtime specifies local-only approved execution, hash checks and bounded inputs. A pinned pickle can still be unsafe if its trusted provenance fails. |
 
-Detailed outstanding blockers are indexed in the [P0 status](../../docs/isef/P0_GAP_CLOSURE_STATUS.md).
-Consult the [rights decision record](../../docs/isef/LICENSING_DECISION_RECORD.md),
-[review gate](../../docs/review/PHASE_5E_COMPLETION_GATE.md) and
+The detailed P0 blocker inventory and rights decision record are in the separate local research
+history. Consult the [review gate](../../docs/review/PHASE_5E_COMPLETION_GATE.md) and
 [product pilot scorecard](../../docs/product/discovery/PILOT_READINESS_SCORECARD.md).
 Repository administrators should verify enforced review and CI on main, direct-push restrictions,
 applicable secret scanning and push protection, dependency alerts and native-component advisories.
@@ -38,8 +37,8 @@ There is no repository-wide rights clearance.
 | Archaeology | Historic inventory omissions, preservation, site formation, survey quality and natural/modern mounds can all create discordance. Reviewers can agree on morphology without establishing truth. | First attempt the existing 40-record E002 label review as a higher-value prerequisite. Keep the 62-item morphology packet membership frozen. Use a qualified adjudication rubric, blind predictions and strata, track uncertainty, separate field/reference evidence from morphology, and preserve disagreement. Pending student, archaeological, custodian and applicable human-participant determinations. |
 | Security | A new pipeline could expose candidate locations through metadata, logs, output differencing or model custody. | Reuse local existing feature and review boundaries if separately approved. Store exact location and asset manifests privately, verify hash and custody, restrict aggregate reporting for small cells, and require independent security/privacy review. Release and new private access require explicit approval. |
 
-The master's E002 title collides with [E002 label reliability](../../docs/research/E002_INDEPENDENT_LABEL_REVIEW.md).
-The repository already reserves E003 for [confusers and prevalence](E003_E006_DRAFT_DESIGN_GATE.md).
+The proposed E002 title collides with the independent label-reliability exercise in the separate
+local research history. That history reserves E003 for confusers and prevalence.
 Preserve both. Recommend student approval of label/reference feasibility first, with the rare-target
 calculator available immediately. If adjudication or representative coverage is unaffordable, a
 narrow matched confuser or timed review-feasibility study can answer a smaller question. Neither
@@ -48,7 +47,7 @@ alternative can identify population prevalence; no direction is approved here.
 ## Literature and contribution boundary
 
 Primary sources checked on 24 November 2026. This is targeted verification for the decision,
-building on the existing [systematic literature matrix](../../docs/research/systematic-literature-2027/STUDY_MATRIX.csv).
+building on the systematic literature appraisal in the separate local research history.
 
 | Source | What it establishes for this decision |
 | --- | --- |
